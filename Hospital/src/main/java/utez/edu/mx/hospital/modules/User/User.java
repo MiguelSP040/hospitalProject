@@ -13,7 +13,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable= false)
     private long id;
 
     @Column(name = "full_name", nullable = false)
@@ -28,7 +28,7 @@ public class User {
     @Column(name = "lastname")
     private String lastname;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique= true)
     private String email;
 
     @Column(name = "password", nullable = false)
@@ -50,8 +50,8 @@ public class User {
     private List<Bed> beds;
 
     @ManyToOne
-    @JoinColumn(name = "nurse_in_floor", nullable = true)
-    private Floor nurse;
+    @JoinColumn(name = "nurse_in_floor", nullable = true) // -> actualizado nombre
+    private Floor nurseInFloor;
 
     @OneToOne(mappedBy = "secretary")
     @JsonIgnore
@@ -81,7 +81,7 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public User(String identificationName, String username, String surname, String lastname, String email, String password, String phoneNumber, Role role, List<Bed> beds, Floor nurse, Floor secretary_in_charge) {
+    public User(String identificationName, String username, String surname, String lastname, String email, String password, String phoneNumber, Role role, List<Bed> beds, Floor nurseInFloor, Floor secretary_in_charge) {
         this.identificationName = identificationName;
         this.username = username;
         this.surname = surname;
@@ -91,11 +91,11 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.role = role;
         this.beds = beds;
-        this.nurse = nurse;
+        this.nurseInFloor = nurseInFloor;
         this.secretary_in_charge = secretary_in_charge;
     }
 
-    public User(long id, String identificationName, String username, String surname, String lastname, String email, String password, String phoneNumber, Role role, List<Bed> beds, Floor nurse, Floor secretary_in_charge) {
+    public User(long id, String identificationName, String username, String surname, String lastname, String email, String password, String phoneNumber, Role role, List<Bed> beds, Floor nurseInFloor, Floor secretary_in_charge) {
         this.id = id;
         this.identificationName = identificationName;
         this.username = username;
@@ -106,7 +106,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.role = role;
         this.beds = beds;
-        this.nurse = nurse;
+        this.nurseInFloor = nurseInFloor;
         this.secretary_in_charge = secretary_in_charge;
     }
 
@@ -190,12 +190,12 @@ public class User {
         this.beds = beds;
     }
 
-    public Floor getNurse() {
-        return nurse;
+    public Floor getNurseInFloor() {
+        return nurseInFloor;
     }
 
-    public void setNurse(Floor nurse) {
-        this.nurse = nurse;
+    public void setNurseInFloor(Floor nurseInFloor) {
+        this.nurseInFloor = nurseInFloor;
     }
 
     public Floor getSecretary_in_charge() {

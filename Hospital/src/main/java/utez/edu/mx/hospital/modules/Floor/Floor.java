@@ -22,7 +22,7 @@ public class Floor {
     @JsonIgnore
     private List<Bed> beds;
 
-    @OneToMany(mappedBy = "nurse")
+    @OneToMany(mappedBy = "nurseInFloor")  // -> nombre actualizado
     @JsonIgnore
     private List<User> nurses;
 
@@ -97,4 +97,14 @@ public class Floor {
         this.secretary = secretary;
     }
 
+    @Override
+    public String toString() {
+        return "Floor{" +
+                "id=" + id +
+                ", identificationName='" + identificationName + '\'' +
+                ", beds=" + beds +
+                ", nurses=" + nurses +
+                ", secretary=" + secretary +
+                '}';
+    }
 }
