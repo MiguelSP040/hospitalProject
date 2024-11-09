@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import utez.edu.mx.hospital.modules.Bed.Bed;
 
 @Entity
-@Table(name = "Patient")
+@Table(name = "patient")
 public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,7 +13,7 @@ public class Patient {
     private long id;
 
     @Column(name = "full_name", nullable = false)
-    private String identificationName;
+    private String fullName;
 
     @Column(name = "surname", nullable = false)
     private String surname;
@@ -37,8 +37,8 @@ public class Patient {
     public Patient() {
     }
 
-    public Patient(String identificationName, String surname, String lastname, String phoneNumber, String assignmentDate, boolean isDischarged) {
-        this.identificationName = identificationName;
+    public Patient(String fullName, String surname, String lastname, String phoneNumber, String assignmentDate, boolean isDischarged) {
+        this.fullName = fullName;
         this.surname = surname;
         this.lastname = lastname;
         this.phoneNumber = phoneNumber;
@@ -46,9 +46,9 @@ public class Patient {
         this.isDischarged = isDischarged;
     }
 
-    public Patient(long id, String identificationName, String surname, String lastname, String phoneNumber, String assignmentDate, boolean isDischarged) {
+    public Patient(long id, String fullName, String surname, String lastname, String phoneNumber, String assignmentDate, boolean isDischarged) {
         this.id = id;
-        this.identificationName = identificationName;
+        this.fullName = fullName;
         this.surname = surname;
         this.lastname = lastname;
         this.phoneNumber = phoneNumber;
@@ -56,8 +56,8 @@ public class Patient {
         this.isDischarged = isDischarged;
     }
 
-    public Patient(String identificationName, String surname, String lastname, String phoneNumber, String assignmentDate, boolean isDischarged, Bed bed) {
-        this.identificationName = identificationName;
+    public Patient(String fullName, String surname, String lastname, String phoneNumber, String assignmentDate, boolean isDischarged, Bed bed) {
+        this.fullName = fullName;
         this.surname = surname;
         this.lastname = lastname;
         this.phoneNumber = phoneNumber;
@@ -66,9 +66,9 @@ public class Patient {
         this.bed = bed;
     }
 
-    public Patient(long id, String identificationName, String surname, String lastname, String phoneNumber, String assignmentDate, boolean isDischarged, Bed bed) {
+    public Patient(long id, String fullName, String surname, String lastname, String phoneNumber, String assignmentDate, boolean isDischarged, Bed bed) {
         this.id = id;
-        this.identificationName = identificationName;
+        this.fullName = fullName;
         this.surname = surname;
         this.lastname = lastname;
         this.phoneNumber = phoneNumber;
@@ -85,12 +85,12 @@ public class Patient {
         this.id = id;
     }
 
-    public String getIdentificationName() {
-        return identificationName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setIdentificationName(String identificationName) {
-        this.identificationName = identificationName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getSurname() {
