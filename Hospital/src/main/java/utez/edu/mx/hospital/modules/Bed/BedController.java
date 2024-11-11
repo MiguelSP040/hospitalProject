@@ -45,13 +45,13 @@ public class BedController {
     }
 
     //Encontrar camas disponibles por piso
-    @GetMapping("/{idFloor}")
+    @GetMapping("/available/{idFloor}")
     public ResponseEntity<?> findAvailableByFloor(@PathVariable("idFloor") long idFloor){
         return bedService.findAvailableBedsByFloor(idFloor);
     }
 
     //Encontrar camas ocupadas por un paciente
-    @GetMapping("/{idPatient}")
+    @GetMapping("/occupied/{idPatient}")
     public ResponseEntity<?> findAvailableByPatient(@PathVariable("idPatient") long idPatient){
         return bedService.findOccupiedBedsByPatient(idPatient);
     }
