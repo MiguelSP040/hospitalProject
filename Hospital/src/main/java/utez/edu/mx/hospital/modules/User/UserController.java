@@ -3,6 +3,9 @@ package utez.edu.mx.hospital.modules.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import utez.edu.mx.hospital.modules.Bed.Bed;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -15,6 +18,7 @@ public class UserController {
     public ResponseEntity<?> findAll(){
         return userService.findAll();
     }
+
     //traer por el rol de los usuarios
     @GetMapping("/rol/{idRole}")
     public ResponseEntity<?> findAllByIdRol(@PathVariable("idRole") int idRole){
@@ -39,9 +43,23 @@ public class UserController {
         return userService.update(user);
     }
 
+    //secretary asigna camas a nurse
+    @PutMapping("/beds")
+    public ResponseEntity<?> insertBedNurse(@RequestBody User user){
+        return userService.insertBedNurse(user);
+    }
+
+    //secretary asigna floor a nurse
+    @PutMapping("/nurseInFloor")
+    public ResponseEntity<?> insertNurseInFloor(@RequestBody User user){
+        return userService.insertNurseInFloor(user);
+    }
+
     //eliminar usuario
     @DeleteMapping("")
     public ResponseEntity<?> deleteById(@RequestBody User user){
         return userService.deleteById(user);
     }
+
+
 }

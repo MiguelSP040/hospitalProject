@@ -44,6 +44,7 @@ public class UserService {
         );
     }
 
+    //metodo para buscar todos los usuarios
     @Transactional(readOnly = true)
     public ResponseEntity<?> findAll(){
         List<UserDTO> list = new ArrayList<>();
@@ -59,6 +60,7 @@ public class UserService {
         return customResponseEntity.getOkResponse(message, "OK", 200, list);
     }
 
+    //metodo que trae usuario por rol
     @Transactional(readOnly = true)
     public ResponseEntity<?> findAllByIdRol(int idRole){
         List<UserDTO> list = new ArrayList<>();
@@ -88,16 +90,17 @@ public class UserService {
         return customResponseEntity.getOkResponse(message, "OK", 200, dto);
     }
 
+    //guardar cualquier tipo de user con atributos generales
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> save(User user) {
         try {
-            if (user.getRole().getId() == 1) {
+            /*if (user.getRole().getId() == 3) {
                 // Obtenemos el piso directamente (puede devolver null si no se encuentra)
-                Floor found = floorRepository.findById(user.getNurseInFloor().getId()); // Usa getNurse().getId() para obtener el ID del Floor asociado a nurse
-                if (found != null ) {
-                    user.setNurseInFloor(found); // Asigna el objeto Floor completo al atributo nurse
+                Floor foundFloor = floorRepository.findById(user.getSecretary_in_charge().getId());
+                if (foundFloor != null ) {
+                    user.setSecretary_in_charge(foundFloor);
                 }
-            }
+            }*/
             userRepository.save(user);
             return customResponseEntity.getOkResponse(
                     "Registro exitoso",
@@ -112,7 +115,71 @@ public class UserService {
         }
     }
 
+    //metodo para que secretary asigne una bed a nurse
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> insertBedNurse(User user) {
+        User userFound = userRepository.findById(user.getId());
+        if(userFound == null){
+            return customResponseEntity.get404Response();
+        }
+        List<Bed> beds = new ArrayList<>();
+        for(Bed b: user.getBeds()){
+            if(bedRepository.findById(b.getId())==null){
+                return customResponseEntity.get404Response();
+            }else{
+                beds.add(b);
+            }
+        }
+        userFound.setBeds(beds);
+        user = userFound;
+        try {
+            userRepository.save(user);
+            return customResponseEntity.getOkResponse(
+                    "Actualización exitosa",
+                    "OK",
+                    200,
+                    null
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return customResponseEntity.get400Response();
+        }
+    }
 
+    //metodo para que secretary asigne floor a nurse
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> insertNurseInFloor(User user) {
+        User userFound = userRepository.findById(user.getId());
+        if (userFound == null) {
+            return customResponseEntity.get404Response();
+        } else {
+            try {
+                if (user.getRole().getId() == 1) {
+                    // Obtenemos el piso directamente (puede devolver null si no se encuentra)
+                    Floor foundFloor = floorRepository.findById(user.getNurseInFloor().getId()); // Usa getNurse().getId() para obtener el ID del Floor asociado a nurse
+                    if (foundFloor != null ) {
+                        user.setNurseInFloor(foundFloor); // Asigna el objeto Floor completo al atributo nurse
+                    }
+                }
+                userFound.setNurseInFloor(user.getNurseInFloor());
+                user = userFound;
+                userRepository.save(user);
+                return customResponseEntity.getOkResponse(
+                        "Enfermera con piso asignado de forma exitosa",
+                        "OK",
+                        200,
+                        null
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return customResponseEntity.get400Response();
+            }
+        }
+    }
+
+    //metodo para actualizar cualquier tipo de user
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> update(User user) {
         User found = userRepository.findById(user.getId());
@@ -120,14 +187,10 @@ public class UserService {
             return customResponseEntity.get404Response();
         } else {
             try {
-                if (user.getRole().getId() == 1 && user.getNurseInFloor() != null) {
-                    // Verificar si nurseInFloor no es null
-                    Floor foundFloor = floorRepository.findById(user.getNurseInFloor().getId());
-                    if (foundFloor != null) {
-                        user.setNurseInFloor(foundFloor); // Asignar el objeto Floor completo al nurseInFloor
-                    }
-                }
                 user.setPassword(found.getPassword());
+                user.setBeds(found.getBeds());
+                user.setNurseInFloor(found.getNurseInFloor());
+                user.setRole(found.getRole());
                 userRepository.save(user);
                 return customResponseEntity.getOkResponse(
                         "Actualización exitosa",
