@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Hospitalario</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/loginStyle.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .left-section {
+            width: 50%;
+            background-color: #6c757d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .right-section {
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+
+        .shapes {
+            display: flex;
+            gap: 20px;
+            animation: slideInShapes 3s infinite alternate ease-in-out;
+        }
+
+        .shape {
+            width: 100px;
+            height: 100px;
+            background-color: #adb5bd;
+            transform: rotate(45deg);
+        }
+
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid #adb5bd;
+            transform: rotate(0);
+        }
+
+        @keyframes slideInShapes {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .card {
+            width: 400px;
+        }
+
+        .hospital-icon {
+            font-size: 4rem;
+            color: #0d6efd;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            text-align: left;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="left-section">
+        <div class="shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape triangle"></div>
+        </div>
+    </div>
+
+    <div class="right-section">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <i class="fas fa-hospital hospital-icon"></i>
+                <h4 class="card-title mb-4">Sistema Hospitalario</h4>
+                <form>
+                    <div class="mb-3 text-start">
+                        <label for="username" class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="username" placeholder="Ingresa tu usuario">
+                    </div>
+                    <div class="mb-3 text-start">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña">
+                    </div>
+                    <div class="d-grid mb-3">
+                        <a href="list_users.html" class="btn btn-primary"></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

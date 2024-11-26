@@ -1,0 +1,61 @@
+body {
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    overflow: hidden;
+}
+.left-section {
+    width: 50%;
+    background-color: #6c757d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+.right-section {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+.shapes {
+    display: flex;
+    gap: 20px;
+    animation: slideInShapes 3s infinite alternate ease-in-out;
+}
+.shape {
+    width: 100px;
+    height: 100px;
+    background-color: #adb5bd;
+    transform: rotate(45deg);
+}
+.shape.triangle {
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid #adb5bd;
+    transform: rotate(0);
+}
+@keyframes slideInShapes {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+.card {
+    width: 400px;
+}
+.hospital-icon {
+    font-size: 4rem;
+    color: #0d6efd;
+    margin-bottom: 20px;
+}
+.form-label {
+    text-align: left;
+    display: block;
+}
