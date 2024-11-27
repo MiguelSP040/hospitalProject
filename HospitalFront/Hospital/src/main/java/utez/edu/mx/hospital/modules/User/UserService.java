@@ -109,6 +109,7 @@ public class UserService {
                 foundFloor.setSecretary(user);  //aqui se relaciona el piso con el usuario
                 floorRepository.save(foundFloor);   //se guarda el piso con la relación
             }*/
+            user.setPassword(user.getIdentificationName());
             userRepository.save(user);
             return customResponseEntity.getOkResponse(
                     "Registro exitoso",
