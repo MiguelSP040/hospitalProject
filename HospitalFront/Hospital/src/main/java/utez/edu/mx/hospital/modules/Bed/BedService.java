@@ -36,6 +36,7 @@ public class BedService {
         );
     }
 
+    
     @Transactional(readOnly = true)
     public ResponseEntity<?> findAll(){
         List<BedDTO> list= new ArrayList<>();
