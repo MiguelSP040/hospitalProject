@@ -8,6 +8,7 @@ import utez.edu.mx.hospital.modules.Bed.Bed;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.modules.User.User;
+import utez.edu.mx.hospital.modules.User.UserService;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
 import java.sql.SQLException;
@@ -18,40 +19,21 @@ import java.util.stream.Collectors;
 @Service
 public class FloorService {
     @Autowired
+    private UserService userService;
+    @Autowired
     private FloorRepository floorRepository;
 
     @Autowired
     private CustomResponseEntity customResponseEntity;
 
-    private UserDTO transformUserToDTO(User user) {
-        return new UserDTO(
-                user.getId(),
-                user.getIdentificationName(),
-                user.getUsername(),
-                user.getSurname(),
-                user.getLastname(),
-                user.getEmail(),
-                user.getPhoneNumber(),
-                user.getRole(),
-                user.getBeds(),
-                user.getNurseInFloor()
-        );
-    }
-    public FloorDTO transformFloorToDTO(Floor floor) {
-        List<UserDTO> nurseDTOs = floor.getNurses().stream()
-                .map(this::transformUserToDTO)// Mapeamos cada User a un UserDTO
-                .collect(Collectors.toList());
-
-        UserDTO secretaryDTO = transformUserToDTO(floor.getSecretary());
-
+    private FloorDTO transformFloorToDTO(Floor floor) {
         return new FloorDTO(
                 floor.getId(),
                 floor.getIdentificationName(),
-                floor.getBeds(),
-                nurseDTOs,
-                secretaryDTO
+                userService.transformUserToDTO(floor.getSecretary())
         );
     }
+
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> findById(long idFloor) {

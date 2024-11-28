@@ -44,6 +44,14 @@ public class UserService {
         );
     }
 
+    public List<UserDTO> transformUsersDTO(List<User> users){
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for(User u : users){
+            userDTOs.add(transformUserToDTO(u));
+        }
+        return userDTOs;
+    }
+
     //metodo para buscar todos los usuarios
     @Transactional(readOnly = true)
     public ResponseEntity<?> findAll(){
