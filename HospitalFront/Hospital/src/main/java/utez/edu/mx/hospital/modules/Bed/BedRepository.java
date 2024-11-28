@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.User.User;
 
@@ -33,5 +34,5 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
 
     //Encontrar camas sin enfermera en un piso
     @Query(value ="SELECT * FROM Bed  WHERE id_floor = :idFloor AND (has_nurse = false OR has_nurse IS NULL)", nativeQuery = true)
-    List<Bed> findBedsWithoutNurseInFloor(@Param("idFloor") long idFloor);
+    List<BedDTO> findBedsWithoutNurseInFloor(@Param("idFloor") long idFloor);
 }
