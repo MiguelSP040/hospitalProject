@@ -5,10 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.Bed;
+import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
+import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.modules.User.User;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,27 +23,58 @@ public class FloorService {
     @Autowired
     private CustomResponseEntity customResponseEntity;
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> findById(long idFloor){ //  // -> este metodo ya se utiliza en conjunto con User
-        Floor found = floorRepository.findById(idFloor);
-        if(found == null){
-            return customResponseEntity.get404Response();
-        }else{
-            return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, found);
-        }
+    private UserDTO transformUserToDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getIdentificationName(),
+                user.getUsername(),
+                user.getSurname(),
+                user.getLastname(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getRole(),
+                user.getBeds(),
+                user.getNurseInFloor()
+        );
+    }
+    public FloorDTO transformFloorToDTO(Floor floor) {
+        List<UserDTO> nurseDTOs = floor.getNurses().stream()
+                .map(this::transformUserToDTO)// Mapeamos cada User a un UserDTO
+                .collect(Collectors.toList());
 
+        UserDTO secretaryDTO = transformUserToDTO(floor.getSecretary());
+
+        return new FloorDTO(
+                floor.getId(),
+                floor.getIdentificationName(),
+                floor.getBeds(),
+                nurseDTOs,
+                secretaryDTO
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findById(long idFloor) {
+        Floor found = floorRepository.findById(idFloor);
+        if (found == null) {
+            return customResponseEntity.get404Response();
+        }
+        FloorDTO dto = transformFloorToDTO(found);
+        return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, dto);
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> findAllFloors(){
-        List<Floor> floors = floorRepository.findAll();
+        List<FloorDTO> floors = new ArrayList<>();
         String message = "";
         if(floorRepository.findAll().isEmpty()) {
             message = "Aún no hay registros de pisos";
         } else {
             message = "Operación exitosa";
+            for(Floor f: floorRepository.findAll()){
+                floors.add(transformFloorToDTO(f));
+            }
         }
-
         return customResponseEntity.getOkResponse(message,"OK", 200, floors);
     }
 
