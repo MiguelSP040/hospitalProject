@@ -39,6 +39,11 @@ public class BedDTO {
         this.patient = patient;
     }
 
+    public BedDTO(long id, String identificationName) {
+        this.id = id;
+        this.identificationName = identificationName;
+    }
+
     public long getId() {
         return id;
     }

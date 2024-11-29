@@ -30,110 +30,98 @@ public class FloorService {
     @Autowired
     private CustomResponseEntity customResponseEntity;
 
-    public BedDTO transformBedToDTO(Bed b){
+    public BedDTO transformBedToDTO(Bed bed) {
         return new BedDTO(
-                b.getId(),
-                b.getIdentificationName(),
-                b.getIsOccupied(),
-                b.getHasNurse(),
-                transformFloorToDTO(b.getFloor()),
-                b.getPatient()
+                bed.getId(),
+                bed.getIdentificationName(),
+                bed.getIsOccupied(),
+                bed.getHasNurse(),
+                bed.getFloor() != null ? new FloorDTO(bed.getFloor().getId(), bed.getFloor().getIdentificationName(), null, null, null) : null,
+                bed.getPatient() // Se puede transformar si necesitas más detalles.
         );
+    }
+
+    public List<BedDTO> transformBedsToDTOs(List<Bed> beds) {
+        return beds.stream().map(this::transformBedToDTO).collect(Collectors.toList());
+    }
+
+    public UserDTO transformUserToDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getIdentificationName(),
+                user.getUsername(),
+                user.getSurname(),
+                user.getLastname(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getRole(),
+                null, // Evitamos transformar camas si es innecesario
+                user.getNurseInFloor() != null ? new Floor(user.getNurseInFloor().getId(), user.getNurseInFloor().getIdentificationName(), null, null, null) : null
+        );
+    }
+
+    public List<UserDTO> transformUsersToDTOs(List<User> users) {
+        return users.stream().map(this::transformUserToDTO).collect(Collectors.toList());
     }
 
     public FloorDTO transformFloorToDTO(Floor floor) {
         return new FloorDTO(
                 floor.getId(),
                 floor.getIdentificationName(),
-                userService.transformUserToDTO(floor.getSecretary())
-
-        );
-    }
-
-    public FloorDTO transformFloorForBedToDTO(Floor floor) {
-        return new FloorDTO(
-                floor.getId(),
-                floor.getIdentificationName()
+                transformBedsToDTOs(floor.getBeds()),
+                transformUsersToDTOs(floor.getNurses()),
+                floor.getSecretary() != null ? transformUserToDTO(floor.getSecretary()) : null
         );
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> findById(long idFloor) {
-        Floor found = floorRepository.findById(idFloor);
-        if (found == null) {
+        Floor floor = floorRepository.findById(idFloor);
+        if (floor == null) {
             return customResponseEntity.get404Response();
         }
-        FloorDTO dto = transformFloorToDTO(found);
-        return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, dto);
+        return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, transformFloorToDTO(floor));
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findAllFloors(){
-        List<FloorDTO> floors = new ArrayList<>();
-        String message = "";
-        if(floorRepository.findAll().isEmpty()) {
-            message = "Aún no hay registros de pisos";
-        } else {
-            message = "Operación exitosa";
-            for(Floor f: floorRepository.findAll()){
-                floors.add(transformFloorToDTO(f));
-            }
-        }
-        return customResponseEntity.getOkResponse(message,"OK", 200, floors);
+    public ResponseEntity<?> findAllFloors() {
+        List<Floor> floors = floorRepository.findAll();
+        String message = floors.isEmpty() ? "Aún no hay registros de pisos" : "Operación exitosa";
+        return customResponseEntity.getOkResponse(message, "OK", 200, floors.stream().map(this::transformFloorToDTO).collect(Collectors.toList()));
     }
 
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> saveFloor(Floor floor) {
         try {
-            Floor saved = floorRepository.save(floor);
-            return customResponseEntity.getOkResponse(
-                    "Registro exitoso",
-                    "CREATED",
-                    201,
-                    null
-            );
+            floorRepository.save(floor);
+            return customResponseEntity.getOkResponse("Registro exitoso", "CREATED", 201, null);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(e.getMessage());
             return customResponseEntity.get400Response();
         }
     }
 
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
-    public ResponseEntity<?> updateFloor(Floor floor){
-
-        if (floorRepository.findById(floor.getId()) == null){
+    public ResponseEntity<?> updateFloor(Floor floor) {
+        if (floorRepository.findById(floor.getId()) == null) {
             return customResponseEntity.get404Response();
-
-        } else {
-            try {
-                floorRepository.save(floor);
-                return customResponseEntity.getOkResponse(
-                        "Actualizacion exitosa",
-                        "OK",
-                        200,
-                        null
-                );
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-                System.out.println(e.getMessage());
-                return customResponseEntity.get400Response();
-            }
+        }
+        try {
+            floorRepository.save(floor);
+            return customResponseEntity.getOkResponse("Actualización exitosa", "OK", 200, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return customResponseEntity.get400Response();
         }
     }
 
-    // Obtener las camas del piso
     @Transactional(readOnly = true)
     public ResponseEntity<?> getBedsByFloorId(long floorId) {
         Floor floor = floorRepository.findById(floorId);
-
         if (floor == null) {
             return customResponseEntity.get404Response();
         }
-
-        List<Bed> beds = floor.getBeds();
+        List<BedDTO> beds = transformBedsToDTOs(floor.getBeds());
         String message = beds.isEmpty() ? "No hay camas asignadas a este piso" : "Operación exitosa";
         return customResponseEntity.getOkResponse(message, "OK", 200, beds);
     }
@@ -141,16 +129,10 @@ public class FloorService {
     @Transactional(readOnly = true)
     public ResponseEntity<?> getNursesByFloorId(long floorId) {
         Floor floor = floorRepository.findById(floorId);
-
         if (floor == null) {
             return customResponseEntity.get404Response();
         }
-
-        // Filtrar los usuarios que tienen el rol de "nurse"
-        List<User> nurses = floor.getNurses().stream()
-                .filter(user -> user.getRole().getName().equalsIgnoreCase("ROLE_NURSE"))
-                .collect(Collectors.toList());
-
+        List<UserDTO> nurses = transformUsersToDTOs(floor.getNurses());
         String message = nurses.isEmpty() ? "No hay enfermeras asignadas a este piso" : "Operación exitosa";
         return customResponseEntity.getOkResponse(message, "OK", 200, nurses);
     }
