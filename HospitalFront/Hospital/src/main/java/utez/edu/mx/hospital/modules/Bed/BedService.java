@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
+import utez.edu.mx.hospital.modules.Floor.FloorService;
 import utez.edu.mx.hospital.modules.User.UserService;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
@@ -19,20 +20,22 @@ public class BedService {
     private UserService userService;
 
     @Autowired
+    private FloorService floorService;
+
+    @Autowired
     private BedRepository bedRepository;
 
     @Autowired
     private CustomResponseEntity customResponseEntity;
 
-    public BedDTO transformBedToDTO(BedDTO b){
+    public BedDTO transformBedToDTO(Bed b){
         return new BedDTO(
                 b.getId(),
                 b.getIdentificationName(),
-                b.isOccupied(),
+                b.getIsOccupied(),
                 b.getHasNurse(),
-                b.getFloor(),
-                b.getPatient(),
-                userService.transformUserToDTO(b.getUsers())
+                floorService.transformFloorToDTO(b.getFloor()),
+                b.getPatient()
         );
     }
 
@@ -45,10 +48,10 @@ public class BedService {
             message="Aún no hay registros";
         } else{
             for (Bed bd: bedRepository.findAll()){
-                list.add(transformBedToDTO(b));
+                System.out.println(bd.getFloor().getId());
+                list.add(transformBedToDTO(bd));
             }
             message="Operación exitosa";
-
         }
         return customResponseEntity.getOkResponse(message, "OK", 200, list);
     }

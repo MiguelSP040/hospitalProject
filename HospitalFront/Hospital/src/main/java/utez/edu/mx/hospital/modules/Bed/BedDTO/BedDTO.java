@@ -13,21 +13,30 @@ public class BedDTO {
     private String identificationName;
     private boolean isOccupied;
     private Boolean hasNurse;
-    private Floor floor;
+    private FloorDTO floor;
     private Patient patient;
-    private List<UserDTO> users;
+    private List<UserDTO> nurses;
 
     public BedDTO() {
     }
 
-    public BedDTO(long id, String identificationName, boolean isOccupied, Boolean hasNurse, Floor floor, Patient patient, List<UserDTO> users) {
+    public BedDTO(long id, String identificationName, boolean isOccupied, Boolean hasNurse, FloorDTO floor, Patient patient, List<UserDTO> nurses) {
         this.id = id;
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
         this.hasNurse = hasNurse;
         this.floor = floor;
         this.patient = patient;
-        this.users = users;
+        this.nurses = nurses;
+    }
+
+    public BedDTO(long id, String identificationName, boolean isOccupied, Boolean hasNurse, FloorDTO floor, Patient patient) {
+        this.id = id;
+        this.identificationName = identificationName;
+        this.isOccupied = isOccupied;
+        this.hasNurse = hasNurse;
+        this.floor = floor;
+        this.patient = patient;
     }
 
     public long getId() {
@@ -62,11 +71,11 @@ public class BedDTO {
         this.hasNurse = hasNurse;
     }
 
-    public Floor getFloor() {
+    public FloorDTO getFloor() {
         return floor;
     }
 
-    public void setFloor(Floor floor) {
+    public void setFloor(FloorDTO floor) {
         this.floor = floor;
     }
 
@@ -78,11 +87,11 @@ public class BedDTO {
         this.patient = patient;
     }
 
-    public List<UserDTO> getUsers() {
-        return users;
+    public List<UserDTO> getNurses() {
+        return nurses;
     }
 
-    public void setUsers(List<UserDTO> users) {
-        this.users = users;
+    public void setNurses(List<UserDTO> nurses) {
+        this.nurses = nurses;
     }
 }

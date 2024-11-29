@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.Bed;
+import utez.edu.mx.hospital.modules.Bed.BedService;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.modules.User.User;
@@ -26,7 +27,7 @@ public class FloorService {
     @Autowired
     private CustomResponseEntity customResponseEntity;
 
-    private FloorDTO transformFloorToDTO(Floor floor) {
+    public FloorDTO transformFloorToDTO(Floor floor) {
         return new FloorDTO(
                 floor.getId(),
                 floor.getIdentificationName(),
