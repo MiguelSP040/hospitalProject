@@ -1,6 +1,7 @@
 package utez.edu.mx.hospital.modules.User.DTO;
 
 import utez.edu.mx.hospital.modules.Bed.Bed;
+import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Role.Role;
 
@@ -10,13 +11,13 @@ public class UserDTO {
     private long id;
     private String identificationName, username, surname, lastname, email,phoneNumber;
     private Role role;
-    private List<Bed> beds;
+    private List<BedDTO> beds;
     private Floor nurseInFloor;
 
     public UserDTO() {
     }
 
-    public UserDTO(long id, String identificationName, String username, String surname, String lastname, String email, String phoneNumber, Role role, List<Bed> beds, Floor nurseInFloor) {
+    public UserDTO(long id, String identificationName, String username, String surname, String lastname, String email, String phoneNumber, Role role, List<BedDTO> beds, Floor nurseInFloor) {
         this.id = id;
         this.identificationName = identificationName;
         this.username = username;
@@ -29,7 +30,8 @@ public class UserDTO {
         this.nurseInFloor = nurseInFloor;
     }
 
-    public UserDTO(String identificationName, String username, String surname, String lastname, String email, String phoneNumber, Role role, List<Bed> beds, Floor nurseInFloor) {
+    public UserDTO(long id, String identificationName, String username, String surname, String lastname, String email, String phoneNumber, Role role) {
+        this.id = id;
         this.identificationName = identificationName;
         this.username = username;
         this.surname = surname;
@@ -37,17 +39,6 @@ public class UserDTO {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.beds = beds;
-        this.nurseInFloor = nurseInFloor;
-    }
-
-    public UserDTO(long id, String identificationName, String username, String surname, String lastname, String email) {
-        this.id = id;
-        this.identificationName = identificationName;
-        this.username = username;
-        this.surname = surname;
-        this.lastname = lastname;
-        this.email = email;
     }
 
     public long getId() {
@@ -114,11 +105,11 @@ public class UserDTO {
         this.role = role;
     }
 
-    public List<Bed> getBeds() {
+    public List<BedDTO> getBeds() {
         return beds;
     }
 
-    public void setBeds(List<Bed> beds) {
+    public void setBeds(List<BedDTO> beds) {
         this.beds = beds;
     }
 
