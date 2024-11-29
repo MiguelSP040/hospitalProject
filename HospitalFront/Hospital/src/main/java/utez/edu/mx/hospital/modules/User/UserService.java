@@ -269,8 +269,8 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
-    public ResponseEntity<?> changeFloorNurse(User user) {
-        User userFound = userRepository.findById(user.getId());
+    public ResponseEntity<?> changeFloorNurse(long idUser, long idFloor) {
+        User userFound = userRepository.findById(idUser);
         if (userFound == null) {
             return customResponseEntity.get404Response();
         }
@@ -281,8 +281,13 @@ public class UserService {
             return customResponseEntity.get400Response();
         }
 
+        // Verifica si el piso nuevo existe
+        Floor newFloor = floorRepository.findById(idFloor); // Asumiendo que tienes un repositorio de pisos
+        if (newFloor == null) {
+            return customResponseEntity.get404Response(); // Piso no encontrado
+        }
+
         // Lógica para cambiar el piso
-        Floor newFloor = userFound.getNurseInFloor(); // Elige el nuevo piso basado en la selección del frontend
         userFound.setNurseInFloor(newFloor); // Cambia el piso de la enfermera
         userRepository.save(userFound); // Guarda la actualización
 
