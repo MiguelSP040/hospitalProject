@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class BedService {
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private FloorService floorService;
 
     @Autowired
@@ -137,11 +134,14 @@ public class BedService {
     @Transactional(readOnly = true)
     public ResponseEntity<?> findBedsWithoutNurseInFloor(long idFloor) {
         try {
-            List<BedDTO> bedsWithoutNurse = bedRepository.findBedsWithoutNurseInFloor(idFloor);
+            List<Bed> bedsWithoutNurse = bedRepository.findBedsWithoutNurseInFloor(idFloor);
             if (bedsWithoutNurse.isEmpty()) {
                 return customResponseEntity.get404Response();
             }
-            return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, bedsWithoutNurse
+            List<BedDTO> bedDTOs = bedsWithoutNurse.stream()
+                    .map(this::transformBedToDTO)  // Aquí aplicas la transformación a DTO
+                    .collect(Collectors.toList());
+            return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, bedDTOs
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,7 +149,6 @@ public class BedService {
         }
     }
 
-    //mostar pisos con camas sin enfermera
     //mostar pisos con camas sin enfermera
     @Transactional(readOnly = true)
     public ResponseEntity<?> findFloorsWithoutNurse() {
@@ -172,6 +171,18 @@ public class BedService {
                     200,
                     floorsWithoutNurse
             );
+        }
+    }
+
+    //cuenta camas vacias por piso
+    public ResponseEntity<?> countEmptyBedsInFloor(long idFloor) {
+        try{
+            // Llama al servicio que usa el método de BedRepository
+            long count = bedRepository.countEmptyBedsInFloor(idFloor);
+            return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, count);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return customResponseEntity.get400Response();
         }
     }
 

@@ -62,4 +62,10 @@ public class BedController {
     public ResponseEntity<?> findFloorsWithoutNurse() {
         return bedService.findFloorsWithoutNurse();
     }
+
+    //contador de camas vacias por piso
+    @GetMapping("/countEmptyBeds/{idFloor}")
+    public ResponseEntity<?> countEmptyBedsInFloor(@PathVariable("idFloor") long idFloor) {
+        return bedService.countEmptyBedsInFloor(idFloor);
+    }
 }
