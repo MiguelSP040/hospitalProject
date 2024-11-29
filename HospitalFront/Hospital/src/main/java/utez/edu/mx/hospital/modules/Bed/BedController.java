@@ -56,4 +56,10 @@ public class BedController {
     public ResponseEntity<?> findBedsWithoutNurse(@PathVariable ("idFloor") long idFloor) {
         return bedService.findBedsWithoutNurseInFloor(idFloor);
     }
+
+    //mostrar los pisos con camas sin enfermera
+    @GetMapping("/floorsWithoutNurse")
+    public ResponseEntity<?> findFloorsWithoutNurse() {
+        return bedService.findFloorsWithoutNurse();
+    }
 }

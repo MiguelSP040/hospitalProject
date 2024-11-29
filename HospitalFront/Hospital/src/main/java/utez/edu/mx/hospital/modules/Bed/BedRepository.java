@@ -35,4 +35,13 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     //Encontrar camas sin enfermera en un piso
     @Query(value ="SELECT * FROM Bed  WHERE id_floor = :idFloor AND (has_nurse = false OR has_nurse IS NULL)", nativeQuery = true)
     List<BedDTO> findBedsWithoutNurseInFloor(@Param("idFloor") long idFloor);
+
+    //metodo traer pisos que tengan camas sin enfermeras
+    @Query(value = "select b.* from bed b " +
+            "join floor f on b.id_floor = f.id " +
+            "where b.has_nurse is NULL",
+            nativeQuery = true)
+    List<Bed> findFloorsWithBedsHasNurseIsNull();
+
+
 }

@@ -20,6 +20,11 @@ public class FloorDTO {
         this.id = id;
     }
 
+    public FloorDTO(long id, String identificationName) {
+        this.id = id;
+        this.identificationName = identificationName;
+    }
+
     public FloorDTO(long id, String identificationName, List<Bed> beds, List<UserDTO> nurses, UserDTO secretary) {
         this.id = id;
         this.identificationName = identificationName;

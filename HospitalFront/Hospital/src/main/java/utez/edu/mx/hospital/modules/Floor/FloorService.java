@@ -35,6 +35,12 @@ public class FloorService {
         );
     }
 
+    public FloorDTO transformFloorForBedToDTO(Floor floor) {
+        return new FloorDTO(
+                floor.getId(),
+                floor.getIdentificationName()
+        );
+    }
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> findById(long idFloor) {

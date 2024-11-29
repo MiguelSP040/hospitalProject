@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
+import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorService;
 import utez.edu.mx.hospital.modules.User.UserService;
@@ -13,6 +14,7 @@ import utez.edu.mx.hospital.utils.CustomResponseEntity;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BedService {
@@ -146,4 +148,31 @@ public class BedService {
             return customResponseEntity.get400Response();
         }
     }
+
+    //mostar pisos con camas sin enfermera
+    //mostar pisos con camas sin enfermera
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findFloorsWithoutNurse() {
+        // Obtener las camas asociadas a pisos sin enfermera
+        List<Bed> beds = bedRepository.findFloorsWithBedsHasNurseIsNull();
+
+        if (beds.isEmpty()) {
+            return customResponseEntity.get404Response();
+        } else {
+            List<FloorDTO> floorsWithoutNurse = new ArrayList<>();
+            for (Bed b : beds) {
+                Floor floor = b.getFloor();
+                if (floor != null) {
+                    floorsWithoutNurse.add(floorService.transformFloorToDTO(floor));
+                }
+            }
+            return customResponseEntity.getOkResponse(
+                    "Operación exitosa",
+                    "OK",
+                    200,
+                    floorsWithoutNurse
+            );
+        }
+    }
+
 }
