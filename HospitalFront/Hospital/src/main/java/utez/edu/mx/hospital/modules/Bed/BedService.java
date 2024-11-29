@@ -37,6 +37,13 @@ public class BedService {
         );
     }
 
+    public List<BedDTO> transformBedsDTO(List<Bed> beds){
+        List<BedDTO> bedDTOs = new ArrayList<>();
+        for(Bed b : beds){
+            bedDTOs.add(transformBedToDTO(b));
+        }
+        return bedDTOs;
+    }
     
     @Transactional(readOnly = true)
     public ResponseEntity<?> findAll(){

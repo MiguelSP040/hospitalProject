@@ -1,6 +1,7 @@
 package utez.edu.mx.hospital.modules.Floor.DTO;
 
 import utez.edu.mx.hospital.modules.Bed.Bed;
+import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 
 import java.util.List;
@@ -9,7 +10,7 @@ public class FloorDTO {
 
     private long id;
     private String identificationName;
-    private List<Bed> beds;
+    private List<BedDTO> beds;
     private List<UserDTO> nurses;
     private UserDTO secretary;
 
@@ -25,7 +26,7 @@ public class FloorDTO {
         this.identificationName = identificationName;
     }
 
-    public FloorDTO(long id, String identificationName, List<Bed> beds, List<UserDTO> nurses, UserDTO secretary) {
+    public FloorDTO(long id, String identificationName, List<BedDTO> beds, List<UserDTO> nurses, UserDTO secretary) {
         this.id = id;
         this.identificationName = identificationName;
         this.beds = beds;
@@ -33,7 +34,7 @@ public class FloorDTO {
         this.secretary = secretary;
     }
 
-    public FloorDTO(long id, String identificationName, List<Bed> beds, UserDTO secretary) {
+    public FloorDTO(long id, String identificationName, List<BedDTO> beds, UserDTO secretary) {
         this.id = id;
         this.identificationName = identificationName;
         this.beds = beds;
@@ -62,11 +63,11 @@ public class FloorDTO {
         this.identificationName = identificationName;
     }
 
-    public List<Bed> getBeds() {
+    public List<BedDTO> getBeds() {
         return beds;
     }
 
-    public void setBeds(List<Bed> beds) {
+    public void setBeds(List<BedDTO> beds) {
         this.beds = beds;
     }
 
