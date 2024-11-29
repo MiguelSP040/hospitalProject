@@ -41,6 +41,15 @@ public class UserDTO {
         this.nurseInFloor = nurseInFloor;
     }
 
+    public UserDTO(long id, String identificationName, String username, String surname, String lastname, String email) {
+        this.id = id;
+        this.identificationName = identificationName;
+        this.username = username;
+        this.surname = surname;
+        this.lastname = lastname;
+        this.email = email;
+    }
+
     public long getId() {
         return id;
     }
