@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.Bed;
+import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Bed.BedService;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
@@ -19,19 +20,33 @@ import java.util.stream.Collectors;
 
 @Service
 public class FloorService {
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private FloorRepository floorRepository;
 
     @Autowired
     private CustomResponseEntity customResponseEntity;
 
+    public BedDTO transformBedToDTO(Bed b){
+        return new BedDTO(
+                b.getId(),
+                b.getIdentificationName(),
+                b.getIsOccupied(),
+                b.getHasNurse(),
+                transformFloorToDTO(b.getFloor()),
+                b.getPatient()
+        );
+    }
+
     public FloorDTO transformFloorToDTO(Floor floor) {
         return new FloorDTO(
                 floor.getId(),
                 floor.getIdentificationName(),
                 userService.transformUserToDTO(floor.getSecretary())
+
         );
     }
 
@@ -133,7 +148,7 @@ public class FloorService {
 
         // Filtrar los usuarios que tienen el rol de "nurse"
         List<User> nurses = floor.getNurses().stream()
-                .filter(user -> user.getRole().getName().equalsIgnoreCase("nurse"))
+                .filter(user -> user.getRole().getName().equalsIgnoreCase("ROLE_NURSE"))
                 .collect(Collectors.toList());
 
         String message = nurses.isEmpty() ? "No hay enfermeras asignadas a este piso" : "Operación exitosa";

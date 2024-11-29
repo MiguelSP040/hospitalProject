@@ -8,7 +8,6 @@ import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorService;
-import utez.edu.mx.hospital.modules.User.UserService;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
 import java.sql.SQLException;
