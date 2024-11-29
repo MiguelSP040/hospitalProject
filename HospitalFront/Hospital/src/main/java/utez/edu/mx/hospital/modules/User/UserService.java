@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.Bed;
 import utez.edu.mx.hospital.modules.Bed.BedRepository;
+import utez.edu.mx.hospital.modules.Bed.BedService;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorRepository;
+import utez.edu.mx.hospital.modules.Floor.FloorService;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
@@ -42,6 +44,14 @@ public class UserService {
                 u.getBeds(),
                 u.getNurseInFloor()
         );
+    }
+
+    public List<UserDTO> transformUsersDTO(List<User> users){
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for(User u : users){
+            userDTOs.add(transformUserToDTO(u));
+        }
+        return userDTOs;
     }
 
     //metodo para buscar todos los usuarios
@@ -257,4 +267,31 @@ public class UserService {
             return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, listSecretariesDTO);
         }
     }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> changeFloorNurse(User user) {
+        User userFound = userRepository.findById(user.getId());
+        if (userFound == null) {
+            return customResponseEntity.get404Response();
+        }
+
+        // Verifica que el usuario tiene un piso asignado
+        Floor currentFloor = userFound.getNurseInFloor();
+        if (currentFloor == null) {
+            return customResponseEntity.get400Response();
+        }
+
+        // Lógica para cambiar el piso
+        Floor newFloor = userFound.getNurseInFloor(); // Elige el nuevo piso basado en la selección del frontend
+        userFound.setNurseInFloor(newFloor); // Cambia el piso de la enfermera
+        userRepository.save(userFound); // Guarda la actualización
+
+        return customResponseEntity.getOkResponse(
+                "Cambio de piso realizado con éxito",
+                "OK",
+                200,
+                null
+        );
+    }
+
 }
