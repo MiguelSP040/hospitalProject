@@ -44,9 +44,11 @@ public class UserService {
                 u.getPhoneNumber(),
                 u.getRole(),
                 transformBedsDTO(u.getBeds()),
-                u.getNurseInFloor()
+                u.getNurseInFloor() != null ? new Floor(u.getNurseInFloor().getId(), u.getNurseInFloor().getIdentificationName(), null, null, null) : null
         );
     }
+
+
 
     public UserDTO transformUserDTO(User u){
         return new UserDTO(
@@ -66,8 +68,6 @@ public class UserService {
                 b.getId(),
                 b.getIdentificationName(),
                 b.getIsOccupied(),
-                b.getHasNurse(),
-                transformFloorToDTO(b.getFloor()),
                 b.getPatient()
         );
     }
