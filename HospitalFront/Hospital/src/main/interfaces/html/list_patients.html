@@ -5,42 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pacientes</title>
-    <link rel="icon" href="../resources/patient_list.svg" type="image/svg+xml">
+    <link rel="icon" href="../resources/patient.svg" type="image/svg+xml">
     <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/navbar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .nav-link:hover {
-            transform: scale(1.05);
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" style="background-color: #6c757d;">
+    <nav class="navbar navbar-expand-lg py-3">
         <div class="container-fluid">
-            <div class="d-flex">
-                <a href="#" class="nav-link fw-bold text-white mx-2 px-3">Camas</a>
+            <!-- Título y logotipo -->
+            <div class="d-flex align-items-center">
+                <i class="fas fa-hospital text-white fs-4"></i>
+                <span class="text-white fw-bold ms-3">Sistema Hospitalario</span>
             </div>
-            <div class="ms-auto d-flex align-items-center">
-                <span class="text-white fw-bold me-2">Sistema Hospitalario</span>
-                <i class="fas fa-hospital text-white"></i>
+            <!-- Divisor -->
+            <span class="navbar-text text-white mx-3">|</span>
+            <!-- Menú colapsable -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Contenido del navbar -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Opciones después del título -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="list_owned_beds.html" class="nav-link fw-bold text-white">Camas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link fw-bold text-white">Otra Opción</a>
+                    </li>
+                </ul>
+                <!-- Sesión activa -->
+                <div class="ms-auto d-flex align-items-center">
+                    <span class="text-white me-3">miguel@correo.com</span>
+                    <button class="btn btn-sm d-flex align-items-center text-white">
+                        <span class="material-symbols-outlined">
+                            logout
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center">
-            <span class="badge bg-primary fs-5 px-4 py-2">Pacientes</span>
-            <button class="btn btn-outline-primary" data-bs-target="#registerModal" data-bs-toggle="modal">
+            <!-- <span class="badge bg-primary fs-5 px-4 py-2 w-50 text-start">Usuarios</span> -->
+            <h3 class="custom-title">
+                Pacientes
+            </h3>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
                 Registrar Paciente
             </button>
         </div>
-
         <!-- Tabla de Usuarios -->
         <div class="table-responsive mt-4">
-            <table class="table table-bordered">
-                <thead class="text-white text-center" style="background-color: #6c757d;">
+            <table class="table table-borderless table-hover">
+                <thead class="text-white text-center table-dark">
                     <tr>
                         <th>#</th>
                         <th>Nombre Completo</th>
@@ -50,26 +75,40 @@
                     </tr>
                 </thead>
                 <tbody class="text-center" id="tbody">
-                    
+                    <!--Registro estático-->
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Miguel Ángel Sánchez Pérez</td>
+                        <td>7771231212</td>
+                        <td><span class="badge text-bg-success">Ingreso</td>
+                        <td class="text-center">
+                            <button class="btn btn-secondary btn-sm me-3" onclick="">Alta</button>
+                            <button class="btn btn-primary btn-sm ms-3" onclick="" data-bs-target="#updateModal"
+                                data-bs-toggle="modal">Editar</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Modal para Registrar Usuario -->
+    <!-- Modal para Registrar Paciente -->
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Registrar Paciente</h5>
+                    <span class="material-symbols-outlined">
+                        patient_list
+                    </span>
+                    <h5 class="modal-title ms-1" id="registerModalLabel">Registrar Paciente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="row g-3 needs-validation" id="registerForm" novalidate>
                         <div>
                             <label for="regNombres" class="form-label">Nombre(s):</label>
-                            <input type="text" class="form-control" id="regNombres"
-                                placeholder="Ingresa los nombres" required>
+                            <input type="text" class="form-control" id="regNombres" placeholder="Ingresa los nombres"
+                                required>
                         </div>
                         <div class="col">
                             <label for="regApellidoPaterno" class="form-label">Apellido Paterno:</label>
@@ -87,7 +126,7 @@
                                 required>
                         </div>
                         <div class="col-12 text-end">
-                            <button type="reset" class="btn btn-outline-secondary"
+                            <button type="reset" class="btn btn-secondary"
                                 data-bs-dismiss="modal">Cerrar</button>
                             <button type="submit" class="btn btn-primary" onclick="savePatient()"
                                 data-bs-dismiss="modal">Registrar</button>
@@ -98,16 +137,19 @@
         </div>
     </div>
 
-    <!-- Modal para Actualizar Usuario -->
+    <!-- Modal para Actualizar Paciente -->
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="updateModalLabel">Actualizar Paciente</h5>
+                    <span class="material-symbols-outlined">
+                        patient_list
+                    </span>
+                    <h5 class="modal-title ms-1" id="updateModalLabel">Actualizar Paciente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form z>
+                    <form class="row g-3 needs-validation" id="updateForm" novalidate>
                         <div>
                             <label for="updNombres" class="form-label">Nombre(s):</label>
                             <input type="text" class="form-control" id="updNombres" placeholder="Ingresa los nombres">
@@ -127,7 +169,7 @@
                             <input type="text" class="form-control" id="updTelefono" placeholder="Ingresa el teléfono">
                         </div>
                         <div class="col-12 text-end">
-                            <button type="reset" class="btn btn-outline-secondary"
+                            <button type="reset" class="btn btn-secondary"
                                 data-bs-dismiss="modal">Cerrar</button>
                             <button type="submit" class="btn btn-primary" onclick="updatePatient()"
                                 data-bs-dismiss="modal">Actualizar</button>
@@ -139,7 +181,7 @@
     </div>
 
     <script src="../js/bootstrap.bundle.min.js"></script>
-    <script src="../js/patient_management.js"></script>
+
 </body>
 
 </html>

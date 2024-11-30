@@ -7,57 +7,92 @@
     <title>Pisos</title>
     <link rel="icon" href="../resources/floor.svg" type="image/svg+xml">
     <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/navbar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .nav-link:hover {
-            transform: scale(1.05);
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" style="background-color: #6c757d;">
+    <nav class="navbar navbar-expand-lg py-3">
         <div class="container-fluid">
-            <div class="d-flex">
-                <a href="list_users.html" class="nav-link fw-bold text-white mx-2 px-3">Usuarios</a>
+            <!-- Título y logotipo -->
+            <div class="d-flex align-items-center">
+                <i class="fas fa-hospital text-white fs-4"></i>
+                <span class="text-white fw-bold ms-3">Sistema Hospitalario</span>
             </div>
-            <div class="ms-auto d-flex align-items-center">
-                <span class="text-white fw-bold me-2">Sistema Hospitalario</span>
-                <i class="fas fa-hospital text-white"></i>
+            <!-- Divisor -->
+            <span class="navbar-text text-white mx-3">|</span>
+            <!-- Menú colapsable -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Contenido del navbar -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Opciones después del título -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="list_users.html" class="nav-link fw-bold text-white">Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link fw-bold text-white">Otra Opción</a>
+                    </li>
+                </ul>
+                <!-- Sesión activa -->
+                <div class="ms-auto d-flex align-items-center">
+                    <span class="text-white me-3">miguel@correo.com</span>
+                    <button class="btn btn-sm d-flex align-items-center text-white">
+                        <span class="material-symbols-outlined">
+                            logout
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center">
-            <span class="badge bg-primary fs-5 px-4 py-2">Pisos</span>
-            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
+            <h3 class="custom-title">
+                Pisos
+            </h3>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
                 Registrar Piso
             </button>
         </div>
 
         <!-- Card Group de Pisos -->
         <div class="row row-cols-1 row-cols-md-3 g-4 mt-1" id="floorCards">
-            <!-- Primer fila de Cards-->
-            <!-- Registro estático 
+            <!-- Primer Card -->
+            <!-- Registro estático -->
             <div class="col">
-                <div class="card h-100">
-                    <div class="card-header">
-                        Secretaria titular: Marylin Cote
+                <div class="card h-100 d-flex flex-row">
+                    <!-- Contenido del Card -->
+                    <div class="card-body flex-grow-1">
+                        <h4 class="card-title">Piso 01</h4>
+                        Camas
+                        <span class="badge text-bg-secondary">0</span><br>
+                        Enfermeras
+                        <span class="badge text-bg-secondary">0</span>
+                        <hr>
+                        <div class="text-body-secondary">
+                            Encargada: Marylin Cote
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">Piso 01</h5>
-                        <p>Camas: 0 <br> Enfermeras: 0</p>
-                    </div>
-                    <div class="card-footer text-center">
-                        <button type="button" class="btn btn-outline-danger btn-sm mx-4" onclick="deleteFloor()">Eliminar</button>
-                        <button type="button" class="btn btn-secondary btn-sm mx-4" onclick="loadFloor()"
-                            data-bs-target="#updateModal" data-bs-toggle="modal">Editar</button>
+                    <!-- Botones alineados verticalmente -->
+                    <div class="d-flex flex-column justify-content-start align-items-center p-3">
+                        <button type="button" class="btn btn-primary btn-sm mb-2" onclick="loadFloor()"
+                            data-bs-target="#updateModal" data-bs-toggle="modal">
+                            <i class="bi bi-pencil"></i> <!-- Ícono de editar -->
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm " onclick="deleteFloor()">
+                            <i class="bi bi-trash"></i> <!-- Ícono de eliminar -->
+                        </button>
                     </div>
                 </div>
             </div>
-            -->
         </div>
     </div>
 
@@ -66,7 +101,10 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Registrar Piso</h5>
+                    <span class="material-symbols-outlined">
+                        floor
+                    </span>
+                    <h5 class="modal-title ms-1" id="registerModalLabel">Registrar Piso</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -77,7 +115,7 @@
                                 placeholder="Ingresa el nombre del piso">
                         </div>
                         <div class="mb-3">
-                            <label for="regSecretary" class="form-label">Secretaria titular:</label>
+                            <label for="regSecretary" class="form-label">Secretaria:</label>
                             <select class="form-select" id="regSecretary">
                             </select>
                         </div>
@@ -98,7 +136,10 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="updateModalLabel">Actualizar Piso</h5>
+                    <span class="material-symbols-outlined">
+                        floor
+                    </span>
+                    <h5 class="modal-title ms-1" id="updateModalLabel">Actualizar Piso</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -109,7 +150,7 @@
                                 placeholder="Ingresa el nombre del piso">
                         </div>
                         <div class="mb-3">
-                            <label for="updSecretary" class="form-label">Secretaria titular:</label>
+                            <label for="updSecretary" class="form-label">Secretaria:</label>
                             <select class="form-select" id="updSecretary">
                             </select>
                         </div>
@@ -126,7 +167,6 @@
     </div>
 
     <script src="../js/bootstrap.bundle.min.js"></script>
-    <script src="../js/floor_management.js"></script>
 </body>
 
 </html>
