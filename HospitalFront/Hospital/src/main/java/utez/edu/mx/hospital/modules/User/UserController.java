@@ -66,4 +66,10 @@ public class UserController {
     public ResponseEntity<?> findAllSecretariesWithoutFloor(){
         return userService.findAllSecretariesWithoutFloor();
     }
+
+    //cambiar el piso de la enfermera
+    @PutMapping("/changeFloorNurse/{idUser}/{idFloor}")
+    public ResponseEntity<?> changeFloorNurse(@PathVariable("idUser") long idUser, @PathVariable("idFloor") long idFloor) {
+        return userService.changeFloorNurse(idUser, idFloor);
+    }
 }

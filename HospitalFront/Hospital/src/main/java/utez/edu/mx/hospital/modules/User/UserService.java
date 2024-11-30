@@ -5,9 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.Bed;
+import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Bed.BedRepository;
+import utez.edu.mx.hospital.modules.Bed.BedService;
+import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorRepository;
+import utez.edu.mx.hospital.modules.Floor.FloorService;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
@@ -39,9 +43,58 @@ public class UserService {
                 u.getEmail(),
                 u.getPhoneNumber(),
                 u.getRole(),
-                u.getBeds(),
+                transformBedsDTO(u.getBeds()),
                 u.getNurseInFloor()
         );
+    }
+
+    public UserDTO transformUserDTO(User u){
+        return new UserDTO(
+                u.getId(),
+                u.getIdentificationName(),
+                u.getUsername(),
+                u.getSurname(),
+                u.getLastname(),
+                u.getEmail(),
+                u.getPhoneNumber(),
+                u.getRole()
+        );
+    }
+
+    public BedDTO transformBedToDTO(Bed b){
+        return new BedDTO(
+                b.getId(),
+                b.getIdentificationName(),
+                b.getIsOccupied(),
+                b.getHasNurse(),
+                transformFloorToDTO(b.getFloor()),
+                b.getPatient()
+        );
+    }
+
+    public FloorDTO transformFloorToDTO(Floor floor) {
+        return new FloorDTO(
+                floor.getId(),
+                floor.getIdentificationName(),
+                transformUserToDTO(floor.getSecretary())
+        );
+    }
+
+    public List<BedDTO> transformBedsDTO(List<Bed> beds){
+        List<BedDTO> bedDTOs = new ArrayList<>();
+        for(Bed b : beds){
+            bedDTOs.add(transformBedToDTO(b));
+        }
+        return bedDTOs;
+    }
+
+
+    public List<UserDTO> transformUsersDTO(List<User> users){
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for(User u : users){
+            userDTOs.add(transformUserToDTO(u));
+        }
+        return userDTOs;
     }
 
     //metodo para buscar todos los usuarios
@@ -70,7 +123,7 @@ public class UserService {
         }else{
             message = "Operacion exitosa";
             for(User u: userRepository.findAllByIdRol(idRole)){
-                list.add(transformUserToDTO(u));
+                list.add(transformUserDTO(u));
             }
         }
         return customResponseEntity.getOkResponse(message, "OK", 200, list);
@@ -257,4 +310,34 @@ public class UserService {
             return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, listSecretariesDTO);
         }
     }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> changeFloorNurse(long idUser, long idFloor) {
+        User userFound = userRepository.findById(idUser);
+        if (userFound == null) {
+            return customResponseEntity.get404Response();
+        }
+
+        // Verifica que el usuario tiene un piso asignado
+        Floor currentFloor = userFound.getNurseInFloor();
+        if (currentFloor == null) {
+            return customResponseEntity.get400Response();
+        }
+        // Verifica si el piso nuevo existe
+        Floor newFloor = floorRepository.findById(idFloor); // Asumiendo que tienes un repositorio de pisos
+        if (newFloor == null) {
+            return customResponseEntity.get404Response(); // Piso no encontrado
+        }
+        // Lógica para cambiar el piso
+        userFound.setNurseInFloor(newFloor); // Cambia el piso de la enfermera
+        userRepository.save(userFound); // Guarda la actualización
+
+        return customResponseEntity.getOkResponse(
+                "Cambio de piso realizado con éxito",
+                "OK",
+                200,
+                null
+        );
+    }
+
 }
