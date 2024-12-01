@@ -37,6 +37,17 @@ public class BedService {
         );
     }
 
+    public BedDTO transformBedToDTOAvailable(Bed b){
+        return new BedDTO(
+                b.getId(),
+                b.getIdentificationName(),
+                b.getIsOccupied(),
+                b.getHasNurse(),
+                transformFloorToDTO(b.getFloor()),
+                b.getPatient()
+        );
+    }
+
     public UserDTO transformUserToUserDTO(User u){
         return new UserDTO(
                 u.getId(),
@@ -61,8 +72,7 @@ public class BedService {
     public FloorDTO transformFloorToDTO(Floor floor) {
         return new FloorDTO(
                 floor.getId(),
-                floor.getIdentificationName(),
-                transformUserToUserDTO(floor.getSecretary())
+                floor.getIdentificationName()
         );
     }
 
@@ -176,7 +186,7 @@ public class BedService {
             message="No se encontraron camas disponibles en este piso";
         } else {
             for (Bed b: bedRepository.findAvailableBedsByFloor(floorId)){
-                list.add(transformBedToDTO(b));
+                list.add(transformBedToDTOAvailable(b));
             }
             message="Operacion exitosa";
         }
