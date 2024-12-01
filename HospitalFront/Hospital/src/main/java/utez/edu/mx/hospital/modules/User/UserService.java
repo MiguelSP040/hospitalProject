@@ -258,7 +258,6 @@ public class UserService {
         }
     }
 
-
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> deleteById(long idUser){
         User userFound = userRepository.findById(idUser);
