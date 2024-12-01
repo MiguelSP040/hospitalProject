@@ -22,9 +22,6 @@ import java.util.stream.Collectors;
 public class FloorService {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private FloorRepository floorRepository;
 
     @Autowired

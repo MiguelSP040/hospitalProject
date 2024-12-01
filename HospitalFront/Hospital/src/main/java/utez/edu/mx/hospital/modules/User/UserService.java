@@ -48,8 +48,6 @@ public class UserService {
         );
     }
 
-
-
     public UserDTO transformUserDTO(User u){
         return new UserDTO(
                 u.getId(),
@@ -72,13 +70,6 @@ public class UserService {
         );
     }
 
-    public FloorDTO transformFloorToDTO(Floor floor) {
-        return new FloorDTO(
-                floor.getId(),
-                floor.getIdentificationName(),
-                transformUserToDTO(floor.getSecretary())
-        );
-    }
 
     public List<BedDTO> transformBedsDTO(List<Bed> beds){
         List<BedDTO> bedDTOs = new ArrayList<>();
