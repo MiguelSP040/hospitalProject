@@ -22,6 +22,8 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     //Encontrar cama por id
     Bed findById(long id);
 
+    Bed findCompleteById(long id);
+
     //Guardar una cama
     Bed save (Bed bed);
 

@@ -20,6 +20,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //traer usuario por id
     User findById(long idUser);
 
+    User findCompleteById(long idUser);
+
+
     //traer todos los usuarios por id
     User save(User user);
 
