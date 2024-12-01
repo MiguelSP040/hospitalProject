@@ -47,8 +47,6 @@ public class User {
             joinColumns = @JoinColumn(name = "id_user", nullable = true),
             inverseJoinColumns = @JoinColumn(name = "id_bed", nullable = true)
     )
-
-    @JsonIgnore
     private List<Bed> beds;
 
 
