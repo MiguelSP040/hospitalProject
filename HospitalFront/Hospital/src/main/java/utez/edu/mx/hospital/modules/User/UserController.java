@@ -32,6 +32,7 @@ public class UserController {
         return userService.findById(idUser);
     }
 
+
     //guardar usuario
     @PostMapping("")
     public ResponseEntity<?> save(@RequestBody User user){
