@@ -87,9 +87,6 @@
                             data-bs-target="#updateModal" data-bs-toggle="modal">
                             <i class="bi bi-pencil"></i> <!-- Ícono de editar -->
                         </button>
-                        <button type="button" class="btn btn-outline-danger btn-sm " onclick="deleteFloor()">
-                            <i class="bi bi-trash"></i> <!-- Ícono de eliminar -->
-                        </button>
                     </div>
                 </div>
             </div>
@@ -109,12 +106,12 @@
                 </div>
                 <div class="modal-body">
                     <form class="row g-3 needs-validation" id="registerForm" novalidate>
-                        <div class="mb-3">
+                        <div>
                             <label for="regNombre" class="form-label">Nombre:</label>
                             <input type="text" class="form-control" id="regNombre"
                                 placeholder="Ingresa el nombre del piso">
                         </div>
-                        <div class="mb-3">
+                        <div>
                             <label for="regSecretary" class="form-label">Secretaria:</label>
                             <select class="form-select" id="regSecretary">
                             </select>
@@ -144,12 +141,12 @@
                 </div>
                 <div class="modal-body">
                     <form class="row g-3 needs-validation" id="updateForm" novalidate>
-                        <div class="mb-3">
+                        <div>
                             <label for="updNombre" class="form-label">Nombre:</label>
                             <input type="text" class="form-control" id="updNombre"
                                 placeholder="Ingresa el nombre del piso">
                         </div>
-                        <div class="mb-3">
+                        <div>
                             <label for="updSecretary" class="form-label">Secretaria:</label>
                             <select class="form-select" id="updSecretary">
                             </select>
