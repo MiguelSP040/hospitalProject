@@ -17,8 +17,10 @@ public class FloorDTO {
     public FloorDTO() {
     }
 
-    public FloorDTO(long id) {
+    public FloorDTO(long id, String identificationName, List<UserDTO> nurses) {
         this.id = id;
+        this.identificationName = identificationName;
+        this.nurses = nurses;
     }
 
     public FloorDTO(long id, String identificationName) {

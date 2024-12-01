@@ -73,6 +73,13 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    public User(long id, String identificationName, String username, String email) {
+        this.id = id;
+        this.identificationName = identificationName;
+        this.username = username;
+        this.email = email;
+    }
+
     public User(long id, String identificationName, String username, String surname, String lastname, String email, String password, String phoneNumber) {
         this.id = id;
         this.identificationName = identificationName;
