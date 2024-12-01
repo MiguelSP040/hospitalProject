@@ -1,16 +1,18 @@
 const URL = 'http://localhost:8080';
 let patientList = [];
 let patient = {};
+let bedList = [];
+let bed = {};
 
 //Método para obtener la lista de pacientes
 const getAllPatients = async () => {
-    await fetch (`${URL}/api/patient`,{
-        method : 'GET',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+    await fetch(`${URL}/api/patient`, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         }
-    }).then(response => response.json()).then(response =>{
+    }).then(response => response.json()).then(response => {
         //ToDo
         patientList = response.data;
     }).catch(console.log());
@@ -19,19 +21,19 @@ const getAllPatients = async () => {
 //Método para insertar la lista de pacientes en el HTML
 const loadTable = async () => {
     await getAllPatients();
-    
+
     let tbody = document.getElementById("tbody");
-    let content ='';
-    patientList.forEach((item, index)=>{
+    let content = '';
+    patientList.forEach((item, index) => {
         content += `<tr>
                         <th scope="row">${index + 1}</th>
                         <td>${`${item.fullName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.phoneNumber}</td>
-                        <td><span class="badge text-bg-${item.discharged ? "danger" : "success"}">${item.discharged ? "Alta" : "Ingreso"}</td>
-                        
+                        <td></td>
+                        <td><span class="badge text-bg-${item.discharged ? "secondary" : "success"}">${item.discharged ? "Alta" : "Ingreso"}</td>
                         <td class="text-center">
-                            <button class="btn btn-outline-danger btn-sm me-3 ${item.discharged ? "disabled" : ""}" onclick="dischargePatient(${item.id})">Alta</button>
-                            <button class="btn btn-secondary btn-sm ms-3" onclick="loadPatient(${item.id})" data-bs-target="#updateModal"
+                            <button class="btn btn-secondary btn-sm me-3" ${item.discharged ? "disabled" : ""} onclick="dischargePatient(${item.id})">Alta</button>
+                            <button class="btn btn-primary btn-sm ms-3" onclick="loadPatient(${item.id})" data-bs-target="#updateModal"
                                 data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;
@@ -40,20 +42,51 @@ const loadTable = async () => {
 }
 
 //Función anónima para cargar la información de la tabla
-(async () =>{
+(async () => {
     await loadTable();
 })();
 
+//Método para cargar la lista de camas por piso
+const findAllBedsByFloor = async () => {
+    await fetch(`${URL}/api/...`, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
+        }
+    }).then(response =>response.json()).then(response =>{
+        //ToDo
+        roleList = response.data;
+    }).catch(error => console.error(error));
+}
+//Revisar
+
+//Método para cargar las opciones de camas en el select
+const loadData = async () => {
+    await findAllBedsByFloor();
+    let bedSelect = document.getElementById('regCama');
+    let content = '';
+    if (bedList.length === 0) {
+        content += `<option selected disabled>No hay camas para escoger</option>`
+    } else {
+        content = `<option selected disabled hidden>Selecciona una cama</option>`;
+        bedList.forEach(item => {
+            content += `<option value="${item.id}">${item.identificationName}</option>`
+        });
+    }
+    bedSelect.innerHTML = content;
+}
+
 //Método para buscar a los pacientes por id
 const findPatientById = async id => {
-    await fetch (`${URL}/api/patient/${id}`,{
-        method : 'GET',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+    await fetch(`${URL}/api/patient/${id}`, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         }
-    }).then(response => response.json()).then(response =>{
-        //ToDo
+    }).then(response => response.json()).then(response => {
+        console.log(response);
         patient = response.data;
     }).catch(console.log());
 }
@@ -65,25 +98,33 @@ const loadPatient = async id => {
     document.getElementById("updApellidoPaterno").value = patient.surname;
     document.getElementById("updApellidoMaterno").value = patient.lastname;
     document.getElementById("updTelefono").value = patient.phoneNumber;
+    /*
+    let select = document.getElementById("updCama").value;
+    content = '';
+    bedList.forEach(item => {
+        content += `<option value="${item.id}">${item.identificationName}</option>`
+    });
+    select.innerHTML = content;
+    select.value = patient.bed;*/
 }
 
 //Método para registrar un paciente
 const savePatient = async () => {
     let form = document.getElementById('registerForm');
     patient = {
-        fullName : document.getElementById("regNombres").value,
-        surname : document.getElementById("regApellidoPaterno").value,
-        lastname : document.getElementById("regApellidoMaterno").value,
-        phoneNumber : document.getElementById("regTelefono").value
+        fullName: document.getElementById("regNombres").value,
+        surname: document.getElementById("regApellidoPaterno").value,
+        lastname: document.getElementById("regApellidoMaterno").value,
+        phoneNumber: document.getElementById("regTelefono").value
     };
 
     await fetch(`${URL}/api/patient`, {
-        method : 'POST',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         },
-        body : JSON.stringify(patient)
+        body: JSON.stringify(patient)
     }).then(response => response.json()).then(async response => {
         patient = {};
         await loadTable();
@@ -91,28 +132,27 @@ const savePatient = async () => {
     }).catch(console.log);
 }
 
-//Método para registrar un paciente
+//Método para actualizar un paciente
 const updatePatient = async () => {
     let form = document.getElementById('updateForm');
     let updated = {
-        id : patient.id,
-        assignmentDate : patient.assignmentDate,
-        isDischarged : patient.isDischarged,
-        fullName : document.getElementById("updNombres").value,
-        surname : document.getElementById("updApellidoPaterno").value,
-        lastname : document.getElementById("updApellidoMaterno").value,
-        phoneNumber : document.getElementById("updTelefono").value
+        id: patient.id,
+        assignmentDate: patient.assignmentDate,
+        isDischarged: patient.isDischarged,
+        fullName: document.getElementById("updNombres").value,
+        surname: document.getElementById("updApellidoPaterno").value,
+        lastname: document.getElementById("updApellidoMaterno").value,
+        phoneNumber: document.getElementById("updTelefono").value
     };
 
     await fetch(`${URL}/api/patient`, {
-        method : 'PUT',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+        method: 'PUT',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         },
-        body : JSON.stringify(updated)
+        body: JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
-        console.log(response);
         patient = {};
         await loadTable();
         form.reset();
@@ -122,9 +162,9 @@ const updatePatient = async () => {
 //Método para dar de alta a un paciente
 const dischargePatient = async idPatient => {
     await fetch(`${URL}/api/patient/${idPatient}`, {
-        method : 'PUT',
-        headers : {
-            "Accept" : "application/json"
+        method: 'PUT',
+        headers: {
+            "Accept": "application/json"
         }
     }).then(response => response.json()).then(async response => {
         patient = {};
