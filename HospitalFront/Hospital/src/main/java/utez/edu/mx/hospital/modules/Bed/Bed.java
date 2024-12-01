@@ -20,9 +20,8 @@ public class Bed {
     @Column(name = "identification_name", nullable = false)
     private String identificationName;
 
-    @Column(name = "is_occupied", nullable = false)
-    @JsonProperty("isOccupied")
-    private boolean isOccupied;
+    @Column(name = "is_occupied")
+    private Boolean isOccupied;
 
     @Column(name="has_nurse")
     private Boolean hasNurse;
@@ -42,20 +41,20 @@ public class Bed {
     public Bed() {
     }
 
-    public Bed(String identificationName, boolean isOccupied, boolean hasNurse) {
+    public Bed(String identificationName, Boolean isOccupied, Boolean hasNurse) {
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
         this.hasNurse = hasNurse;
     }
 
-    public Bed(long id, String identificationName, boolean isOccupied, boolean hasNurse) {
+    public Bed(long id, String identificationName, Boolean isOccupied, Boolean hasNurse) {
         this.id = id;
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
         this.hasNurse = hasNurse;
     }
 
-    public Bed(String identificationName, boolean isOccupied, boolean hasNurse, Floor floor, Patient patient, List<User> users) {
+    public Bed(String identificationName, Boolean isOccupied, Boolean hasNurse, Floor floor, Patient patient, List<User> users) {
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
         this.hasNurse = hasNurse;
@@ -64,7 +63,7 @@ public class Bed {
         this.users = users;
     }
 
-    public Bed(long id, String identificationName, boolean isOccupied, boolean hasNurse, Floor floor, Patient patient, List<User> users) {
+    public Bed(long id, String identificationName, Boolean isOccupied, Boolean hasNurse, Floor floor, Patient patient, List<User> users) {
         this.id = id;
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
@@ -90,15 +89,15 @@ public class Bed {
         this.identificationName = identificationName;
     }
 
-    public boolean getIsOccupied() { return isOccupied; }
+    public Boolean getIsOccupied() { return isOccupied != null ? isOccupied : false; }
 
-    public void setIsOccupied(boolean isOccupied) { this.isOccupied = isOccupied; }
+    public void setIsOccupied(Boolean isOccupied) { this.isOccupied = isOccupied; }
 
     public Boolean getHasNurse() {
         return hasNurse != null ? hasNurse : false;
     }
 
-    public void setHasNurse(boolean hasNurse) { this.hasNurse = hasNurse; }
+    public void setHasNurse(Boolean hasNurse) { this.hasNurse = hasNurse; }
 
     public Floor getFloor() {
         return floor;

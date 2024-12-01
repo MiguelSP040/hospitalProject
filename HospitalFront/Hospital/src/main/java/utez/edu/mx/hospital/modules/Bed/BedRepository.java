@@ -26,7 +26,7 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     Bed save (Bed bed);
 
     // Encontrar camas por piso
-    List<Bed> findByFloor(Floor floor);
+    List<Bed> findByFloor_Id(long idFloor);
 
     // Encontrar camas disponibles en un piso
     @Query(value = "SELECT * FROM Bed WHERE id_floor = :idFloor AND is_occupied = false", nativeQuery = true)

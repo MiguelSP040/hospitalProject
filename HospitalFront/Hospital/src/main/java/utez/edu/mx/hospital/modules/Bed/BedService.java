@@ -78,8 +78,10 @@ public class BedService {
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?>save(Bed bed){
         try{
+            bed.setIsOccupied(true);
+            bed.setHasNurse(false);
             bedRepository.save(bed);
-            return customResponseEntity.getOkResponse("Registro exitoso", "CREATED",200,null);
+            return customResponseEntity.getOkResponse("Registro exitoso", "CREATED",201,null);
         }catch (Exception e){
             e.printStackTrace();
             System.out.println(e.getMessage());
@@ -104,18 +106,19 @@ public class BedService {
         }
     }
 
-    // Encontrar camas por piso
+    //Encontrar las camas en un piso
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findByFloor(Floor floor){
-        List<BedDTO> list= new ArrayList<>();
-        String message="";
-        if(bedRepository.findByFloor(floor).isEmpty()){
-            message="No se encontraron camas en este piso";
-        } else{
-            for (Bed b: bedRepository.findByFloor(floor)){
-                list.add(transformBedToDTO(b));
+    public ResponseEntity<?> findByFloor(long idFloor) {
+        List<BedDTO> list = new ArrayList<>();
+        String message;
+        List<Bed> beds = bedRepository.findByFloor_Id(idFloor);
+        if (beds.isEmpty()) {
+            message = "No se encontraron camas en este piso";
+        } else {
+            for (Bed bed : beds) {
+                list.add(transformBedToDTO(bed));
             }
-            message="Operación exitosa";
+            message = "Operación exitosa";
         }
         return customResponseEntity.getOkResponse(message, "OK", 200, list);
     }
