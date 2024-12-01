@@ -1,7 +1,8 @@
 const URL = 'http://localhost:8080';
 let userList = [];
-let roleList = [];
 let user = {};
+let roleList = [];
+let role = {};
 
 //Método para obtener la lista de usuarios
 const findAllUsers = async () =>{
@@ -13,9 +14,8 @@ const findAllUsers = async () =>{
         }
     }).then(response =>response.json()).then(response =>{
         //ToDo
-        console.log(response);
         userList = response.data;
-    }).catch(cerror => console.error(error));
+    }).catch(error => console.error(error));
 }
 
 //Método para insertar la tabla de usuarios en el cuerpo HTML
@@ -33,7 +33,7 @@ const loadTable = async () => {
                         <td>${item.username}</td>
                         <td>${item.role.name}</td>
                         <td class="text-center">
-                            <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser()">Eliminar</button>
+                            <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
                             <button class="btn btn-secondary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal" data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;
@@ -48,7 +48,7 @@ const loadTable = async () => {
 
 //Método para cargar la lista de roles
 const findAllRoles = async () => {
-    await fetch(`${URL}/api/user/roles`, {
+    await fetch(`${URL}/api/role`, {
         method: 'GET',
         headers: {
             "Content-type": "application/json",
@@ -56,8 +56,8 @@ const findAllRoles = async () => {
         }
     }).then(response =>response.json()).then(response =>{
         //ToDo
-        secretaryList = response.data;
-    }).catch(console.log());
+        roleList = response.data;
+    }).catch(error => console.error(error));
 }
 
 //Método para cargar las opciones de roles en el select
@@ -86,15 +86,13 @@ const findUserById = async idUser => {
         }
     }).then(response =>response.json()).then(response =>{
         //ToDo
-        console.log(response);
         user = response.data;
     }).catch(error => console.error(error));
 }
 
-//Método para obtener la información del piso a editar
+//Método para obtener la información del usuario a editar
 const loadUser = async id => {
     await findUserById(id);
-    await loadData();
     document.getElementById("updNombres").value = user.identificationName;
     document.getElementById("updApellidoPaterno").value = user.surname;
     document.getElementById("updApellidoMaterno").value = user.lastname;
@@ -102,7 +100,14 @@ const loadUser = async id => {
     document.getElementById("updTelefono").value = user.phoneNumber;
     document.getElementById("updUsuario").value = user.username;
     document.getElementById("updPassword").value = user.password;
-    //Falta completar
+    let select = document.getElementById("updRol").value;
+    content = '';
+    roleList.forEach(item => {
+        content += `<option value="${item.id}">${item.name}</option>`
+    });
+    console.log(user);
+    select.innerHTML = content;
+    select.value = user.role.id;
 }
 
 //Método para registrar un nuevo usuario
@@ -110,8 +115,8 @@ const loadUser = async id => {
 //Método para editar un usuario
 
 //Método para eliminar un usuario
-const deleteUser = async () => {
-    await fetch(`${URL}/api/user/${user.id}`, {
+const deleteUser = async idUser => {
+    await fetch(`${URL}/api/user/delete/${idUser}`, {
         method : 'DELETE',
         headers : {
             "Content-type" : "application/json",
@@ -119,8 +124,7 @@ const deleteUser = async () => {
         },
 
     }).then(response => response.json()).then(async response => {
-        console.log(response);
         user = {};
         await loadTable();
-    }).catch(console.log);
+    }).catch(error => console.error(error));
 }

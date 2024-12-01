@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camas asignadas</title>
+    <link rel="icon" href="../resources/beds.svg" type="image/svg+xml">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg py-3">
+        <div class="container-fluid">
+            <!-- Título y logotipo -->
+            <div class="d-flex align-items-center">
+                <i class="fas fa-hospital text-white fs-4"></i>
+                <span class="text-white fw-bold ms-3">Sistema Hospitalario</span>
+            </div>
+            <!-- Divisor -->
+            <span class="navbar-text text-white mx-3">|</span>
+            <!-- Menú colapsable -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Contenido del navbar -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Opciones después del título -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="list_patients.html" class="nav-link fw-bold text-white">Pacientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link fw-bold text-white">Otra Opción</a>
+                    </li>
+                </ul>
+                <!-- Sesión activa -->
+                <div class="ms-auto d-flex align-items-center">
+                    <span class="text-white me-3" id="userLogged">miguel@correo.com</span>
+                    <button class="btn btn-sm d-flex align-items-center text-white" onclick="">
+                        <span class="material-symbols-outlined">
+                            logout
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="custom-title">
+                Camas asignadas:
+                <i id="numPiso">Piso 01</i>
+            </h3>
+        </div>
+
+        <!-- Card Group de Camas -->
+        <div class="row row-cols-1 row-cols-md-3 g-4 mt-1" id="bedsCards">
+            <!-- Primer Card -->
+            <div class="col">
+                <div class="card h-100 d-flex flex-row">
+                    <!-- Contenido del Card -->
+                    <div class="card-body flex-grow-1">
+                        <h4 class="card-title">Cama 01</h4>
+                        <span class="badge text-bg-success">Ingreso</span>
+                        <span class="badge text-bg-secondary">Disponible</span>
+                        <hr>
+                        <div class="text-body-secondary">
+                            Paciente: Alfredito Olivas
+                        </div>
+                    </div>
+                    <!-- Botones alineados verticalmente -->
+                    <div class="d-flex flex-column justify-content-start align-items-center p-3">
+                        <button class="btn btn btn-success btn-sm mb-2" data-bs-toggle="modal"
+                            data-bs-target="#registerModal" onclick="loadData()">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                        <button class="btn btn btn-secondary btn-sm mb-3" onclick="">
+                            <i class="bi bi-escape"></i>
+                        </button>
+                        <button class="btn btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#infoModal"
+                            onclick="loadBed()">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Asignar Paciente -->
+        <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="material-symbols-outlined">
+                            patient_list
+                        </span>
+                        <h5 class="modal-title ms-1" id="infoModalLabel">Registrar Paciente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="row g-3 needs-validation" id="registerForm" novalidate>
+                            <div class="col">
+                                <label for="regPaciente" class="form-label">Paciente:</label>
+                                <select class="form-select" id="regPaciente">
+                                </select>
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary" onclick=""
+                                    data-bs-dismiss="modal">Registrar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Ver Más -->
+        <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="material-symbols-outlined">
+                            patient_list
+                        </span>
+                        <h5 class="modal-title ms-1" id="infoModalLabel">Información del Paciente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div>
+                                <label for="infNombres" class="form-label">Nombre(s):</label>
+                                <input type="text" class="form-control" id="infNombres" disabled>
+                            </div>
+                            <div class="col">
+                                <label for="infApellidoPaterno" class="form-label">Apellido Paterno:</label>
+                                <input type="text" class="form-control" id="infApellidoPaterno" disabled>
+                            </div>
+                            <div class="col">
+                                <label for="infApellidoMaterno" class="form-label">Apellido Materno:</label>
+                                <input type="text" class="form-control" id="infApellidoMaterno" disabled>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label for="infTelefono" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="infTelefono" disabled>
+                            </div>
+                            <div class="col">
+                                <label for="infIngreso" class="form-label">Fecha de ingreso:</label>
+                                <input type="text" class="form-control" id="infIngreso" disabled>
+                            </div>
+                        </div>
+                        <div class="col-12 text-end mt-3">
+                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="../js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

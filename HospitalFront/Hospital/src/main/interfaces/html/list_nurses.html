@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios</title>
-    <link rel="icon" href="../resources/user.svg" type="image/svg+xml">
+    <title>Enfermeras</title>
+    <link rel="icon" href="../resources/nurse.svg" type="image/svg+xml">
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/navbar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -55,14 +55,14 @@
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center">
             <h3 class="custom-title">
-                Usuarios
+                Enfermeras
             </h3>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
-                Registrar Usuario
+                Registrar Enfermera
             </button>
         </div>
 
-        <!-- Tabla de Usuarios -->
+        <!-- Tabla de Enfermeras -->
         <div class="table-responsive mt-4">
             <table class="table table-borderless table-hover">
                 <thead class="text-white text-center table-dark">
@@ -71,8 +71,7 @@
                         <th>Nombre Completo</th>
                         <th>Correo</th>
                         <th>Teléfono</th>
-                        <th>Usuario</th>
-                        <th>Rol</th>
+                        <th>Piso</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -83,29 +82,27 @@
                         <td>Ángel Alcocer</td>
                         <td>coker@gutez.edu.mx</td>
                         <td>7772302453</td>
-                        <td>cokerangel</td>
-                        <td>Administrador</td>
+                        <td>Piso 01</td>
                         <td class="text-center">
                             <button class="btn btn-outline-danger btn-sm me-3" onclick="">Eliminar</button>
                             <button class="btn btn-primary btn-sm ms-3" onclick="" data-bs-target="#updateModal"
                                 data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>
-
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Modal para Registrar Usuario -->
+    <!-- Modal para Registrar Enfermera -->
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <span class="material-symbols-outlined">
-                        person
+                        masks
                     </span>
-                    <h5 class="modal-title ms-1" id="registerModalLabel">Registrar Usuario</h5>
+                    <h5 class="modal-title ms-1" id="registerModalLabel">Registrar Enfermera</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -129,8 +126,8 @@
                             <input type="email" class="form-control" id="regEmail" placeholder="Ingresa el correo">
                         </div>
                         <div class="col">
-                            <label for="regRol" class="form-label">Rol:</label>
-                            <select class="form-select" id="regRol">
+                            <label for="regFloor" class="form-label">Piso:</label>
+                            <select class="form-select" id="regFloor">
                             </select>
                         </div>
                         <div class="col">
@@ -148,7 +145,7 @@
         </div>
     </div>
 
-    <!-- Modal para Actualizar Usuario -->
+    <!-- Modal para Actualizar Enfermera -->
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -156,7 +153,7 @@
                     <span class="material-symbols-outlined">
                         person
                     </span>
-                    <h5 class="modal-title ms-1" id="updateModalLabel">Actualizar Usuario</h5>
+                    <h5 class="modal-title ms-1" id="updateModalLabel">Actualizar Enfermera</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -180,8 +177,8 @@
                             <input type="email" class="form-control" id="updEmail" placeholder="Ingresa el correo">
                         </div>
                         <div class="col">
-                            <label for="updRol" class="form-label">Rol:</label>
-                            <select class="form-select" id="updRol">
+                            <label for="updFloor" class="form-label">Piso:</label>
+                            <select class="form-select" id="updFloor">
                             </select>
                         </div>
                         <div class="col">
