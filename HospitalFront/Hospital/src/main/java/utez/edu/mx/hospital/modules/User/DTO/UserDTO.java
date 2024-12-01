@@ -30,6 +30,13 @@ public class UserDTO {
         this.nurseInFloor = nurseInFloor;
     }
 
+    public UserDTO(long id, String identificationName, String username, String email) {
+        this.id = id;
+        this.identificationName = identificationName;
+        this.username = username;
+        this.email = email;
+    }
+
     public UserDTO(long id, String identificationName, String username, String surname, String lastname, String email, String phoneNumber, Role role) {
         this.id = id;
         this.identificationName = identificationName;

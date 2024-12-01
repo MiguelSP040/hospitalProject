@@ -8,6 +8,8 @@ import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorService;
+import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
+import utez.edu.mx.hospital.modules.User.User;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
 import java.sql.SQLException;
@@ -17,8 +19,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class BedService {
-    @Autowired
-    private FloorService floorService;
 
     @Autowired
     private BedRepository bedRepository;
@@ -32,8 +32,55 @@ public class BedService {
                 b.getIdentificationName(),
                 b.getIsOccupied(),
                 b.getHasNurse(),
-                floorService.transformFloorToDTO(b.getFloor()),
+                transformBedFloorToDTO(b.getFloor()),
                 b.getPatient()
+        );
+    }
+
+    public UserDTO transformUserToUserDTO(User u){
+        return new UserDTO(
+                u.getId(),
+                u.getIdentificationName(),
+                u.getUsername(),
+                u.getSurname(),
+                u.getLastname(),
+                u.getEmail(),
+                u.getPhoneNumber(),
+                u.getRole()
+        );
+    }
+
+    public List<UserDTO> transformUsersDTO(List<User> users){
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for(User u : users){
+            userDTOs.add(transformUserToUserDTO(u));
+        }
+        return userDTOs;
+    }
+
+    public FloorDTO transformFloorToDTO(Floor floor) {
+        return new FloorDTO(
+                floor.getId(),
+                floor.getIdentificationName(),
+                transformUserToUserDTO(floor.getSecretary())
+        );
+    }
+
+    public BedDTO transformBedToDTOTODTO(Bed b){
+        return new BedDTO(
+                b.getId(),
+                b.getIdentificationName(),
+                b.getIsOccupied(),
+                b.getHasNurse(),
+                b.getPatient()
+        );
+    }
+
+    public FloorDTO transformBedFloorToDTO(Floor f){
+        return new FloorDTO(
+                f.getId(),
+                f.getIdentificationName(),
+                transformUsersDTO(f.getNurses())
         );
     }
 
@@ -147,9 +194,10 @@ public class BedService {
             if (bedsWithoutNurse.isEmpty()) {
                 return customResponseEntity.get404Response();
             }
-            List<BedDTO> bedDTOs = bedsWithoutNurse.stream()
-                    .map(this::transformBedToDTO)  // Aquí aplicas la transformación a DTO
-                    .collect(Collectors.toList());
+            List<BedDTO> bedDTOs = new ArrayList<>();
+            for (Bed b: bedsWithoutNurse){
+                bedDTOs.add(transformBedToDTOTODTO(b));
+            }
             return customResponseEntity.getOkResponse("Operación exitosa", "OK", 200, bedDTOs
             );
         } catch (Exception e) {
@@ -163,7 +211,6 @@ public class BedService {
     public ResponseEntity<?> findFloorsWithoutNurse() {
         // Obtener las camas asociadas a pisos sin enfermera
         List<Bed> beds = bedRepository.findFloorsWithBedsHasNurseIsNull();
-
         if (beds.isEmpty()) {
             return customResponseEntity.get404Response();
         } else {
@@ -171,7 +218,7 @@ public class BedService {
             for (Bed b : beds) {
                 Floor floor = b.getFloor();
                 if (floor != null) {
-                    floorsWithoutNurse.add(floorService.transformFloorToDTO(floor));
+                    floorsWithoutNurse.add(transformFloorToDTO(floor));
                 }
             }
             return customResponseEntity.getOkResponse(

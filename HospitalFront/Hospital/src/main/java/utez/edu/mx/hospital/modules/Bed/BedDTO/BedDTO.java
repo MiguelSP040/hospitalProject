@@ -28,12 +28,27 @@ public class BedDTO {
         this.nurses = nurses;
     }
 
+    public BedDTO(long id, String identificationName, Boolean isOccupied, Patient patient) {
+        this.id = id;
+        this.identificationName = identificationName;
+        this.isOccupied = isOccupied;
+        this.patient = patient;
+    }
+
     public BedDTO(long id, String identificationName, Boolean isOccupied, Boolean hasNurse, FloorDTO floor, Patient patient) {
         this.id = id;
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
         this.hasNurse = hasNurse;
         this.floor = floor;
+        this.patient = patient;
+    }
+
+    public BedDTO(long id, String identificationName, Boolean isOccupied, Boolean hasNurse, Patient patient) {
+        this.id = id;
+        this.identificationName = identificationName;
+        this.isOccupied = isOccupied;
+        this.hasNurse = hasNurse;
         this.patient = patient;
     }
 
