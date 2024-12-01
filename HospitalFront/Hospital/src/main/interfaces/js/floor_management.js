@@ -25,20 +25,32 @@ const loadCards = async () => {
     let tbody = document.getElementById("floorCards");
     let content = '';
     floorList.forEach((item) => {
-        content += `<div class="col">
-              <div class="card h-100">
-                <div class="card-header">
-                    Secretaria titular: ${`${item.secretary.identificationName} ${item.secretary.surname} ${item.secretary.lastname}`}
-                  </div>
-                <div class="card-body">
-                  <h5 class="card-title">${item.identificationName}</h5>
-                  <p>Camas: 0 <br> Enfermeras: 0</p>
+        content += `
+            <div class="col">
+                <div class="card h-100 d-flex flex-row">
+                    <!-- Contenido del Card -->
+                    <div class="card-body flex-grow-1">
+                        <h4 class="card-title">${item.identificationName}</h4>
+                        Camas
+                        <span class="badge text-bg-secondary">0</span><br>
+                        Enfermeras
+                        <span class="badge text-bg-secondary">0</span>
+                        <hr>
+                        <div class="text-body-secondary">
+                        ${`${item.secretary.identificationName} ${item.secretary.surname} ${item.secretary.lastname}`}
+                        </div>
+                    </div>
+                    <!-- Botones alineados verticalmente -->
+                    <div class="d-flex flex-column justify-content-start align-items-center p-3">
+                        <button type="button" class="btn btn-primary btn-sm mb-2" onclick="loadFloor(${item.id})"
+                            data-bs-target="#updateModal" data-bs-toggle="modal">
+                            <i class="bi bi-pencil"></i> <!-- Ícono de editar -->
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm " onclick="deleteFloor(${item.id})">
+                            <i class="bi bi-trash"></i> <!-- Ícono de eliminar -->
+                        </button>
+                    </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="button" class="btn btn-outline-danger btn-sm mx-4" onclick="deleteFloor(${item.id})">Eliminar</button>
-                    <button type="button" class="btn btn-secondary btn-sm mx-4" onclick="loadFloor(${item.id})" data-bs-target="#updateModal" data-bs-toggle="modal">Editar</button>
-                </div>
-              </div>
             </div>`;
     });
     tbody.innerHTML = content;
@@ -71,7 +83,7 @@ const findAllSecretaries = async idRol => {
             "Content-type": "application/json",
             "Accept": "application/json"
         }
-    }).then(response =>response.json()).then(response =>{
+    }).then(response => response.json()).then(response => {
         //ToDo
         secretaryList = response.data;
     }).catch(console.log());
@@ -126,9 +138,9 @@ const loadFloor = async id => {
 const saveFloor = async () => {
     let form = document.getElementById('registerForm');
     floor = {
-        identificationName : document.getElementById("regNombre").value,
-        secretary : {
-            id : document.getElementById('regSecretary').value
+        identificationName: document.getElementById("regNombre").value,
+        secretary: {
+            id: document.getElementById('regSecretary').value
         }
     };
 
@@ -152,10 +164,10 @@ const saveFloor = async () => {
 //Método para eliminar un piso
 const deleteFloor = async () => {
     await fetch(`${URL}/api/floor/${floor.id}`, {
-        method : 'DELETE',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+        method: 'DELETE',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         }
     }).then(response => response.json()).then(async response => {
         console.log(response);
