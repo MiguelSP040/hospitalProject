@@ -45,6 +45,7 @@ public class BedController {
         return bedService.findByFloor(idFloor);
     }
 
+
     //Encontrar camas disponibles por piso
     @GetMapping("/available/{idFloor}")
     public ResponseEntity<?> findAvailableByFloor(@PathVariable("idFloor") long idFloor){
