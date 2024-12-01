@@ -40,10 +40,11 @@ public class BedController {
     }
 
     //Encontrar camas por piso
-    @GetMapping("/bedOnFloor")
-    public ResponseEntity<?> findBedOnFloor(@RequestBody Floor floor){
-        return bedService.findByFloor(floor);
+    @GetMapping("/bedOnFloor/{idFloor}")
+    public ResponseEntity<?> findBedOnFloor(@PathVariable ("idFloor") long idFloor){
+        return bedService.findByFloor(idFloor);
     }
+
 
     //Encontrar camas disponibles por piso
     @GetMapping("/available/{idFloor}")

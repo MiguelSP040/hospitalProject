@@ -1,17 +1,15 @@
 package utez.edu.mx.hospital.modules.Bed.BedDTO;
 
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
-import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Patient.Patient;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
-import utez.edu.mx.hospital.modules.User.User;
 
 import java.util.List;
 
 public class BedDTO {
     private long id;
     private String identificationName;
-    private boolean isOccupied;
+    private Boolean isOccupied;
     private Boolean hasNurse;
     private FloorDTO floor;
     private Patient patient;
@@ -20,7 +18,7 @@ public class BedDTO {
     public BedDTO() {
     }
 
-    public BedDTO(long id, String identificationName, boolean isOccupied, Boolean hasNurse, FloorDTO floor, Patient patient, List<UserDTO> nurses) {
+    public BedDTO(long id, String identificationName, Boolean isOccupied, Boolean hasNurse, FloorDTO floor, Patient patient, List<UserDTO> nurses) {
         this.id = id;
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
@@ -30,14 +28,14 @@ public class BedDTO {
         this.nurses = nurses;
     }
 
-    public BedDTO(long id, String identificationName, boolean isOccupied, Patient patient) {
+    public BedDTO(long id, String identificationName, Boolean isOccupied, Patient patient) {
         this.id = id;
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
         this.patient = patient;
     }
 
-    public BedDTO(long id, String identificationName, boolean isOccupied, Boolean hasNurse, FloorDTO floor, Patient patient) {
+    public BedDTO(long id, String identificationName, Boolean isOccupied, Boolean hasNurse, FloorDTO floor, Patient patient) {
         this.id = id;
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
@@ -46,7 +44,7 @@ public class BedDTO {
         this.patient = patient;
     }
 
-    public BedDTO(long id, String identificationName, boolean isOccupied, Boolean hasNurse, Patient patient) {
+    public BedDTO(long id, String identificationName, Boolean isOccupied, Boolean hasNurse, Patient patient) {
         this.id = id;
         this.identificationName = identificationName;
         this.isOccupied = isOccupied;
@@ -75,16 +73,14 @@ public class BedDTO {
         this.identificationName = identificationName;
     }
 
-    public boolean isOccupied() {
-        return isOccupied;
-    }
+    public Boolean getIsOccupied() { return isOccupied != null ? isOccupied : false; }
 
-    public void setOccupied(boolean occupied) {
-        isOccupied = occupied;
+    public void setIsOccupied(Boolean isOccupied) {
+        this.isOccupied = isOccupied;
     }
 
     public Boolean getHasNurse() {
-        return hasNurse;
+        return hasNurse != null ? hasNurse : false;
     }
 
     public void setHasNurse(Boolean hasNurse) {
