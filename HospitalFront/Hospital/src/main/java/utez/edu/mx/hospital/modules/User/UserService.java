@@ -44,7 +44,7 @@ public class UserService {
                 u.getPhoneNumber(),
                 u.getRole(),
                 transformBedsDTO(u.getBeds()),
-                u.getNurseInFloor()
+                u.getNurseInFloor() != null ? new Floor(u.getNurseInFloor().getId(), u.getNurseInFloor().getIdentificationName(), null, null, null) : null
         );
     }
 
@@ -66,19 +66,10 @@ public class UserService {
                 b.getId(),
                 b.getIdentificationName(),
                 b.getIsOccupied(),
-                b.getHasNurse(),
-                transformFloorToDTO(b.getFloor()),
                 b.getPatient()
         );
     }
 
-    public FloorDTO transformFloorToDTO(Floor floor) {
-        return new FloorDTO(
-                floor.getId(),
-                floor.getIdentificationName(),
-                transformUserToDTO(floor.getSecretary())
-        );
-    }
 
     public List<BedDTO> transformBedsDTO(List<Bed> beds){
         List<BedDTO> bedDTOs = new ArrayList<>();

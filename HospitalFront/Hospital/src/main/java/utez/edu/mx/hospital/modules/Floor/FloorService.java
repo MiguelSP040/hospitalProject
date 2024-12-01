@@ -22,9 +22,6 @@ import java.util.stream.Collectors;
 public class FloorService {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private FloorRepository floorRepository;
 
     @Autowired
@@ -41,8 +38,27 @@ public class FloorService {
         );
     }
 
+
     public List<BedDTO> transformBedsToDTOs(List<Bed> beds) {
         return beds.stream().map(this::transformBedToDTO).collect(Collectors.toList());
+    }
+
+    public List<BedDTO> transformBedsToDTOToDTO(List<Bed> beds) {
+        List<BedDTO> bedDTOs = new ArrayList<>();
+        for(Bed b : beds){
+            bedDTOs.add(transformBedDTOToDTO(b));
+        }
+        return bedDTOs;
+    }
+
+    public BedDTO transformBedDTOToDTO(Bed bed) {
+        return new BedDTO(
+                bed.getId(),
+                bed.getIdentificationName(),
+                bed.getIsOccupied(),
+                bed.getHasNurse(),
+                bed.getPatient()
+        );
     }
 
     public UserDTO transformUserToDTO(User user) {
@@ -54,15 +70,15 @@ public class FloorService {
                 user.getLastname(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                user.getRole(),
-                null, // Evitamos transformar camas si es innecesario
-                user.getNurseInFloor() != null ? new Floor(user.getNurseInFloor().getId(), user.getNurseInFloor().getIdentificationName(), null, null, null) : null
+                user.getRole()
         );
     }
 
     public List<UserDTO> transformUsersToDTOs(List<User> users) {
         return users.stream().map(this::transformUserToDTO).collect(Collectors.toList());
     }
+
+
 
     public FloorDTO transformFloorToDTO(Floor floor) {
         return new FloorDTO(
@@ -121,7 +137,7 @@ public class FloorService {
         if (floor == null) {
             return customResponseEntity.get404Response();
         }
-        List<BedDTO> beds = transformBedsToDTOs(floor.getBeds());
+        List<BedDTO> beds = transformBedsToDTOToDTO(floor.getBeds());
         String message = beds.isEmpty() ? "No hay camas asignadas a este piso" : "Operación exitosa";
         return customResponseEntity.getOkResponse(message, "OK", 200, beds);
     }
