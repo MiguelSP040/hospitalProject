@@ -19,42 +19,87 @@ const findAllFloors = async () => {
 }
 
 //Método para contar las camas por piso
-async function getBedsOnFloor(idFloor) {
+const getBedsOnFloor = async (idFloor) => {
     try {
         const response = await fetch(`${URL}/api/floor/beds/${idFloor}`);
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
-        const data = await response.json();
-        // Verifica si la respuesta incluye una lista de camas
-        const bedsList = data.list || [];
-        const count = bedsList.length;
-        return { bedsList, count }; // Devuelve la lista y el contador
+        
+        const result = await response.json();
+
+        // Check if the response directly contains nurses, not floors
+        const bedList = Array.isArray(result.data) ? result.data : [];
+
+        // Count nurses directly if they're not grouped by floor
+        return { bedList, count: bedList.length };
     } catch (error) {
         console.error("Error al obtener las camas del piso:", error.message);
-        return { bedsList: [], count: 0 }; // Retorna valores por defecto en caso de error
+        return { bedList: [], count: 0 };
     }
-}
+};
 
-//Método para contar las enfermeras por piso
-async function getNursesByFloor(idFloor) {
+
+const countNurses = async (idFloor) => {
     try {
         const response = await fetch(`${URL}/api/floor/nurses/${idFloor}`);
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
-        const data = await response.json();
-        // Verifica si la respuesta incluye la lista de enfermeras
-        const nursesList = data.list;
-        const count = nursesList.length;
-        return { count }; // Devuelve la lista y el contador
+        const result = await response.json();
+
+        // Check if the response directly contains nurses, not floors
+        const nursesList = Array.isArray(result.data) ? result.data : [];
+
+        // Count nurses directly if they're not grouped by floor
+        return { nursesList, count: nursesList.length };
     } catch (error) {
         console.error("Error al obtener las enfermeras del piso:", error.message);
-        return { nursesList: [], count: 0 }; // Retorna valores por defecto en caso de error
+        return { nursesList: [], count: 0 };
     }
-}
+};
 
 
+const loadCards = async () => {
+    await findAllFloors();
+    const tbody = document.getElementById("floorCards");
+    tbody.innerHTML = "";
+
+    const promises = floorList.map(async (item) => {
+        const [bedsResult, nursesResult] = await Promise.all([
+            getBedsOnFloor(item.id),
+            countNurses(item.id),
+        ]);
+
+        return `
+            <div class="col">
+                <div class="card h-100 d-flex flex-row">
+                    <div class="card-body flex-grow-1">
+                        <h4 class="card-title">${item.identificationName}</h4>
+                        Camas <span class="badge text-bg-secondary">${bedsResult.count}</span><br>
+                        Enfermeras <span class="badge text-bg-secondary">${nursesResult.count}</span>
+                        <hr>
+                        <div class="text-body-secondary">
+                            ${item.secretary?.identificationName || 'Sin secretario asignado'}
+                            ${item.secretary?.surname || ''} 
+                            ${item.secretary?.lastname || ''}
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column justify-content-start align-items-center p-3">
+                        <button type="button" class="btn btn-primary btn-sm mb-2" 
+                                onclick="loadFloor(${item.id})" data-bs-target="#updateModal" data-bs-toggle="modal">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+    });
+
+    tbody.innerHTML = (await Promise.all(promises)).join("");
+};
+
+
+/*
 const loadCards = async () => {
     await findAllFloors(); // Load the list of floors
     const tbody = document.getElementById("floorCards");
@@ -65,11 +110,11 @@ const loadCards = async () => {
         // Fetch beds and nurses data simultaneously
         const [bedsResult, nursesResult] = await Promise.all([
             getBedsOnFloor(item.id),
-            getNursesByFloor(item.id),
+            countNurses(item.id),
         ]);
 
         const bedsCount = bedsResult.count; // Number of beds
-        const nursesCount = nursesResult.count; // Number of nurses
+        const countNurses = nursesResult.count; // Number of nurses
 
         // Return the card content
         return `
@@ -81,7 +126,7 @@ const loadCards = async () => {
                         Camas
                         <span class="badge text-bg-secondary">${bedsCount}</span><br>
                         Enfermeras
-                        <span class="badge text-bg-secondary">${nursesCount}</span>
+                        <span class="badge text-bg-secondary">${countNurses}</span>
                         <hr>
                         <div class="text-body-secondary">
                         ${`${item.secretary.identificationName} ${item.secretary.surname} ${item.secretary.lastname}`}
@@ -101,59 +146,7 @@ const loadCards = async () => {
     // Wait for all promises to resolve and update the HTML
     const cardsContent = await Promise.all(promises);
     tbody.innerHTML = cardsContent.join("");
-};
-
-/*
-const loadCards = async () => {
-    await findAllFloors(); // Carga la lista de pisos
-    const tbody = document.getElementById("floorCards");
-    tbody.innerHTML = ""; // Limpia el contenido anterior
-
-    // Mapea y resuelve las promesas para camas y enfermeras
-    const promises = floorList.map(async (item) => {
-        // Llama a ambas funciones en paralelo
-        const [bedsResult, nursesResult] = await Promise.all([
-            getBedsOnFloor(item.id),
-            getNursesByFloor(item.id),
-        ]);
-
-        const bedsCount = bedsResult.count; // Número de camas
-        const nursesCount = nursesResult.count; // Número de enfermeras
-        console.log("Número de camas", bedsCount);
-        console.log(nursesCount);
-
-        // Retorna el contenido de la tarjeta
-        return `
-            <div class="col">
-                <div class="card h-100 d-flex flex-row">
-                    <!-- Contenido del Card -->
-                    <div class="card-body flex-grow-1">
-                        <h4 class="card-title">${item.identificationName}</h4>
-                        Camas
-                        <span class="badge text-bg-secondary">${bedsCount}</span><br>
-                        Enfermeras
-                        <span class="badge text-bg-secondary">${nursesCount}</span>
-                        <hr>
-                        <div class="text-body-secondary">
-                        ${`${item.secretary.identificationName} ${item.secretary.surname} ${item.secretary.lastname}`}
-                        </div>
-                    </div>
-                    <!-- Botones alineados verticalmente -->
-                    <div class="d-flex flex-column justify-content-start align-items-center p-3">
-                        <button type="button" class="btn btn-primary btn-sm mb-2" onclick="loadFloor(${item.id})"
-                            data-bs-target="#updateModal" data-bs-toggle="modal">
-                            <i class="bi bi-pencil"></i> <!-- Ícono de editar -->
-                        </button>
-                    </div>
-                </div>
-            </div>`;
-    });
-
-    // Espera a que todas las promesas se resuelvan y actualiza el HTML
-    const cardsContent = await Promise.all(promises);
-    tbody.innerHTML = cardsContent.join("");
-};
-*/
+};*/
 
 //Función anónima para cargar la información
 (async () => {
