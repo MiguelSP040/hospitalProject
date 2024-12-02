@@ -6,22 +6,22 @@ let bed = {};
 
 //Método para obtener la lista de pacientes
 const getAllPatients = async () => {
-    await fetch(`${URL}/api/patient`, {
+    const timestamp = new Date().getTime(); // Genera un número único
+    await fetch(`${URL}/api/patient?_=${timestamp}`, { 
         method: 'GET',
         headers: {
             "Content-type": "application/json",
             "Accept": "application/json"
         }
     }).then(response => response.json()).then(response => {
-        //ToDo
         patientList = response.data;
     }).catch(console.log());
 }
 
+
 //Método para insertar la lista de pacientes en el HTML
 const loadTable = async () => {
     await getAllPatients();
-
     let tbody = document.getElementById("tbody");
     let content = '';
     patientList.forEach((item, index) => {
@@ -29,8 +29,8 @@ const loadTable = async () => {
                         <th scope="row">${index + 1}</th>
                         <td>${`${item.fullName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.phoneNumber}</td>
-                        <td></td>
                         <td><span class="badge text-bg-${item.discharged ? "secondary" : "success"}">${item.discharged ? "Alta" : "Ingreso"}</td>
+                        <td></td>
                         <td class="text-center">
                             <button class="btn btn-secondary btn-sm me-3" ${item.discharged ? "disabled" : ""} onclick="dischargePatient(${item.id})">Alta</button>
                             <button class="btn btn-primary btn-sm ms-3" onclick="loadPatient(${item.id})" data-bs-target="#updateModal"
@@ -45,6 +45,19 @@ const loadTable = async () => {
 (async () => {
     await loadTable();
 })();
+
+//Método para pintar la información del piso en la card
+const loadInfo = async id => {
+    await findPatientById(id);
+    document.getElementById("updNombres").value = floor.identificationName;
+    let select = document.getElementById("updSecretary");
+    content = '';
+    secretaryList.forEach(item => {
+        content += `<option value="${item.id}">${`${item.fullName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</option>`
+    });
+    select.innerHTML = content;
+    select.value = floor.secretary.id;
+}
 
 //Método para cargar la lista de camas por piso
 const findAllBedsByFloor = async () => {
@@ -63,11 +76,11 @@ const findAllBedsByFloor = async () => {
 
 //Método para cargar las opciones de camas en el select
 const loadData = async () => {
-    await findAllBedsByFloor();
+    /*await findAllBedsByFloor();*/
     let bedSelect = document.getElementById('regCama');
     let content = '';
     if (bedList.length === 0) {
-        content += `<option selected disabled>No hay camas para escoger</option>`
+        content += `<option selected disabled>No hay camas</option>`
     } else {
         content = `<option selected disabled hidden>Selecciona una cama</option>`;
         bedList.forEach(item => {

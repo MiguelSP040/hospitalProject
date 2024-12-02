@@ -51,7 +51,7 @@ public class User {
 
 
     @ManyToOne
-    @JoinColumn(name = "nurse_in_floor", nullable = true) // -> actualizado nombre
+    @JoinColumn(name = "nurse_in_floor") // -> actualizado nombre
     private Floor nurseInFloor;
 
     @OneToOne(mappedBy = "secretary")
