@@ -31,15 +31,15 @@ const loadTable = async () => {
 
     for (const item of patientList) {
         const bedName = await fetchBedName(item.id); // Fetch the bed name for the patient
-        content += `<tr>
+        content += `<tr style="background-color: ${item.discharged ? '#d3d3d3' : 'transparent'};">
                         <th scope="row">${patientList.indexOf(item) + 1}</th>
                         <td>${`${item.fullName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.phoneNumber}</td>
                         <td><span class="badge text-bg-${item.discharged ? "secondary" : "success"}">${item.discharged ? "Alta" : "Ingreso"}</span></td>
-                        <td>${bedName ? bedName : "Sin cama asignada"}</td>
+                        <td>${item.discharged ? "N/A" : bedName ? bedName : "Sin cama asignada"}</td>
                         <td class="text-center">
                             <button class="btn btn-secondary btn-sm me-3" ${item.discharged ? "disabled" : ""} onclick="dischargePatient(${item.id})">Alta</button>
-                            <button class="btn btn-primary btn-sm ms-3" onclick="loadPatient(${item.id})" data-bs-target="#updateModal"
+                            <button class="btn btn-primary btn-sm ms-3" ${item.discharged ? "disabled" : ""} onclick="loadPatient(${item.id})" data-bs-target="#updateModal"
                                 data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;

@@ -98,56 +98,6 @@ const loadCards = async () => {
     tbody.innerHTML = (await Promise.all(promises)).join("");
 };
 
-
-/*
-const loadCards = async () => {
-    await findAllFloors(); // Load the list of floors
-    const tbody = document.getElementById("floorCards");
-    tbody.innerHTML = ""; // Clear previous content
-
-    // Map and resolve promises for both beds and nurses
-    const promises = floorList.map(async (item) => {
-        // Fetch beds and nurses data simultaneously
-        const [bedsResult, nursesResult] = await Promise.all([
-            getBedsOnFloor(item.id),
-            countNurses(item.id),
-        ]);
-
-        const bedsCount = bedsResult.count; // Number of beds
-        const countNurses = nursesResult.count; // Number of nurses
-
-        // Return the card content
-        return `
-            <div class="col">
-                <div class="card h-100 d-flex flex-row">
-                    <!-- Card Content -->
-                    <div class="card-body flex-grow-1">
-                        <h4 class="card-title">${item.identificationName}</h4>
-                        Camas
-                        <span class="badge text-bg-secondary">${bedsCount}</span><br>
-                        Enfermeras
-                        <span class="badge text-bg-secondary">${countNurses}</span>
-                        <hr>
-                        <div class="text-body-secondary">
-                        ${`${item.secretary.identificationName} ${item.secretary.surname} ${item.secretary.lastname}`}
-                        </div>
-                    </div>
-                    <!-- Buttons -->
-                    <div class="d-flex flex-column justify-content-start align-items-center p-3">
-                        <button type="button" class="btn btn-primary btn-sm mb-2" onclick="loadFloor(${item.id})"
-                            data-bs-target="#updateModal" data-bs-toggle="modal">
-                            <i class="bi bi-pencil"></i> <!-- Edit icon -->
-                        </button>
-                    </div>
-                </div>
-            </div>`;
-    });
-
-    // Wait for all promises to resolve and update the HTML
-    const cardsContent = await Promise.all(promises);
-    tbody.innerHTML = cardsContent.join("");
-};*/
-
 //Función anónima para cargar la información
 (async () => {
     await loadCards();
