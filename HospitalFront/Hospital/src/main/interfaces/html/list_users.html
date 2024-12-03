@@ -108,33 +108,43 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="row g-3 needs-validation" id="registerForm" novalidate>
+                    <form class="needs-validation" id="registerForm" novalidate>
                         <div>
                             <label for="regNombres" class="form-label">Nombre(s):</label>
                             <input type="text" class="form-control" id="regNombres" placeholder="Ingresa los nombres">
                         </div>
-                        <div class="col">
-                            <label for="regApellidoPaterno" class="form-label">Apellido Paterno:</label>
-                            <input type="text" class="form-control" id="regApellidoPaterno"
-                                placeholder="Ingresa el apellido paterno">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="regApellidoPaterno" class="form-label">Apellido Paterno:</label>
+                                <input type="text" class="form-control" id="regApellidoPaterno"
+                                    placeholder="Ingresa el apellido paterno">
+                            </div>
+                            <div class="col">
+                                <label for="regApellidoMaterno" class="form-label">Apellido Materno:</label>
+                                <input type="text" class="form-control" id="regApellidoMaterno"
+                                    placeholder="Ingresa el apellido materno">
+                            </div>
                         </div>
-                        <div class="col">
-                            <label for="regApellidoMaterno" class="form-label">Apellido Materno:</label>
-                            <input type="text" class="form-control" id="regApellidoMaterno"
-                                placeholder="Ingresa el apellido materno">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="regEmail" class="form-label">Correo Electrónico:</label>
+                                <input type="email" class="form-control" id="regEmail" placeholder="Ingresa el correo">
+                            </div>
+                            <div class="col">
+                                <label for="regTelefono" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="regTelefono" placeholder="Ingresa el teléfono">
+                            </div>
                         </div>
-                        <div>
-                            <label for="regEmail" class="form-label">Correo Electrónico:</label>
-                            <input type="email" class="form-control" id="regEmail" placeholder="Ingresa el correo">
-                        </div>
-                        <div class="col">
-                            <label for="regRol" class="form-label">Rol:</label>
-                            <select class="form-select" id="regRol">
-                            </select>
-                        </div>
-                        <div class="col">
-                            <label for="regTelefono" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="regTelefono" placeholder="Ingresa el teléfono">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="regRol" class="form-label">Rol:</label>
+                                <select class="form-select" id="regRol">
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="regUsuario" class="form-label">Usuario:</label>
+                                <input type="text" class="form-control" id="regUsuario" placeholder="Ingresa el usuario ">
+                            </div>
                         </div>
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -164,28 +174,38 @@
                             <label for="updNombres" class="form-label">Nombre(s):</label>
                             <input type="text" class="form-control" id="updNombres" placeholder="Ingresa los nombres">
                         </div>
-                        <div class="col">
-                            <label for="updApellidoPaterno" class="form-label">Apellido Paterno:</label>
-                            <input type="text" class="form-control" id="updApellidoPaterno"
-                                placeholder="Ingresa el apellido paterno">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="updApellidoPaterno" class="form-label">Apellido Paterno:</label>
+                                <input type="text" class="form-control" id="updApellidoPaterno"
+                                    placeholder="Ingresa el apellido paterno">
+                            </div>
+                            <div class="col">
+                                <label for="updApellidoMaterno" class="form-label">Apellido Materno:</label>
+                                <input type="text" class="form-control" id="updApellidoMaterno"
+                                    placeholder="Ingresa el apellido materno">
+                            </div>
                         </div>
-                        <div class="col">
-                            <label for="updApellidoMaterno" class="form-label">Apellido Materno:</label>
-                            <input type="text" class="form-control" id="updApellidoMaterno"
-                                placeholder="Ingresa el apellido materno">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="updEmail" class="form-label">Correo Electrónico:</label>
+                                <input type="email" class="form-control" id="updEmail" placeholder="Ingresa el correo">
+                            </div>
+                            <div class="col">
+                                <label for="updTelefono" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="updTelefono" placeholder="Ingresa el teléfono">
+                            </div>
                         </div>
-                        <div>
-                            <label for="updEmail" class="form-label">Correo Electrónico:</label>
-                            <input type="email" class="form-control" id="updEmail" placeholder="Ingresa el correo">
-                        </div>
-                        <div class="col">
-                            <label for="updRol" class="form-label">Rol:</label>
-                            <select class="form-select" id="updRol">
-                            </select>
-                        </div>
-                        <div class="col">
-                            <label for="updTelefono" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="updTelefono" placeholder="Ingresa el teléfono">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="updRol" class="form-label">Rol:</label>
+                                <select class="form-select" id="updRol">
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="updUsuario" class="form-label">Usuario:</label>
+                                <input type="text" class="form-control" id="updUsuario" placeholder="Ingresa el usuario ">
+                            </div>
                         </div>
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
