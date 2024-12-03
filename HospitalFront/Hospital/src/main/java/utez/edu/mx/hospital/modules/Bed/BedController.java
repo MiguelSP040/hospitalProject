@@ -69,4 +69,9 @@ public class BedController {
     public ResponseEntity<?> countEmptyBedsInFloor(@PathVariable("idFloor") long idFloor) {
         return bedService.countEmptyBedsInFloor(idFloor);
     }
+
+    @GetMapping("/findBedName/{idPatient}")
+    public ResponseEntity<?> getBedNameByPatientId(@PathVariable("idPatient") long idPatient) {
+        return bedService.findBedNameByPatientId(idPatient);
+    }
 }

@@ -18,28 +18,29 @@ const getAllPatients = async () => {
     }).catch(console.log());
 }
 
-
 //Método para insertar la lista de pacientes en el HTML
 const loadTable = async () => {
-    await getAllPatients();
+    await getAllPatients(); // Assuming this fetches the patientList
     let tbody = document.getElementById("tbody");
     let content = '';
-    patientList.forEach((item, index) => {
+
+    for (const item of patientList) {
+        const bedName = await fetchBedName(item.id); // Fetch the bed name for the patient
         content += `<tr>
-                        <th scope="row">${index + 1}</th>
+                        <th scope="row">${patientList.indexOf(item) + 1}</th>
                         <td>${`${item.fullName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.phoneNumber}</td>
-                        <td><span class="badge text-bg-${item.discharged ? "secondary" : "success"}">${item.discharged ? "Alta" : "Ingreso"}</td>
-                        <td></td>
+                        <td><span class="badge text-bg-${item.discharged ? "secondary" : "success"}">${item.discharged ? "Alta" : "Ingreso"}</span></td>
+                        <td>${bedName ? bedName : "Sin cama asignada"}</td>
                         <td class="text-center">
                             <button class="btn btn-secondary btn-sm me-3" ${item.discharged ? "disabled" : ""} onclick="dischargePatient(${item.id})">Alta</button>
                             <button class="btn btn-primary btn-sm ms-3" onclick="loadPatient(${item.id})" data-bs-target="#updateModal"
                                 data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;
-    });
+    }
     tbody.innerHTML = content;
-}
+};
 
 //Función anónima para cargar la información de la tabla
 (async () => {
@@ -75,8 +76,8 @@ const findAllBedsByFloor = async () => {
 //Revisar
 
 //Método para cargar las opciones de camas en el select
-const loadData = async () => {
-    /*await findAllBedsByFloor();*/
+/*const loadData = async () => {
+    //await findAllBedsByFloor();
     let bedSelect = document.getElementById('regCama');
     let content = '';
     if (bedList.length === 0) {
@@ -88,7 +89,7 @@ const loadData = async () => {
         });
     }
     bedSelect.innerHTML = content;
-}
+}*/
 
 //Método para buscar a los pacientes por id
 const findPatientById = async id => {
@@ -141,7 +142,6 @@ const savePatient = async () => {
     }).then(response => response.json()).then(async response => {
         patient = {};
         await loadTable();
-        form.reset();
     }).catch(console.log);
 }
 
@@ -168,7 +168,6 @@ const updatePatient = async () => {
     }).then(response => response.json()).then(async response => {
         patient = {};
         await loadTable();
-        form.reset();
     }).catch(console.log);
 }
 
@@ -183,4 +182,17 @@ const dischargePatient = async idPatient => {
         patient = {};
         await loadTable();
     }).catch(console.log);
+};
+
+const fetchBedName = async (idPatient) => {
+    try {
+        const response = await fetch(`${URL}/api/bed/findBedName/${idPatient}`);
+        if (!response.ok) throw new Error("Error fetching bed name");
+        const result = await response.json(); // Parse the response as JSON
+        if (result.code !== 200) throw new Error(result.message || "Unexpected error");
+        return result.data; // Return only the bed name
+    } catch (error) {
+        console.error(error.message);
+        return "Sin cama asignada"; // Default value if fetching fails
+    }
 };
