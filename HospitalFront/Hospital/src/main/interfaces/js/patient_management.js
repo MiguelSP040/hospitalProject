@@ -1,3 +1,8 @@
+/*
+Pendiente: 
+Revisar el método actualizar, hay un retraso entre la actualización de información y actualización de tabla en vista
+Falta comprobar la asignación de camas en registro y actualización
+*/
 const URL = 'http://localhost:8080';
 let patientList = [];
 let patient = {};
