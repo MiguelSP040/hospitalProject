@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "Bed")
+//ola
 public class Bed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
