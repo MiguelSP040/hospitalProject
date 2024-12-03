@@ -34,7 +34,7 @@ const loadTable = async () => {
                         <td>${item.role.name}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
-                            <button class="btn btn-secondary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal" data-bs-toggle="modal">Editar</button>
+                            <button class="btn btn-primary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal" data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;
     });
@@ -111,8 +111,64 @@ const loadUser = async id => {
 }
 
 //Método para registrar un nuevo usuario
+const saveUser = async () => {
+    let form = document.getElementById('saveForm');
+    user = {
+        identificationName : getElementById("regNombres").value,
+        surname : getElementById("regApellidoPaterno").value, 
+        lastname : getElementById("regApellidoMaterno").value,
+        email : getElementById("regEmail").value,
+        phoneNumber : getElementById("regTelefono").value,
+        username : getElementById("regUsuario").value,
+        role : {
+            id: document.getElementById('regRol').value
+        }
+    };
+
+    await fetch(`${URL}/api/user`, {
+        method : 'POST',
+        headers : {
+            "Content-type" : "application/json",
+            "Accept" : "application/json"
+        },
+        body : JSON.stringify(user)
+    }).then(response => response.json()).then(async response => {
+        console.log(response);
+        user = {};
+        await loadTable();
+        form.reset();
+    }).catch(console.log);
+}
 
 //Método para editar un usuario
+const updateUser = async () => {
+    let form = document.getElementById('updateForm');
+    let updated = {
+        id : user.id,
+        identificationName : getElementById("regNombres").value,
+        surname : getElementById("regApellidoPaterno").value, 
+        lastname : getElementById("regApellidoMaterno").value,
+        email : getElementById("regEmail").value,
+        phoneNumber : getElementById("regTelefono").value,
+        username : getElementById("regUsuario").value,
+        role : {
+            id: document.getElementById('regRol').value
+        }
+    };
+
+    await fetch(`${URL}/api/user`, {
+        method : 'PUT',
+        headers : {
+            "Content-type" : "application/json",
+            "Accept" : "application/json"
+        },
+        body : JSON.stringify(updated)
+    }).then(response => response.json()).then(async response => {
+        console.log(response);
+        pet = {};
+        await loadTable();
+    }).catch(console.log);
+}
 
 //Método para eliminar un usuario
 const deleteUser = async idUser => {
