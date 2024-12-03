@@ -252,4 +252,20 @@ public class BedService {
         }
     }
 
+    public ResponseEntity<?> findBedNameByPatientId(long patientId) {
+        String bedName = null;
+        String message = "";
+
+        String foundBedName = bedRepository.findBedNameByPatientId(patientId);
+
+        if (foundBedName.isEmpty()) {
+            return customResponseEntity.get404Response();
+        } else {
+            bedName = foundBedName;
+            message = "Operación exitosa";
+        }
+
+        return customResponseEntity.getOkResponse(message, "OK", 200, bedName);
+    }
+
 }

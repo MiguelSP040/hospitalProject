@@ -49,6 +49,6 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     @Query("SELECT COUNT(b) FROM Bed b WHERE b.floor.id = :idFloor AND b.hasNurse = false")
     long countEmptyBedsInFloor(@Param("idFloor") long idFloor);
 
-
-
+    @Query("SELECT b.identificationName FROM Bed b WHERE b.patient.id = :idPatient")
+    String findBedNameByPatientId(@Param("idPatient") long idPatient);
 }

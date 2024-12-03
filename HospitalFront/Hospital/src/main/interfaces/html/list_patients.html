@@ -58,7 +58,7 @@
             <h3 class="custom-title">
                 Pacientes
             </h3>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
                 Registrar Paciente
             </button>
         </div>
@@ -107,28 +107,23 @@
                 </div>
                 <div class="modal-body">
                     <form class="needs-validation" id="registerForm" novalidate>
-                        <div class="mb-3">
-                            <label for="regNombres" class="form-label">Nombre(s):</label>
-                            <input type="text" class="form-control" id="regNombres" placeholder="Ingresa los nombres"
-                                required>
-                        </div>
-                        <div class="row mb-3">
+                        <div class=" row mb-3">
+                            <div class="col">
+                                <label for="regNombres" class="form-label">Nombre(s):</label>
+                                <input type="text" class="form-control" id="regNombres" placeholder="Ingresa los nombres"
+                                    required>
+                            </div>
                             <div class="col">
                                 <label for="regApellidoPaterno" class="form-label">Apellido Paterno:</label>
                                 <input type="text" class="form-control" id="regApellidoPaterno"
                                     placeholder="Ingresa el apellido paterno" required>
                             </div>
+                        </div>
+                        <div class="row mb-3">
                             <div class="col">
                                 <label for="regApellidoMaterno" class="form-label">Apellido Materno:</label>
                                 <input type="text" class="form-control" id="regApellidoMaterno"
                                     placeholder="Ingresa el apellido materno">
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="regCama" class="form-label">Cama:</label>
-                                <select class="form-select" id="regCama">
-                                </select>
                             </div>
                             <div class="col">
                                 <label for="regTelefono" class="form-label">Teléfono:</label>
@@ -160,31 +155,28 @@
                 </div>
                 <div class="modal-body">
                     <form class="needs-validation" id="updateForm" novalidate>
-                        <div>
-                            <label for="updNombres" class="form-label">Nombre(s):</label>
-                            <input type="text" class="form-control" id="updNombres" placeholder="Ingresa los nombres">
-                        </div>
-                        <div class="row mb-3">
+                        <div class=" row mb-3">
+                            <div class="col">
+                                <label for="updNombres" class="form-label">Nombre(s):</label>
+                                <input type="text" class="form-control" id="updNombres" placeholder="Ingresa los nombres"
+                                    required>
+                            </div>
                             <div class="col">
                                 <label for="updApellidoPaterno" class="form-label">Apellido Paterno:</label>
                                 <input type="text" class="form-control" id="updApellidoPaterno"
-                                    placeholder="Ingresa el apellido paterno">
+                                    placeholder="Ingresa el apellido paterno" required>
                             </div>
+                        </div>
+                        <div class="row mb-3">
                             <div class="col">
                                 <label for="updApellidoMaterno" class="form-label">Apellido Materno:</label>
                                 <input type="text" class="form-control" id="updApellidoMaterno"
                                     placeholder="Ingresa el apellido materno">
                             </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="regCama" class="form-label">Cama:</label>
-                                <select class="form-select" id="regCama">
-                                </select>
-                            </div>
                             <div class="col">
                                 <label for="updTelefono" class="form-label">Teléfono:</label>
-                                <input type="text" class="form-control" id="updTelefono" placeholder="Ingresa el teléfono">
+                                <input type="text" class="form-control" id="updTelefono"
+                                    placeholder="Ingresa el teléfono" required>
                             </div>
                         </div>
                         <div class="col-12 text-end">
