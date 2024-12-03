@@ -1,3 +1,6 @@
+/*
+Revisar método save y update, restraso para mostrar información actualizada
+*/
 const URL = 'http://localhost:8080';
 let userList = [];
 let user = {};
@@ -5,14 +8,14 @@ let roleList = [];
 let role = {};
 
 //Método para obtener la lista de usuarios
-const findAllUsers = async () =>{
-    await fetch (`${URL}/api/user`,{
-        method : 'GET',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+const findAllUsers = async () => {
+    await fetch(`${URL}/api/user`, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         }
-    }).then(response =>response.json()).then(response =>{
+    }).then(response => response.json()).then(response => {
         //ToDo
         userList = response.data;
     }).catch(error => console.error(error));
@@ -24,7 +27,7 @@ const loadTable = async () => {
 
     let tbody = document.getElementById("tbody");
     let content = '';
-    userList.forEach((item, index)=>{
+    userList.forEach((item, index) => {
         content += `<tr>
                         <th scope="row">${index + 1}</th>
                         <td>${`${item.identificationName} ${item.surname} ${item.lastname}`}</td>
@@ -42,7 +45,7 @@ const loadTable = async () => {
 }
 
 //Función anónima para cargar la información de la tabla
-(async () =>{
+(async () => {
     await loadTable();
 })();
 
@@ -54,13 +57,13 @@ const findAllRoles = async () => {
             "Content-type": "application/json",
             "Accept": "application/json"
         }
-    }).then(response =>response.json()).then(response =>{
+    }).then(response => response.json()).then(response => {
         //ToDo
         roleList = response.data;
     }).catch(error => console.error(error));
 }
 
-//Método para cargar las opciones de roles en el select
+//Método para cargar las opciones de roles en el registro de usuario
 const loadData = async () => {
     await findAllRoles();
     let roleSelect = document.getElementById('regRol');
@@ -78,13 +81,13 @@ const loadData = async () => {
 
 //Método para obtener los usuarios por id
 const findUserById = async idUser => {
-    await fetch (`${URL}/api/user/${idUser}`,{
-        method : 'GET',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+    await fetch(`${URL}/api/user/${idUser}`, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         }
-    }).then(response =>response.json()).then(response =>{
+    }).then(response => response.json()).then(response => {
         //ToDo
         user = response.data;
     }).catch(error => console.error(error));
@@ -93,50 +96,53 @@ const findUserById = async idUser => {
 //Método para obtener la información del usuario a editar
 const loadUser = async id => {
     await findUserById(id);
+    await findAllRoles();
     document.getElementById("updNombres").value = user.identificationName;
     document.getElementById("updApellidoPaterno").value = user.surname;
     document.getElementById("updApellidoMaterno").value = user.lastname;
     document.getElementById("updEmail").value = user.email;
     document.getElementById("updTelefono").value = user.phoneNumber;
     document.getElementById("updUsuario").value = user.username;
-    document.getElementById("updPassword").value = user.password;
-    let select = document.getElementById("updRol").value;
+    let select = document.getElementById("updRol");
     content = '';
-    roleList.forEach(item => {
-        content += `<option value="${item.id}">${item.name}</option>`
-    });
-    console.log(user);
+    content = `<option value="${user.role.id}" selected disabled hidden>${user.role.name}</option>`;
+    if (roleList.length === 0) {
+        content += `<option disabled>No hay secretarias para escoger</option>`;
+    } else {
+        roleList.forEach(item => {
+            content += `<option value="${item.id}">${item.name}</option>`
+        });
+    }
     select.innerHTML = content;
     select.value = user.role.id;
 }
 
 //Método para registrar un nuevo usuario
 const saveUser = async () => {
-    let form = document.getElementById('saveForm');
+    let form = document.getElementById('registerForm');
     user = {
-        identificationName : getElementById("regNombres").value,
-        surname : getElementById("regApellidoPaterno").value, 
-        lastname : getElementById("regApellidoMaterno").value,
-        email : getElementById("regEmail").value,
-        phoneNumber : getElementById("regTelefono").value,
-        username : getElementById("regUsuario").value,
-        role : {
+        identificationName: document.getElementById("regNombres").value,
+        surname: document.getElementById("regApellidoPaterno").value,
+        lastname: document.getElementById("regApellidoMaterno").value,
+        email: document.getElementById("regEmail").value,
+        phoneNumber: document.getElementById("regTelefono").value,
+        username: document.getElementById("regUsuario").value,
+        role: {
             id: document.getElementById('regRol').value
         }
     };
 
     await fetch(`${URL}/api/user`, {
-        method : 'POST',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         },
-        body : JSON.stringify(user)
+        body: JSON.stringify(user)
     }).then(response => response.json()).then(async response => {
         console.log(response);
         user = {};
         await loadTable();
-        form.reset();
     }).catch(console.log);
 }
 
@@ -145,14 +151,14 @@ const updateUser = async () => {
     let form = document.getElementById('updateForm');
     let updated = {
         id : user.id,
-        identificationName : getElementById("regNombres").value,
-        surname : getElementById("regApellidoPaterno").value, 
-        lastname : getElementById("regApellidoMaterno").value,
-        email : getElementById("regEmail").value,
-        phoneNumber : getElementById("regTelefono").value,
-        username : getElementById("regUsuario").value,
+        identificationName : document.getElementById("updNombres").value,
+        surname : document.getElementById("updApellidoPaterno").value, 
+        lastname : document.getElementById("updApellidoMaterno").value,
+        email : document.getElementById("updEmail").value,
+        phoneNumber : document.getElementById("updTelefono").value,
+        username : document.getElementById("updUsuario").value,
         role : {
-            id: document.getElementById('regRol').value
+            id: document.getElementById('updRol').value
         }
     };
 
@@ -165,18 +171,18 @@ const updateUser = async () => {
         body : JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
         console.log(response);
-        pet = {};
-        await loadTable();
-    }).catch(console.log);
+        user = {};
+        loadTable();
+    }).catch(console.log());
 }
 
 //Método para eliminar un usuario
 const deleteUser = async idUser => {
     await fetch(`${URL}/api/user/delete/${idUser}`, {
-        method : 'DELETE',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+        method: 'DELETE',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         },
 
     }).then(response => response.json()).then(async response => {
