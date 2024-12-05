@@ -35,7 +35,7 @@ const loadTable = async () => {
                         <th scope="row">${patientList.indexOf(item) + 1}</th>
                         <td>${`${item.fullName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.phoneNumber}</td>
-                        <td><span class="badge text-bg-${item.discharged ? "secondary" : "success"}">${item.discharged ? "Alta" : "Ingreso"}</span></td>
+                        <td><span class="badge text-bg-${item.discharged ? "secondary" : "success"}">${item.discharged ? "Alta" : "Ingresado"}</span></td>
                         <td>${item.discharged ? "N/A" : bedName ? bedName : "Sin cama asignada"}</td>
                         <td class="text-center">
                             <button class="btn btn-secondary btn-sm me-3" ${item.discharged ? "disabled" : ""} onclick="dischargePatient(${item.id})">Alta</button>

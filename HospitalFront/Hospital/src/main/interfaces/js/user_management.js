@@ -9,23 +9,35 @@ let role = {};
 
 //Método para obtener la lista de usuarios
 const findAllUsers = async () => {
-    await fetch(`${URL}/api/user`, {
-        method: 'GET',
-        headers: {
-            "Content-type": "application/json",
-            "Accept": "application/json"
+    try {
+        const response = await fetch(`${URL}/api/user?timestamp=${new Date().getTime()}`, {
+            method: 'GET',
+            headers: {
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Error fetching users: ${response.status} ${response.statusText}`);
         }
-    }).then(response => response.json()).then(response => {
-        //ToDo
-        userList = response.data;
-    }).catch(error => console.error(error));
+        const data = await response.json();
+        console.log("Fetched user data:", data); // Debugging
+        userList = data.data || data;
+    } catch (error) {
+        console.error(error);
+        alert("Failed to fetch user list. Please try again later.");
+    }
 }
+
 
 //Método para insertar la tabla de usuarios en el cuerpo HTML
 const loadTable = async () => {
     await findAllUsers();
-
     let tbody = document.getElementById("tbody");
+    if (!tbody) {
+        console.error("Table body not found");
+        return;
+    }
     let content = '';
     userList.forEach((item, index) => {
         content += `<tr>
@@ -41,7 +53,7 @@ const loadTable = async () => {
                         </td>
                     </tr>`;
     });
-    tbody.innerHTML = content;
+    tbody.innerHTML = content; // Replace table content dynamically
 }
 
 //Función anónima para cargar la información de la tabla
@@ -119,7 +131,6 @@ const loadUser = async id => {
 
 //Método para registrar un nuevo usuario
 const saveUser = async () => {
-    let form = document.getElementById('registerForm');
     user = {
         identificationName: document.getElementById("regNombres").value,
         surname: document.getElementById("regApellidoPaterno").value,
@@ -132,18 +143,24 @@ const saveUser = async () => {
         }
     };
 
-    await fetch(`${URL}/api/user`, {
-        method: 'POST',
-        headers: {
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(user)
-    }).then(response => response.json()).then(async response => {
-        console.log(response);
-        user = {};
+    try {
+        const response = await fetch(`${URL}/api/user`, {
+            method: 'POST',
+            headers: {
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(user)
+        });
+        if (!response.ok) {
+            throw new Error("Failed to save user");
+        }
+        const result = await response.json();
+        console.log("User saved:", result);
         await loadTable();
-    }).catch(console.log);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 //Método para editar un usuario
@@ -172,7 +189,7 @@ const updateUser = async () => {
     }).then(response => response.json()).then(async response => {
         console.log(response);
         user = {};
-        loadTable();
+        await loadTable();
     }).catch(console.log());
 }
 
