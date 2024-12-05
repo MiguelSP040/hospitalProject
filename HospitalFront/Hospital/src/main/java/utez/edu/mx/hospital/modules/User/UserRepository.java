@@ -48,4 +48,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //metodo para buscar secretarias sin piso
     @Query("SELECT u FROM User u LEFT JOIN u.secretary_in_charge f WHERE u.role.id = 3 AND f IS NULL")
     List<User> findSecretariesWithoutFloor();
+
+    @Modifying
+    @Query(value="UPDATE user SET password=:password WHERE id=:idUser and password=:oldPassword", nativeQuery = true)
+    void updatePassword(@Param("password")String password, @Param("idUser")long idUser, @Param("oldPassword")String oldPassword);
+
 }

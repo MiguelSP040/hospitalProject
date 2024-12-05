@@ -258,7 +258,6 @@ public class UserService {
         }
     }
 
-
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> deleteById(long idUser){
         User userFound = userRepository.findById(idUser);
@@ -329,5 +328,32 @@ public class UserService {
                 null
         );
     }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> updatePassword(UserDTO user) {
+        if(userRepository.findById(user.getId())==null){
+            return customResponseEntity.get404Response();
+        }else{
+            try{
+
+                if (userRepository.findById(user.getId()).getPassword().equals(user.getOldPassword())) {
+                    userRepository.updatePassword(user.getNewPassword(), user.getId(), user.getOldPassword());
+                    return customResponseEntity.getOkResponse(
+                            "Actualización exitosa",
+                            "OK",
+                            200,
+                            null
+                    );
+                }else{
+                    return customResponseEntity.get400Response();
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return customResponseEntity.get400Response();
+            }
+        }
+    }
+
 
 }

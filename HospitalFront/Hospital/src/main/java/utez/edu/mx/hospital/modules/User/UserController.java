@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.hospital.modules.Bed.Bed;
+import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 
 import java.util.List;
 
@@ -73,4 +74,10 @@ public class UserController {
     public ResponseEntity<?> changeFloorNurse(@PathVariable("idUser") long idUser, @PathVariable("idFloor") long idFloor) {
         return userService.changeFloorNurse(idUser, idFloor);
     }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@RequestBody UserDTO user) {
+        return userService.updatePassword(user);
+    }
+
 }
