@@ -13,6 +13,8 @@ public class UserDTO {
     private Role role;
     private List<BedDTO> beds;
     private Floor nurseInFloor;
+    private String oldPassword;
+    private String newPassword;
 
     public UserDTO() {
     }
@@ -46,6 +48,12 @@ public class UserDTO {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.role = role;
+    }
+
+    public UserDTO(long id, String oldPassword, String newPassword) {
+        this.id = id;
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
     }
 
     public long getId() {
@@ -126,5 +134,21 @@ public class UserDTO {
 
     public void setNurseInFloor(Floor nurseInFloor) {
         this.nurseInFloor = nurseInFloor;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }
