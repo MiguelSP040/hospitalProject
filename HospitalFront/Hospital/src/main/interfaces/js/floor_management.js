@@ -1,6 +1,8 @@
+/*
+Revisar método save y update, restraso para mostrar información actualizada
+*/
 const URL = 'http://localhost:8080';
 let floorList = [];
-let secretaryList = [];
 let floor = {};
 
 //Método para obtener la lista de pisos
@@ -12,8 +14,6 @@ const findAllFloors = async () => {
             "Accept": "application/json"
         }
     }).then(response => response.json()).then(response => {
-        //ToDo
-        console.log(response);
         floorList = response.data;
     }).catch(error => console.error(error));
 }
@@ -39,7 +39,7 @@ const getBedsOnFloor = async (idFloor) => {
     }
 };
 
-
+//Método para contar las enfermeras por piso
 const countNurses = async (idFloor) => {
     try {
         const response = await fetch(`${URL}/api/floor/nurses/${idFloor}`);
@@ -129,19 +129,30 @@ const findAllSecretariesWithoutFloor = async () => {
 
 //Método para cargar las opciones de secretarias en registro de piso
 const loadData = async () => {
-    const secretaries = await findAllSecretariesWithoutFloor();
-    let secretarySelect = document.getElementById('regSecretary');
+    const secretarySelect = document.getElementById('regSecretary');
     let content = '';
-    if (secretaries.length === 0) {
-        content = `<option selected disabled>No hay secretarias para escoger</option>`;
-    } else {
-        content = `<option selected disabled hidden>Selecciona una secretaria</option>`;
-        secretaries.forEach(item => {
-            content += `<option value="${item.id}">${`${item.identificationName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</option>`
-        });
+
+    try {
+        // Llama a la función para obtener la lista de secretarias
+        const secretaryList = await findAllSecretariesWithoutFloor();
+
+        if (!secretaryList || secretaryList.length === 0) {
+            content = `<option selected disabled>No hay secretarias para escoger</option>`;
+        } else {
+            content = `<option selected disabled hidden>Selecciona una secretaria</option>`;
+            secretaryList.forEach(item => {
+                const fullName = `${item.identificationName} ${item.surname} ${item.lastname || ''}`.trim();
+                content += `<option value="${item.id}">${fullName}</option>`;
+            });
+        }
+    } catch (error) {
+        console.error("Error cargando las secretarias:", error);
+        content = `<option selected disabled>Error al cargar las opciones</option>`;
     }
+
+    // Actualiza el contenido del select
     secretarySelect.innerHTML = content;
-}
+};
 
 //Método para obtener los pisos por id
 const findFloorById = async idFloor => {
@@ -186,7 +197,6 @@ const saveFloor = async () => {
         }
     };
 
-    console.log(floor);
     await fetch(`${URL}/api/floor`, {
         method: 'POST',
         headers: {
@@ -195,17 +205,17 @@ const saveFloor = async () => {
         },
         body: JSON.stringify(floor)
     }).then(response => response.json()).then(async response => {
-        console.log(response);
         floor = {};
         await loadCards();
         form.reset();
-    }).catch(console.log);
+    }).catch(console.log());
 }
 
 //Método para actualizar un piso
 const updateFloor = async () => {
     let form = document.getElementById('updateForm');
     let updated = {
+        id : floor.id,
         identificationName: document.getElementById("updNombre").value,
         secretary: {
             id: document.getElementById('updSecretary').value
@@ -220,9 +230,8 @@ const updateFloor = async () => {
         },
         body : JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
-        console.log(response);
         floor = {};
         await loadCards();
         form.reset();
-    }).catch(console.log);
+    }).catch(console.log());
 }

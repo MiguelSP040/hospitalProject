@@ -1,31 +1,28 @@
 /*
-Revisar método save y update, restraso para mostrar información actualizada
+Revisar retraso en actualización y registro
 */
 const URL = 'http://localhost:8080';
 let userList = [];
 let user = {};
-let roleList = [];
-let role = {};
+let floorList = [];
+let floor = {};
 
 //Método para obtener la lista de usuarios
-const findAllUsers = async () => {
-    await fetch(`${URL}/api/user`, {
+const findAllSecretaries = async () => {
+    await fetch(`${URL}/api/user/rol/3`, {
         method: 'GET',
         headers: {
             "Content-type": "application/json",
             "Accept": "application/json"
         }
     }).then(response => response.json()).then(response => {
-        //ToDo
-        console.log(response)
         userList = response.data;
     }).catch(error => console.error(error));
 }
 
 //Método para insertar la tabla de usuarios en el cuerpo HTML
 const loadTable = async () => {
-    await findAllUsers();
-
+    await findAllSecretaries();
     let tbody = document.getElementById("tbody");
     let content = '';
     userList.forEach((item, index) => {
@@ -35,10 +32,11 @@ const loadTable = async () => {
                         <td>${item.email}</td>
                         <td>${item.phoneNumber}</td>
                         <td>${item.username}</td>
-                        <td>${item.role.name}</td>
+                        <td>${item.nurseInFloor ? item.nurseInFloor.identificationName : 'Sin piso asignado'}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
-                            <button class="btn btn-primary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal" data-bs-toggle="modal">Editar</button>
+                            <button class="btn btn-primary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal"
+                                data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;
     });
@@ -50,9 +48,9 @@ const loadTable = async () => {
     await loadTable();
 })();
 
-//Método para cargar la lista de roles
-const findAllRoles = async () => {
-    await fetch(`${URL}/api/role`, {
+//Método para cargar la lista de pisos
+const findAllFloors = async () => {
+    await fetch(`${URL}/api/floor`, {
         method: 'GET',
         headers: {
             "Content-type": "application/json",
@@ -60,36 +58,37 @@ const findAllRoles = async () => {
         }
     }).then(response => response.json()).then(response => {
         //ToDo
-        roleList = response.data;
+        floorList = response.data;
     }).catch(error => console.error(error));
 }
 
-//Método para cargar las opciones de roles en el registro de usuario
+//Método para cargar las opciones de pisos en el registro de enfermeras
 const loadData = async () => {
-    await findAllRoles();
-    let roleSelect = document.getElementById('regRol');
+    await findAllFloors();
+    let floorSelect = document.getElementById('regFloor');
     let content = '';
-    if (roleList.length === 0) {
-        content += `<option selected disabled>No hay roles para escoger</option>`
+    if (floorList.length === 0) {
+        content += `<option selected disabled>No hay pisos para escoger</option>`
     } else {
-        content = `<option selected disabled hidden>Selecciona un rol</option>`;
-        roleList.forEach(item => {
-            content += `<option value="${item.id}">${item.name}</option>`
+        content = `<option selected disabled hidden>Selecciona un piso</option>`;
+        floorList.forEach(item => {
+            content += `<option value="${item.id}">${item.identificationName}</option>`
         });
     }
-    roleSelect.innerHTML = content;
+    floorSelect.innerHTML = content;
 }
 
 //Método para obtener los usuarios por id
 const findUserById = async idUser => {
-    await fetch (`${URL}/api/user/${idUser}`,{
-        method : 'GET',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+    await fetch(`${URL}/api/user/${idUser}`, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         }
     }).then(response => response.json()).then(response => {
         //ToDo
+        console.log(response);
         user = response.data;
     }).catch(error => console.error(error));
 }
@@ -97,25 +96,34 @@ const findUserById = async idUser => {
 //Método para obtener la información del usuario a editar
 const loadUser = async id => {
     await findUserById(id);
-    await findAllRoles();
+    await findAllFloors();
     document.getElementById("updNombres").value = user.identificationName;
     document.getElementById("updApellidoPaterno").value = user.surname;
     document.getElementById("updApellidoMaterno").value = user.lastname;
     document.getElementById("updEmail").value = user.email;
     document.getElementById("updTelefono").value = user.phoneNumber;
     document.getElementById("updUsuario").value = user.username;
-    let select = document.getElementById("updRol");
-    content = '';
-    content = `<option value="${user.role.id}" selected disabled hidden>${user.role.name}</option>`;
-    if (roleList.length === 0) {
-        content += `<option disabled>No hay secretarias para escoger</option>`;
+    let select = document.getElementById("updFloor");
+    let content = '';
+
+    const floorId = user.nurseInFloor?.id ?? null; 
+    const floorName = user.nurseInFloor?.identificationName ?? 'Escoge un piso';
+
+    content = `<option value="${floorId}" selected disabled hidden>${floorName}</option>`;
+
+    if (floorList.length === 0) {
+        content += `<option disabled>No hay pisos para escoger</option>`;
     } else {
-        roleList.forEach(item => {
-            content += `<option value="${item.id}">${item.name}</option>`
+        floorList.forEach(item => {
+            content += `<option value="${item.id}">${item.identificationName}</option>`;
         });
     }
+
     select.innerHTML = content;
-    select.value = user.role.id;
+
+    if (floorId !== null) {
+        select.value = floorId;
+    }
 }
 
 //Método para registrar un nuevo usuario
@@ -128,58 +136,58 @@ const saveUser = async () => {
         email: document.getElementById("regEmail").value,
         phoneNumber: document.getElementById("regTelefono").value,
         username: document.getElementById("regUsuario").value,
+        nurseInFloor: {
+            id: document.getElementById('regFloor').value
+        },
         role: {
-            id: document.getElementById('regRol').value
+            id: 1
         }
     };
 
-    try {
-        const response = await fetch(`${URL}/api/user`, {
-            method: 'POST',
-            headers: {
-                "Content-type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify(user)
-        });
-        if (!response.ok) {
-            throw new Error("Failed to save user");
-        }
-        const result = await response.json();
-        console.log("User saved:", result);
+    await fetch(`${URL}/api/user`, {
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(user)
+    }).then(response => response.json()).then(async response => {
+        console.log(response);
+        user = {};
         await loadTable();
-    } catch (error) {
-        console.error(error);
-    }
+        form.reset();
+    }).catch(console.log());
 }
 
 //Método para editar un usuario
 const updateUser = async () => {
     let form = document.getElementById('updateForm');
     let updated = {
-        id : user.id,
-        identificationName : document.getElementById("updNombres").value,
-        surname : document.getElementById("updApellidoPaterno").value, 
-        lastname : document.getElementById("updApellidoMaterno").value,
-        email : document.getElementById("updEmail").value,
-        phoneNumber : document.getElementById("updTelefono").value,
-        username : document.getElementById("updUsuario").value,
-        role : {
-            id: document.getElementById('updRol').value
-        }
+        id: user.id,
+        identificationName: document.getElementById("updNombres").value,
+        surname: document.getElementById("updApellidoPaterno").value,
+        lastname: document.getElementById("updApellidoMaterno").value,
+        email: document.getElementById("updEmail").value,
+        phoneNumber: document.getElementById("updTelefono").value,
+        username: document.getElementById("updUsuario").value,
+        nurseInFloor: {
+            id: document.getElementById('regFloor').value
+        },
     };
 
     await fetch(`${URL}/api/user`, {
-        method : 'PUT',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+        method: 'PUT',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         },
-        body : JSON.stringify(updated)
+        body: JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
+        console.log(response);
         user = {};
         await loadTable();
-    }).catch(error => console.error(error));
+        form.reset();
+    }).catch(console.log());
 }
 
 //Método para eliminar un usuario

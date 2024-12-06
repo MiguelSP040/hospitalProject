@@ -258,7 +258,7 @@ public class BedService {
 
         String foundBedName = bedRepository.findBedNameByPatientId(patientId);
 
-        if (foundBedName.isEmpty()) {
+        if (foundBedName == null) {
             return customResponseEntity.get404Response();
         } else {
             bedName = foundBedName;

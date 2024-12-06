@@ -1,5 +1,5 @@
 /*
-Revisar método save y update, restraso para mostrar información actualizada
+Revisar método save y update, retraso para mostrar información actualizada
 */
 const URL = 'http://localhost:8080';
 let userList = [];
@@ -9,15 +9,13 @@ let floor = {};
 
 //Método para obtener la lista de usuarios
 const findAllNurses = async () => {
-    const timestamp = new Date().getTime();
-    await fetch(`${URL}/api/user/rol/3?_=${timestamp}`, {
+    await fetch(`${URL}/api/user/rol/1`, {
         method: 'GET',
         headers: {
             "Content-type": "application/json",
             "Accept": "application/json"
         }
     }).then(response => response.json()).then(response => {
-        //ToDo
         userList = response.data;
     }).catch(error => console.error(error));
 }
@@ -33,6 +31,7 @@ const loadTable = async () => {
                         <td>${`${item.identificationName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.email}</td>
                         <td>${item.phoneNumber}</td>
+                        <td>${item.username}</td>
                         <td>${item.nurseInFloor ? item.nurseInFloor.identificationName : 'Sin piso asignado'}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
@@ -103,22 +102,31 @@ const loadUser = async id => {
     document.getElementById("updApellidoMaterno").value = user.lastname;
     document.getElementById("updEmail").value = user.email;
     document.getElementById("updTelefono").value = user.phoneNumber;
-    console.log(user.nurseInFloor);
+    document.getElementById("updUsuario").value = user.username;
     let select = document.getElementById("updFloor");
-    content = '';
-    content = `<option value="${user.nurseInFloor.id ? user.nurseInFloor.id : null}" selected disabled hidden>${user.nurseInFloor ? user.nurseInFloor.identificationName : 'Escoge un piso'}</option>`;
+    let content = '';
+
+    const floorId = user.nurseInFloor?.id ?? null; 
+    const floorName = user.nurseInFloor?.identificationName ?? 'Escoge un piso';
+
+    content = `<option value="${floorId}" selected disabled hidden>${floorName}</option>`;
+
     if (floorList.length === 0) {
         content += `<option disabled>No hay pisos para escoger</option>`;
     } else {
         floorList.forEach(item => {
-            content += `<option value="${item.id}">${item.identificationName}</option>`
+            content += `<option value="${item.id}">${item.identificationName}</option>`;
         });
     }
+
     select.innerHTML = content;
-    select.value = user.nurseInFloor.id;
+
+    if (floorId !== null) {
+        select.value = floorId;
+    }
 }
 
-//Método para registrar un nuevo usuario
+//Método para registrar una nueva enfermera
 const saveUser = async () => {
     let form = document.getElementById('registerForm');
     user = {
@@ -128,8 +136,11 @@ const saveUser = async () => {
         email: document.getElementById("regEmail").value,
         phoneNumber: document.getElementById("regTelefono").value,
         username: document.getElementById("regUsuario").value,
+        nurseInFloor: {
+            id: document.getElementById('regFloor').value
+        },
         role: {
-            id: document.getElementById('regRol').value
+            id: 1
         }
     };
 
@@ -144,36 +155,38 @@ const saveUser = async () => {
         console.log(response);
         user = {};
         await loadTable();
-    }).catch(console.log);
+        form.reset();
+    }).catch(console.log());
 }
 
 //Método para editar un usuario
 const updateUser = async () => {
     let form = document.getElementById('updateForm');
     let updated = {
-        id : user.id,
-        identificationName : document.getElementById("updNombres").value,
-        surname : document.getElementById("updApellidoPaterno").value, 
-        lastname : document.getElementById("updApellidoMaterno").value,
-        email : document.getElementById("updEmail").value,
-        phoneNumber : document.getElementById("updTelefono").value,
-        username : document.getElementById("updUsuario").value,
-        role : {
-            id: document.getElementById('updRol').value
+        id: user.id,
+        identificationName: document.getElementById("updNombres").value,
+        surname: document.getElementById("updApellidoPaterno").value,
+        lastname: document.getElementById("updApellidoMaterno").value,
+        email: document.getElementById("updEmail").value,
+        phoneNumber: document.getElementById("updTelefono").value,
+        username: document.getElementById("updUsuario").value,
+        nurseInFloor: {
+            id: document.getElementById('updFloor').value
         }
     };
 
     await fetch(`${URL}/api/user`, {
-        method : 'PUT',
-        headers : {
-            "Content-type" : "application/json",
-            "Accept" : "application/json"
+        method: 'PUT',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
         },
-        body : JSON.stringify(updated)
+        body: JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
         console.log(response);
         user = {};
-        loadTable();
+        await loadTable();
+        form.reset();
     }).catch(console.log());
 }
 

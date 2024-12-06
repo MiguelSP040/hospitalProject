@@ -1,18 +1,13 @@
 /*
-Pendiente: 
-Revisar el método actualizar, hay un retraso entre la actualización de información y actualización de tabla en vista
-Falta comprobar la asignación de camas en registro y actualización
+Revisar retraso en actualización y registro
 */
 const URL = 'http://localhost:8080';
 let patientList = [];
 let patient = {};
-let bedList = [];
-let bed = {};
 
 //Método para obtener la lista de pacientes
 const getAllPatients = async () => {
-    const timestamp = new Date().getTime(); // Genera un número único
-    await fetch(`${URL}/api/patient?_=${timestamp}`, { 
+    await fetch(`${URL}/api/patient`, { 
         method: 'GET',
         headers: {
             "Content-type": "application/json",
@@ -51,34 +46,6 @@ const loadTable = async () => {
 (async () => {
     await loadTable();
 })();
-
-//Método para pintar la información del piso en la card
-const loadInfo = async id => {
-    await findPatientById(id);
-    document.getElementById("updNombres").value = floor.identificationName;
-    let select = document.getElementById("updSecretary");
-    content = '';
-    secretaryList.forEach(item => {
-        content += `<option value="${item.id}">${`${item.fullName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</option>`
-    });
-    select.innerHTML = content;
-    select.value = floor.secretary.id;
-}
-
-//Método para cargar la lista de camas por piso
-const findAllBedsByFloor = async () => {
-    await fetch(`${URL}/api/...`, {
-        method: 'GET',
-        headers: {
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        }
-    }).then(response =>response.json()).then(response =>{
-        //ToDo
-        roleList = response.data;
-    }).catch(error => console.error(error));
-}
-//Revisar
 
 //Método para cargar las opciones de camas en el select
 /*const loadData = async () => {
@@ -147,7 +114,8 @@ const savePatient = async () => {
     }).then(response => response.json()).then(async response => {
         patient = {};
         await loadTable();
-    }).catch(console.log);
+        form.reset();
+    }).catch(console.log());
 }
 
 //Método para actualizar un paciente
@@ -155,8 +123,6 @@ const updatePatient = async () => {
     let form = document.getElementById('updateForm');
     let updated = {
         id: patient.id,
-        assignmentDate: patient.assignmentDate,
-        isDischarged: patient.isDischarged,
         fullName: document.getElementById("updNombres").value,
         surname: document.getElementById("updApellidoPaterno").value,
         lastname: document.getElementById("updApellidoMaterno").value,
@@ -173,7 +139,8 @@ const updatePatient = async () => {
     }).then(response => response.json()).then(async response => {
         patient = {};
         await loadTable();
-    }).catch(console.log);
+        form.reset();
+    }).catch(console.log());
 }
 
 //Método para dar de alta a un paciente
@@ -192,9 +159,7 @@ const dischargePatient = async idPatient => {
 const fetchBedName = async (idPatient) => {
     try {
         const response = await fetch(`${URL}/api/bed/findBedName/${idPatient}`);
-        if (!response.ok) throw new Error("Error fetching bed name");
         const result = await response.json(); // Parse the response as JSON
-        if (result.code !== 200) throw new Error(result.message || "Unexpected error");
         return result.data; // Return only the bed name
     } catch (error) {
         console.error(error.message);

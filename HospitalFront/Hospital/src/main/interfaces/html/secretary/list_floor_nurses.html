@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enfermeras asignadas</title>
+    <link rel="icon" href="../../resources/nurse.svg" type="image/svg+xml">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/navbar.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg py-3">
+        <div class="container-fluid">
+            <!-- Título y logotipo -->
+            <div class="d-flex align-items-center">
+                <i class="fas fa-hospital text-white fs-4"></i>
+                <span class="text-white fw-bold ms-3">Sistema Hospitalario</span>
+            </div>
+            <!-- Divisor -->
+            <span class="navbar-text text-white mx-3">|</span>
+            <!-- Menú colapsable -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Contenido del navbar -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Opciones después del título -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="list_beds.html" class="nav-link fw-bold text-white">Camas</a>
+                    </li>
+                </ul>
+                <!-- Sesión activa -->
+                <div class="ms-auto d-flex align-items-center">
+                    <span class="text-white me-3">miguel@correo.com</span>
+                    <button class="btn btn-sm d-flex align-items-center text-white">
+                        <span class="material-symbols-outlined">
+                            logout
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="custom-title">
+                Enfermeras:
+                <i id="numPiso">Piso 01</i>
+            </h3>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                Registrar Enfermera
+            </button>
+        </div>
+
+        <!-- Card Group de Camas -->
+        <div class="row row-cols-1 row-cols-md-3 g-4 mt-1" id="nursesCards">
+            <!-- Primer Card 
+            <div class="col">
+                <div class="card h-100 d-flex flex-row">
+                    <div class="card-body flex-grow-1">
+                        <h4 class="card-title">Maria Elena</h4>
+                        <p class="card-text">maria@correo.com<br>777989234<br>maria123</p>
+                    </div>
+                    <div class="d-flex flex-column justify-content-start align-items-center p-3">
+                        <button class="btn btn btn-primary btn-sm mb-2" data-bs-toggle="modal"
+                            data-bs-target="#updateModal" onclick="loadData()">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn btn-secondary btn-sm mb-3" onclick="">
+                            <i class="bi bi-box-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Modal para Registrar Enfermera -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="material-symbols-outlined">
+                        masks
+                    </span>
+                    <h5 class="modal-title ms-1" id="registerModalLabel">Registrar Enfermera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="registerForm" novalidate>
+                        <div class="mb-3">
+                            <label for="regNombres" class="form-label">Nombre(s):</label>
+                            <input type="text" class="form-control" id="regNombres" placeholder="Ingresa los nombres">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="regApellidoPaterno" class="form-label">Apellido Paterno:</label>
+                                <input type="text" class="form-control" id="regApellidoPaterno"
+                                    placeholder="Ingresa el apellido paterno">
+                            </div>
+                            <div class="col">
+                                <label for="regApellidoMaterno" class="form-label">Apellido Materno:</label>
+                                <input type="text" class="form-control" id="regApellidoMaterno"
+                                    placeholder="Ingresa el apellido materno">
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <label for="regEmail" class="form-label">Correo Electrónico:</label>
+                            <input type="email" class="form-control" id="regEmail" placeholder="Ingresa el correo">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="regTelefono" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="regTelefono" placeholder="Ingresa el teléfono">
+                            </div>
+                            <div class="col">
+                                <label for="regUsuario" class="form-label">Usuario:</label>
+                                <input type="text" class="form-control" id="regUsuario" placeholder="Ingresa el usuario ">
+                            </div>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" onclick="saveNurse()"
+                                data-bs-dismiss="modal">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Actualizar Enfermera -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="material-symbols-outlined">
+                        masks
+                    </span>
+                    <h5 class="modal-title ms-1" id="updateModalLabel">Actualizar Enfermera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="updateForm" novalidate>
+                        <div class="mb-3">
+                            <label for="updNombres" class="form-label">Nombre(s):</label>
+                            <input type="text" class="form-control" id="updNombres" placeholder="Ingresa los nombres">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="updApellidoPaterno" class="form-label">Apellido Paterno:</label>
+                                <input type="text" class="form-control" id="updApellidoPaterno"
+                                    placeholder="Ingresa el apellido paterno">
+                            </div>
+                            <div class="col">
+                                <label for="updApellidoMaterno" class="form-label">Apellido Materno:</label>
+                                <input type="text" class="form-control" id="updApellidoMaterno"
+                                    placeholder="Ingresa el apellido materno">
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <label for="updEmail" class="form-label">Correo Electrónico:</label>
+                            <input type="email" class="form-control" id="updEmail" placeholder="Ingresa el correo">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="updTelefono" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="updTelefono" placeholder="Ingresa el teléfono">
+                            </div>
+                            <div class="col">
+                                <label for="updUsuario" class="form-label">Usuario:</label>
+                                <input type="text" class="form-control" id="updUsuario" placeholder="Ingresa el usuario ">
+                            </div>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" onclick="updateUser()"
+                                data-bs-dismiss="modal">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Transferir -->
+    <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="material-symbols-outlined">
+                        masks
+                    </span>
+                    <h5 class="modal-title ms-1" id="transferModalLabel">Transferir Enfermera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="transferForm" novalidate>
+                        <div class="mb-3">
+                            <label for="floor" class="form-label">Piso:</label>
+                            <select class="form-select" id="floor">
+                            </select>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" onclick="confirmTransfer()"
+                                data-bs-dismiss="modal">Transferir</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/floor_nurses_management.js"></script>
+</body>
+
+</html>
