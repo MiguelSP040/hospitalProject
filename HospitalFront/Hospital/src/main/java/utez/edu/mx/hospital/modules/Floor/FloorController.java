@@ -37,12 +37,12 @@ public class FloorController {
     }
 
     // Obtener camas de un piso específico
-    @GetMapping("/{idFloor}/beds")
+    @GetMapping("/beds/{idFloor}")
     public ResponseEntity<?> getBedsByFloorId(@PathVariable long idFloor) {
         return floorService.getBedsByFloorId(idFloor);
     }
 
-    @GetMapping("/{idFloor}/nurses")
+    @GetMapping("/nurses/{idFloor}")
     public ResponseEntity<?> getNursesByFloorId(@PathVariable("idFloor") long idFloor) {
         return floorService.getNursesByFloorId(idFloor);
     }

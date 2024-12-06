@@ -112,7 +112,7 @@ public class UserService {
         }else{
             message = "Operacion exitosa";
             for(User u: userRepository.findAllByIdRol(idRole)){
-                list.add(transformUserDTO(u));
+                list.add(transformUserToDTO(u));
             }
         }
         return customResponseEntity.getOkResponse(message, "OK", 200, list);
@@ -241,7 +241,6 @@ public class UserService {
             try {
                 user.setPassword(found.getPassword());
                 user.setBeds(found.getBeds());
-                user.setNurseInFloor(found.getNurseInFloor());
                 user.setRole(found.getRole());
                 userRepository.save(user);
                 return customResponseEntity.getOkResponse(

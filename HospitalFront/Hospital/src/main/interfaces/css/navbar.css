@@ -1,0 +1,27 @@
+.nav-link:hover {
+    transform: scale(1.08);
+}
+
+.material-symbols-outlined:hover {
+    transform: scale(1.08);
+}
+
+.navbar {
+    background-color: #1F2B6C;
+}
+
+.custom-title {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    transform: translateX(-50%);
+    width: 300%;
+    height: 2px;
+    background-color: #000;
+    left: 150%;
+}
