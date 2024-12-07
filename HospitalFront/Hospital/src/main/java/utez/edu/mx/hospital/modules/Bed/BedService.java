@@ -135,7 +135,7 @@ public class BedService {
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?>save(Bed bed){
         try{
-            bed.setIsOccupied(true);
+            bed.setIsOccupied(false);
             bed.setHasNurse(false);
             bedRepository.save(bed);
             return customResponseEntity.getOkResponse("Registro exitoso", "CREATED",201,null);
@@ -151,8 +151,13 @@ public class BedService {
         Bed found = bedRepository.findById(bed.getId());
         if(found==null){
             return customResponseEntity.get404Response();
+        }else if(found.getHasNurse()){
+            return customResponseEntity.getOkResponse("Esta cama tiene enfermera asignada", "Error en operación", 400, null);
         }else {
             try{
+                bed.setIsOccupied(found.getIsOccupied());
+                bed.setPatient(found.getPatient());
+                bed.setHasNurse(found.getHasNurse());
                 bedRepository.save(bed);
                 return customResponseEntity.getOkResponse("Actualizacion exitosa", "Actualizado",200,null);
             }catch (Exception e){

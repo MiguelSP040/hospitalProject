@@ -26,6 +26,8 @@ const loadTable = async () => {
     let tbody = document.getElementById("tbody");
     let content = '';
     userList.forEach((item, index) => {
+        console.log(item.nurseInFloor)
+        console.log(item)
         content += `<tr>
                         <th scope="row">${index + 1}</th>
                         <td>${`${item.identificationName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>

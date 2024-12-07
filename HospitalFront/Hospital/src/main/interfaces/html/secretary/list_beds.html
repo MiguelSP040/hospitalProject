@@ -61,27 +61,29 @@
     </div>
 
     <!-- Card Group de Camas -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mt-1" id="bedCards">
-      <!-- Primer Card -->
-      <!-- Registro estático -->
-      <div class="col">
-        <div class="card h-100 d-flex flex-row">
-          <!-- Contenido del Card -->
-          <div class="card-body flex-grow-1">
-            <h4 class="card-title">Cama 01</h4>
-            <hr>
-            <div class="text-body-secondary">
-              Enfermera: Marylin Cote
+    <div class="container-fluid mb-4">
+      <div class="row row-cols-1 row-cols-md-3 g-4 mt-1" id="bedCards">
+        <!-- Primer Card -->
+        <!-- Registro estático -->
+        <!-- <div class="col">
+         <div class="card h-100 d-flex flex-row">
+           Contenido del Card
+            <div class="card-body flex-grow-1">
+              <h4 class="card-title">Cama 01</h4>
+              <hr>
+              <div class="text-body-secondary">
+                Enfermera: Marylin Cote
+              </div>
+            </div>
+           Botones alineados verticalmente
+            <div class="d-flex flex-column justify-content-start align-items-center p-3">
+              <button type="button" class="btn btn-primary btn-sm mb-2" onclick=""
+                data-bs-target="#updateModal" data-bs-toggle="modal">
+                <i class="bi bi-pencil"></i> Ícono de editar
+              </button>
             </div>
           </div>
-          <!-- Botones alineados verticalmente -->
-          <div class="d-flex flex-column justify-content-start align-items-center p-3">
-            <button type="button" class="btn btn-primary btn-sm mb-2" onclick=""
-              data-bs-target="#updateModal" data-bs-toggle="modal">
-              <i class="bi bi-pencil"></i> <!-- Ícono de editar -->
-            </button>
-          </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -103,13 +105,13 @@
                 <input type="text" class="form-control" id="regNombre" placeholder="Ingresa el nomrbe de la cama" required>
               </div>
               <div>
-                <label for="regEnfermera" class="form-label">Enfermera:</label>
-                <select class="form-select" id="regEnfermera">
+                <label for="regFloor" class="form-label">Pisos:</label>
+                <select class="form-select" id="regFloor">
                 </select>
             </div>
               <div class="col-12 text-end">
                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" onclick=""
+                <button type="submit" class="btn btn-primary" onclick="saveBed()"
                   data-bs-dismiss="modal">Registrar</button>
               </div>
             </form>
@@ -136,13 +138,13 @@
                 <input type="text" class="form-control" id="updNombre" placeholder="Ingresa el nombre de la cama" required>
               </div>
               <div>
-                <label for="updEnfermera" class="form-label">Enfermera:</label>
-                <select class="form-select" id="updEnfermera">
+                <label for="updFloor" class="form-label">Piso:</label>
+                <select class="form-select" id="updFloor">
                 </select>
             </div>
               <div class="col-12 text-end">
                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" onclick=""
+                <button type="submit" class="btn btn-primary" onclick="updateBed()"
                   data-bs-dismiss="modal">Actualizar</button>
               </div>
             </form>
@@ -150,8 +152,9 @@
         </div>
       </div>
     </div>
-
+  </div>
     <script src="../../js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/beds_management.js"></script>
 </body>
 
 </html>
