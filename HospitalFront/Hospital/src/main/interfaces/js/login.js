@@ -55,7 +55,6 @@ const login = async () => {
 
             await findUserRole();
             localStorage.setItem('rol', rol);
-            
             if(rol==1){
                 window.location.replace('http://127.0.0.1:5500/html/nurse/list_owned_beds.html');
             }else if(rol==3){

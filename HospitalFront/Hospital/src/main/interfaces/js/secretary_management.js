@@ -49,7 +49,7 @@ const loadTable = async () => {
 
 //Función anónima para cargar la información de la tabla
 (async () => {
-    if(role != 3){
+    if(role != 2){
         window.location.replace('http://127.0.0.1:5500/html/login.html');
     }
     await loadTable();

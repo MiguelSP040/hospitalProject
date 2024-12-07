@@ -1,6 +1,7 @@
 package utez.edu.mx.hospital.modules.Bed;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -52,6 +53,18 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     @Query("SELECT b.identificationName FROM Bed b WHERE b.patient.id = :idPatient")
     String findBedNameByPatientId(@Param("idPatient") long idPatient);
 
-    @Query(value = "SELECT b.* FROM bed b JOIN user_has_beds ub ON b.id = ub.id_bed WHERE ub.id_user = :idUser", nativeQuery = true)
-    List<Bed> findBedsByUserId(@Param("idUser") long idUser);
+    @Query(value = "SELECT b.* FROM bed b " +
+            "JOIN user_has_beds ub ON b.id = ub.id_bed " +
+            "JOIN user u ON ub.id_user = u.id " +
+            "WHERE u.username = :userName", nativeQuery = true)
+    List<Bed> findBedsByUserName(@Param("userName") String userName);
+
+    @Modifying
+    @Query(value = "UPDATE bed SET id_patient = :idPatient WHERE id = :idBed;", nativeQuery = true)
+    void insertPatientInBed(@Param("idPatient") long idPatient, @Param("idBed") long idBed);
+
+    @Modifying
+    @Query(value = "UPDATE bed SET is_occupied = :isOccupied WHERE id = :idBed;", nativeQuery = true)
+    void changeIsOccupied(@Param("isOccupied") boolean isOccupied, @Param("idBed") long idBed);
+
 }

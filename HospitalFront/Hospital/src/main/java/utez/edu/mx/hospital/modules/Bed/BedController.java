@@ -88,9 +88,15 @@ public class BedController {
     }
 
     @PreAuthorize("hasRole('ROLE_NURSE')")
-    @GetMapping("/findBedsByNurse/{idNurse}")
-    public ResponseEntity<?> getBedsByNurse(@PathVariable("idNurse") long idNurse) {
-        return bedService.findBedsByNurseId(idNurse);
+    @GetMapping("/findBedsByNurse/{nurseName}")
+    public ResponseEntity<?> getBedsByNurse(@PathVariable("nurseName") String nurseName) {
+        return bedService.findBedsByNurseName(nurseName);
+    }
+
+    @PreAuthorize("hasRole('ROLE_NURSE')")
+    @PutMapping("/insertPatient")
+    public ResponseEntity<?> insertPatient(@RequestBody Bed bed) {
+        return bedService.insertPatient(bed);
     }
 
 

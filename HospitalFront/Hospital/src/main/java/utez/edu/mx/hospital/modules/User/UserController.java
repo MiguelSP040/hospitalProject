@@ -53,6 +53,7 @@ public class UserController {
     }
 
     //secretary asigna camas a nurse
+    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     @PutMapping("/beds")
     @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> insertBedNurse(@RequestBody User user){
@@ -91,5 +92,7 @@ public class UserController {
     public ResponseEntity<?> changePassword(@RequestBody UserDTO user) {
         return userService.updatePassword(user);
     }
+
+
 
 }
