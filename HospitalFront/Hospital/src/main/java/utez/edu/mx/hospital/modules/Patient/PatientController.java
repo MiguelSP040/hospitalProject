@@ -2,6 +2,7 @@ package utez.edu.mx.hospital.modules.Patient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,5 +35,11 @@ public class PatientController {
     @PutMapping("/{id}")
     public ResponseEntity<?> changePatientDischarge(@PathVariable long id) {
         return patientService.changePatientDischarge(id);
+    }
+
+    @PreAuthorize("hasRole('ROLE_NURSE')")
+    @GetMapping("/notDischarged")
+    public ResponseEntity<?> getAllPatientsNotDischarged() {
+        return patientService.findAllPatientsNotDischarged();
     }
 }

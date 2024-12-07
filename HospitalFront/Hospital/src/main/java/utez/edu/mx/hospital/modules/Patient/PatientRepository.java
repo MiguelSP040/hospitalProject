@@ -20,5 +20,9 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query(value = "UPDATE patient SET is_discharged = :isDischarged WHERE id = :idPatient", nativeQuery = true)
     void changeDischarged (@Param("isDischarged") boolean isDischarged, @Param("idPatient") long idPatient);
 
+    @Modifying
+    @Query(value = "SELECT * FROM patient WHERE is_discharged = 0;", nativeQuery = true)
+    List<Patient> findAllPatientsNotDischarged();
+
 
 }

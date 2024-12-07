@@ -6,6 +6,8 @@ let nurseList = [];
 let floorList = [];
 let nurse = {};
 let floor = {};
+const role = localStorage.getItem('rol');
+
 
 //Método para encontrar enfermeras por piso
 //El parámetro de idFloor se obtiene de la sesión de la secretaria
@@ -65,6 +67,9 @@ const loadCards = async () => {
 
 
 (async () => {
+    if(role != 2){
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
     await loadCards();
 })();
 

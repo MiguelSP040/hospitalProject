@@ -10,6 +10,7 @@ import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorService;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.modules.User.User;
+import utez.edu.mx.hospital.modules.User.UserRepository;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
 import java.sql.SQLException;
@@ -22,6 +23,11 @@ public class BedService {
 
     @Autowired
     private BedRepository bedRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
 
     @Autowired
     private CustomResponseEntity customResponseEntity;
@@ -266,6 +272,24 @@ public class BedService {
         }
 
         return customResponseEntity.getOkResponse(message, "OK", 200, bedName);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findBedsByNurseId(long id){
+        User found = userRepository.findById(id);
+        List<Bed> beds = new ArrayList<>();
+        List<BedDTO> bedsDTO = new ArrayList<>();
+
+        String message = "";
+        if(found == null){
+            return customResponseEntity.get404Response();
+        } else {
+            beds = bedRepository.findBedsByUserId(id);
+            for (Bed b : beds){
+                bedsDTO.add(transformBedToDTO(b));
+            }
+        }
+        return customResponseEntity.getOkResponse(message, "OK", 200, bedsDTO);
     }
 
 }

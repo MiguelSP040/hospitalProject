@@ -123,4 +123,24 @@ public class PatientService {
             }
         }
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findAllPatientsNotDischarged(){
+        List<Patient> patients = patientRepository.findAllPatientsNotDischarged();
+        if (patients.isEmpty()) {
+            return customResponseEntity.getOkResponse(
+                    "Aún no hay pacientes registrados.",
+                    "OK",
+                    200,
+                    patients
+            );
+        }else{
+            return customResponseEntity.getOkResponse(
+                    "Operación exitosa.",
+                    "OK",
+                    200,
+                    patients
+            );
+        }
+    }
 }

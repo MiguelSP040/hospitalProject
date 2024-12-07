@@ -2,6 +2,8 @@ package utez.edu.mx.hospital.modules.Bed;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorService;
@@ -74,4 +76,12 @@ public class BedController {
     public ResponseEntity<?> getBedNameByPatientId(@PathVariable("idPatient") long idPatient) {
         return bedService.findBedNameByPatientId(idPatient);
     }
+
+    @PreAuthorize("hasRole('ROLE_NURSE')")
+    @GetMapping("/findBedsByNurse/{idNurse}")
+    public ResponseEntity<?> getBedsByNurse(@PathVariable("idNurse") long idNurse) {
+        return bedService.findBedsByNurseId(idNurse);
+    }
+
+
 }

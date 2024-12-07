@@ -4,6 +4,7 @@ Revisar método save y update, restraso para mostrar información actualizada
 const URL = 'http://localhost:8080';
 let floorList = [];
 let floor = {};
+const role = localStorage.getItem('rol');
 
 //Método para obtener la lista de pisos
 const findAllFloors = async () => {
@@ -100,6 +101,9 @@ const loadCards = async () => {
 
 //Función anónima para cargar la información
 (async () => {
+    if(role != 3){
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
     await loadCards();
 })();
 
