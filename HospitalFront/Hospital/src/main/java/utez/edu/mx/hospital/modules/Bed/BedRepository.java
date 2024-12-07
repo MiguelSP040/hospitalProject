@@ -51,4 +51,7 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
 
     @Query("SELECT b.identificationName FROM Bed b WHERE b.patient.id = :idPatient")
     String findBedNameByPatientId(@Param("idPatient") long idPatient);
+
+    @Query(value = "SELECT b.* FROM bed b JOIN user_has_beds ub ON b.id = ub.id_bed WHERE ub.id_user = :idUser", nativeQuery = true)
+    List<Bed> findBedsByUserId(@Param("idUser") long idUser);
 }

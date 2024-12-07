@@ -66,7 +66,7 @@
         <div class="card-body">
             <i class="fas fa-hospital hospital-icon"></i>
             <h4 class="card-title mb-4">Sistema Hospitalario</h4>
-            <form>
+            <form id="loginForm">
                 <div class="mb-3 text-start">
                     <label for="username" class="form-label">Usuario</label>
                     <input type="text" class="form-control" id="username" placeholder="Ingresa tu usuario">
@@ -76,13 +76,14 @@
                     <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña">
                 </div>
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                    <button type="button" class="btn btn-primary" id="formButton">Iniciar sesión</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/login.js"></script>
 </body>
 
 </html>

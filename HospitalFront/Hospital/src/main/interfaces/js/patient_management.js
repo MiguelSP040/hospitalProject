@@ -4,6 +4,7 @@ Revisar retraso en actualización y registro
 const URL = 'http://localhost:8080';
 let patientList = [];
 let patient = {};
+const role = localStorage.getItem('rol');
 
 //Método para obtener la lista de pacientes
 const getAllPatients = async () => {
@@ -44,6 +45,9 @@ const loadTable = async () => {
 
 //Función anónima para cargar la información de la tabla
 (async () => {
+    if(role != 1){
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
     await loadTable();
 })();
 

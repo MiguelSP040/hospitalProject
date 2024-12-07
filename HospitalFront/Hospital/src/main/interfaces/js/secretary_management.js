@@ -6,6 +6,8 @@ let userList = [];
 let user = {};
 let floorList = [];
 let floor = {};
+const role = localStorage.getItem('rol');
+
 
 //Método para obtener la lista de usuarios
 const findAllSecretaries = async () => {
@@ -47,6 +49,9 @@ const loadTable = async () => {
 
 //Función anónima para cargar la información de la tabla
 (async () => {
+    if(role != 3){
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
     await loadTable();
 })();
 

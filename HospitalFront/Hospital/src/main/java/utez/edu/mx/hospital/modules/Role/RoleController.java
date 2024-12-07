@@ -15,4 +15,9 @@ public class RoleController {
     public ResponseEntity<?> findAll(){
         return roleService.findAll();
     }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<?> findRolByEmployee(@PathVariable("username")String username){
+        return roleService.findRolByUsername(username);
+    }
 }

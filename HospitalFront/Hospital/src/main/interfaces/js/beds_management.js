@@ -20,7 +20,7 @@ const findAllBeds = async () => {
 
 // Método para obtener las camas de un piso específico
 const getBedsByFloorId = async (idFloor) => {
-    await fetch(`${URL}/api/beds/${idFloor}`, {
+    await fetch(`${URL}/api/bed/bedOnFloor/${idFloor}`, {
         method: 'GET',
         headers: {
             "Content-type": "application/json",
@@ -37,11 +37,8 @@ const loadCards = async () => {
     let selectedFloorId = document.getElementById('selectFloor').value;
 
     // Verificar si un piso ha sido seleccionado
-    if (selectedFloorId) {
-        await getBedsByFloorId(selectedFloorId); // Cargar las camas del piso seleccionado
-    } else {
-        await findAllBeds(); // Si no se seleccionó un piso, cargar todas las camas
-    }
+    await findAllBeds()
+    await getBedsByFloorId(selectedFloorId)
 
     let bedCards = document.getElementById("bedCards");
     let content = '';
