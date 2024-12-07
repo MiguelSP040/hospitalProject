@@ -152,4 +152,5 @@ public class FloorService {
         String message = nurses.isEmpty() ? "No hay enfermeras asignadas a este piso" : "Operación exitosa";
         return customResponseEntity.getOkResponse(message, "OK", 200, nurses);
     }
+
 }

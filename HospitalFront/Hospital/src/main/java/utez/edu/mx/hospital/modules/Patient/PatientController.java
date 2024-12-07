@@ -13,26 +13,31 @@ public class PatientController {
     private PatientService patientService;
 
     @GetMapping("")
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> getAllPatients() {
         return patientService.findAllPatients();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> getPatientById(@PathVariable long id) {
         return patientService.findPatientById(id);
     }
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> addPatient(@RequestBody Patient patient) {
         return patientService.savePatient(patient);
     }
 
     @PutMapping("")
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> updatePatient(@RequestBody Patient patient) {
         return patientService.updatePatient(patient);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> changePatientDischarge(@PathVariable long id) {
         return patientService.changePatientDischarge(id);
     }

@@ -1,4 +1,7 @@
 const URL = 'http://localhost:8080';
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('rol');
+
 let userList = [];
 let bedList = []
 let bed = {};
@@ -10,6 +13,7 @@ const findAllBeds = async () => {
     await fetch(`${URL}/api/bed`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -23,6 +27,7 @@ const getBedsByFloorId = async (idFloor) => {
     await fetch(`${URL}/api/bed/bedOnFloor/${idFloor}`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -71,6 +76,9 @@ const loadCards = async () => {
 
 // Función anónima para cargar la información de las cards
 (async () => {
+    if(role != 3){
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
     await loadCards();
 })();
 
@@ -79,6 +87,7 @@ const findBedById = async idBed => {
     await fetch(`${URL}/api/bed/${idBed}`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -151,6 +160,7 @@ const findAllFloors = async () => {
     await fetch(`${URL}/api/floor`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -188,6 +198,7 @@ const saveBed = async () => {
     await fetch(`${URL}/api/bed`, {
         method: 'POST',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         },
@@ -214,6 +225,7 @@ const updateBed = async () => {
     await fetch(`${URL}/api/bed`, {
         method: 'PUT',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         },
