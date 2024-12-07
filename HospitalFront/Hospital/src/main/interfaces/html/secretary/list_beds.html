@@ -53,11 +53,15 @@
     <div class="d-flex justify-content-between align-items-center">
       <h3 class="custom-title">
         Camas:
-        <i id="numPiso">Piso 01</i>
+        <i id="numPiso"></i>
       </h3>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
-        Registrar Camas
-      </button>
+      <div class="d-flex align-items-center">
+        <select class="form-select form-select-md w-auto me-2" id="selectFloor" aria-label="Large select example" onclick="loadFloors()">
+        </select>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
+          Registrar Camas
+        </button>
+      </div>
     </div>
 
     <!-- Card Group de Camas -->

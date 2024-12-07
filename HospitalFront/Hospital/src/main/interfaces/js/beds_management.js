@@ -16,11 +16,33 @@ const findAllBeds = async () => {
     }).then(response => response.json()).then(response => {
         bedList = response.data;
     }).catch(error => console.error(error));
+};
+
+// Método para obtener las camas de un piso específico
+const getBedsByFloorId = async (idFloor) => {
+    await fetch(`${URL}/api/beds/${idFloor}`, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Accept": "application/json"
+        }
+    }).then(response => response.json()).then(response => {
+        bedList = response.data;
+    }).catch(error => console.error(error));
 }
 
-// Método para insertar las cards de beds en el cuerpo HTML
+
+// Método para insertar las cards de camas en el cuerpo HTML
 const loadCards = async () => {
-    await findAllBeds();
+    let selectedFloorId = document.getElementById('selectFloor').value;
+
+    // Verificar si un piso ha sido seleccionado
+    if (selectedFloorId) {
+        await getBedsByFloorId(selectedFloorId); // Cargar las camas del piso seleccionado
+    } else {
+        await findAllBeds(); // Si no se seleccionó un piso, cargar todas las camas
+    }
+
     let bedCards = document.getElementById("bedCards");
     let content = '';
     bedList.forEach((item, index) => {
@@ -87,13 +109,43 @@ const loadBeds = async (id) => {
         content += `<option disabled>No hay pisos disponibles</option>`;
     } else {
         floorList.forEach(item => {
-            // Evitar duplicar la opción actual
             if (item.id !== currentFloorId) {
                 content += `<option value="${item.id}">${item.identificationName}</option>`;
             }
         });
     }
     select.innerHTML = content;
+};
+
+
+const loadFloors = async (idFloor) => {
+    await findAllFloors();
+    let floorSelect = document.getElementById('selectFloor');
+    let content = '';
+    if (floorList.length === 0) {
+        content += `<option selected disabled>No hay pisos para escoger</option>`;
+    } else {
+        content = `<option selected disabled hidden>Cambiar de piso</option>`;
+        floorList.forEach(item => {
+            content += `<option value="${item.id}">${item.identificationName}</option>`;
+        });
+    }
+    floorSelect.innerHTML = content;
+
+    floorSelect.addEventListener('change', updateSelectedFloor);
+
+    if (idFloor) {
+        await getBedsByFloorId(idFloor);
+    }
+};
+
+
+// Función para actualizar el texto del numPiso
+const updateSelectedFloor = () => {
+    const floorSelect = document.getElementById('selectFloor');
+    const selectedFloorName = floorSelect.options[floorSelect.selectedIndex].text;
+    const numPisoElement = document.getElementById('numPiso');
+    numPisoElement.textContent = selectedFloorName;
 };
 
 
@@ -155,8 +207,8 @@ const saveBed = async () => {
 const updateBed = async () => {
     let form = document.getElementById('updateForm');
     let updated = {
-        id: bed.id, // Usar el ID de la cama existente
-        identificationName: document.getElementById("updNombre").value, 
+        id: bed.id,
+        identificationName: document.getElementById("updNombre").value,
         floor: {
             id: document.getElementById('updFloor').value
         },
