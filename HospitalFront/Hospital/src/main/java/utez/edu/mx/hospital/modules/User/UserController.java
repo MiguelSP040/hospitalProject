@@ -2,6 +2,7 @@ package utez.edu.mx.hospital.modules.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.hospital.modules.Bed.Bed;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
@@ -47,6 +48,7 @@ public class UserController {
     }
 
     //secretary asigna camas a nurse
+    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     @PutMapping("/beds")
     public ResponseEntity<?> insertBedNurse(@RequestBody User user){
         return userService.insertBedNurse(user);
@@ -54,6 +56,7 @@ public class UserController {
 
     //secretary asigna floor a nurse
     @PutMapping("/nurseInFloor")
+    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> insertNurseInFloor(@RequestBody User user){
         return userService.insertNurseInFloor(user);
     }
@@ -79,5 +82,7 @@ public class UserController {
     public ResponseEntity<?> changePassword(@RequestBody UserDTO user) {
         return userService.updatePassword(user);
     }
+
+
 
 }

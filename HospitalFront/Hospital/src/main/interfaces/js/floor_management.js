@@ -101,7 +101,7 @@ const loadCards = async () => {
 
 //Función anónima para cargar la información
 (async () => {
-    if(role != 3){
+    if(role != 2){
         window.location.replace('http://127.0.0.1:5500/html/login.html');
     }
     await loadCards();

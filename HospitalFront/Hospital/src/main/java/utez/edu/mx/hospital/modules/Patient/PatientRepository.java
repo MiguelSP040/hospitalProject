@@ -24,5 +24,8 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query(value = "SELECT * FROM patient WHERE is_discharged = 0;", nativeQuery = true)
     List<Patient> findAllPatientsNotDischarged();
 
+    @Modifying
+    @Query(value = "SELECT p.* FROM patient p LEFT JOIN bed b ON p.id = b.id_patient WHERE p.is_discharged = 0 AND b.id_patient IS NULL;", nativeQuery = true)
+    List<Patient> findAllPatientsNotDischargedAndBedIsNotOccupied();
 
 }

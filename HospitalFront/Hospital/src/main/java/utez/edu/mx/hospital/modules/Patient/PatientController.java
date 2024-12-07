@@ -38,8 +38,16 @@ public class PatientController {
     }
 
     @PreAuthorize("hasRole('ROLE_NURSE')")
+    @GetMapping("/withoutBed")
+    public ResponseEntity<?> findAllPatientsNotDischargedAndBedIsNotOccupied() {
+        return patientService.getAllPatientsNotDischargedAndBedIsNotOccupied();
+    }
+
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     @GetMapping("/notDischarged")
     public ResponseEntity<?> getAllPatientsNotDischarged() {
         return patientService.findAllPatientsNotDischarged();
     }
+
+
 }

@@ -8,6 +8,8 @@ import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorService;
+import utez.edu.mx.hospital.modules.Patient.Patient;
+import utez.edu.mx.hospital.modules.Patient.PatientRepository;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.modules.User.User;
 import utez.edu.mx.hospital.modules.User.UserRepository;
@@ -26,6 +28,9 @@ public class BedService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
 
 
 
@@ -275,8 +280,8 @@ public class BedService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findBedsByNurseId(long id){
-        User found = userRepository.findById(id);
+    public ResponseEntity<?> findBedsByNurseName(String name){
+        User found = userRepository.findByUsername(name);
         List<Bed> beds = new ArrayList<>();
         List<BedDTO> bedsDTO = new ArrayList<>();
 
@@ -284,12 +289,59 @@ public class BedService {
         if(found == null){
             return customResponseEntity.get404Response();
         } else {
-            beds = bedRepository.findBedsByUserId(id);
+            beds = bedRepository.findBedsByUserName(name);
             for (Bed b : beds){
                 bedsDTO.add(transformBedToDTO(b));
             }
         }
         return customResponseEntity.getOkResponse(message, "OK", 200, bedsDTO);
     }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?>insertPatient(Bed bed){
+        Bed found = bedRepository.findById(bed.getId());
+        Patient patientFound = patientRepository.findById(bed.getPatient().getId());
+
+        if(found==null || patientFound==null){
+            return customResponseEntity.get404Response();
+        }else if (!found.getIsOccupied() && !patientFound.isDischarged()){
+            try{
+                bedRepository.insertPatientInBed(patientFound.getId(), bed.getId());
+                bedRepository.changeIsOccupied(true, found.getId());
+                return customResponseEntity.getOkResponse("Actualizacion exitosa", "Actualizado",200,null);
+            }catch (Exception e){
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return customResponseEntity.get400Response();
+            }
+        }else {
+            return customResponseEntity.get400Response();
+        }
+    }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?>freeBed(long id){
+        Bed found = bedRepository.findById(id);
+        Patient patientFound = patientRepository.findById(found.getPatient().getId());
+
+        if(found==null || patientFound==null){
+            return customResponseEntity.get404Response();
+        }else if (!found.getIsOccupied() && !patientFound.isDischarged()){
+            try{
+                bedRepository.changeIsOccupied(false, found.getId());
+                patientRepository.changeDischarged(!patientFound.isDischarged(), found.getId());
+                return customResponseEntity.getOkResponse("Actualizacion exitosa", "Actualizado",200,null);
+            }catch (Exception e){
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return customResponseEntity.get400Response();
+            }
+        }else {
+            return customResponseEntity.get400Response();
+        }
+    }
+
+
+
 
 }
