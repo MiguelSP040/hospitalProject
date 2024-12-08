@@ -81,7 +81,9 @@ const loadCards = async () => {
     const bedCards = document.getElementById("bedCards");
     let content = '';
     bedList.forEach((item) => {
-        const nurseName = item.nurse_name || "Sin asignar";
+        const nurseName = item.nurse_name|| "Sin asignar";
+        const nurseSurname = item.nurse_surname || ''
+        const nurseLastname = item.nurse_lastname || ''
         const isDisabled = item.nurse_name ? 'disabled' : ''; // Si tiene enfermera, se desactiva el botón
         content += `
     <div class="col">
@@ -90,7 +92,7 @@ const loadCards = async () => {
                 <h4 class="card-title">${item.bed_name || "Sin nombre"}</h4>
                 <hr>
                 <div class="text-body-secondary">
-                    Enfermera: ${nurseName}
+                    Enfermera: ${nurseName} ${nurseSurname} ${nurseLastname}
                 </div>
             </div>
             <div class="d-flex flex-column justify-content-start align-items-center p-3">
@@ -177,7 +179,7 @@ const loadNurse = async (idBed) => {
     } else {
         content = `<option selected disabled hidden>Selecciona una enfermera</option>`;
         userList.forEach(item => {
-            content += `<option value="${item.id}">${item.identificationName}</option>`;
+            content += `<option value="${item.id}">${item.identificationName} ${item.surname} ${item.lastname}</option>`;
         });
     }
     nurseSelect.innerHTML = content;
