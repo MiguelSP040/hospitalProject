@@ -58,7 +58,7 @@
             </h3>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
                 Registrar Paciente
-            </button>
+            </button>            
         </div>
         <!-- Tabla de Usuarios -->
         <div class="table-responsive mt-4">
@@ -140,54 +140,53 @@
         </div>
     </div>
 
-    <!-- Modal para Actualizar Paciente -->
-    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span class="material-symbols-outlined">
-                        patient_list
-                    </span>
-                    <h5 class="modal-title ms-1" id="updateModalLabel">Actualizar Paciente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="needs-validation" id="updateForm" novalidate>
-                        <div class=" row mb-3">
-                            <div class="col">
-                                <label for="updNombres" class="form-label">Nombre(s):</label>
-                                <input type="text" class="form-control" id="updNombres" placeholder="Ingresa los nombres"
-                                    required>
-                            </div>
-                            <div class="col">
-                                <label for="updApellidoPaterno" class="form-label">Apellido Paterno:</label>
-                                <input type="text" class="form-control" id="updApellidoPaterno"
-                                    placeholder="Ingresa el apellido paterno" required>
-                            </div>
+    <!-- Modal para Registrar Paciente -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="material-symbols-outlined">
+                    patient_list
+                </span>
+                <h5 class="modal-title ms-1" id="registerModalLabel">Registrar Paciente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="registerForm">
+                    <div class=" row mb-3">
+                        <div class="col">
+                            <label for="regNombres" class="form-label">Nombre(s):</label>
+                            <input type="text" class="form-control" id="regNombres" placeholder="Ingresa los nombres"
+                                required>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="updApellidoMaterno" class="form-label">Apellido Materno:</label>
-                                <input type="text" class="form-control" id="updApellidoMaterno"
-                                    placeholder="Ingresa el apellido materno">
-                            </div>
-                            <div class="col">
-                                <label for="updTelefono" class="form-label">Teléfono:</label>
-                                <input type="text" class="form-control" id="updTelefono"
-                                    placeholder="Ingresa el teléfono" required>
-                            </div>
+                        <div class="col">
+                            <label for="regApellidoPaterno" class="form-label">Apellido Paterno:</label>
+                            <input type="text" class="form-control" id="regApellidoPaterno"
+                                placeholder="Ingresa el apellido paterno" required>
                         </div>
-                        <div class="col-12 text-end">
-                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" onclick="updatePatient()"
-                                data-bs-dismiss="modal">Actualizar</button>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="regApellidoMaterno" class="form-label">Apellido Materno:</label>
+                            <input type="text" class="form-control" id="regApellidoMaterno"
+                                placeholder="Ingresa el apellido materno" required>
                         </div>
-                    </form>
-                </div>
+                        <div class="col">
+                            <label for="regTelefono" class="form-label">Teléfono:</label>
+                            <input type="text" class="form-control" id="regTelefono"
+                                placeholder="Ingresa el teléfono" required>
+                        </div>
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="savePatient()"
+                            data-bs-dismiss="modal">Registrar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
+</div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <script src="../../js/patient_management.js"></script>

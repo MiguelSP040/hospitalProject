@@ -22,6 +22,11 @@ const getAllPatients = async () => {
     }).catch(console.log());
 }
 
+document.getElementById('registerModal').addEventListener('hidden.bs.modal', function () {
+    const form = document.getElementById('registerForm');
+    form.reset(); 
+})
+
 //Método para insertar la lista de pacientes en el HTML
 const loadTable = async () => {
     await getAllPatients(); // Assuming this fetches the patientList
