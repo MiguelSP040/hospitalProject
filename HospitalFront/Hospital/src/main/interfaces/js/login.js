@@ -19,7 +19,6 @@ const login = async () => {
         user: document.getElementById('username').value,
     };
 
-
     try {
         // Realiza la petición al servidor
         const response = await fetch('http://localhost:8080/auth', {
@@ -55,6 +54,12 @@ const login = async () => {
 
             await findUserRole();
             localStorage.setItem('rol', rol);
+            await Swal.fire({
+                title: 'Inicio de sesión correcto',
+                text: 'Redirigiendo...',
+                icon: 'success',
+                confirmButtonText: 'Entendido'
+            });
             if(rol==1){
                 window.location.replace('http://127.0.0.1:5500/html/nurse/list_owned_beds.html');
             }else if(rol==2){
@@ -62,15 +67,34 @@ const login = async () => {
             }else if(rol==3){
                 window.location.replace('http://127.0.0.1:5500/html/secretary/list_beds.html');
             }
+
         } else if (response.status === 404) {
             // Mostrar mensaje de error si las credenciales son incorrectas o el usuario no existe
-            alert('Usuario o contraseña incorrectos. Inténtalo de nuevo.');
+            await Swal.fire({
+                title: 'Alerta o usuario incorrectos',
+                text: 'Inténtalo de nuevo',
+                icon: 'error',
+                confirmButtonText: 'Entendido'
+            });
+            form.reset();
         } else {
             // Manejo de otros posibles errores
-            alert('Ocurrió un error inesperado. Inténtalo más tarde.');
+            await Swal.fire({
+                title: 'Operacion fallida',
+                text: 'Inténtalo de nuevo',
+                icon: 'error',
+                confirmButtonText: 'Entendido'
+            });
+            form.reset();
         }
     } catch (error) {
         console.error('Error durante el login:', error);
-        alert('No se pudo conectar con el servidor. Inténtalo más tarde.');
+        await Swal.fire({
+            title: 'Operacion fallida',
+            text: 'Inténtalo de nuevo',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
     }
 };

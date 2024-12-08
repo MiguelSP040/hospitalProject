@@ -72,6 +72,7 @@ const loadPutFloor = async () => {
     if(role != 3){
         window.location.replace('http://127.0.0.1:5500/html/login.html');
     }
+    document.getElementById('userLogged').textContent = username;
     await loadPutFloor();
 })();
 
@@ -497,3 +498,5 @@ const saveBed = async () => {
 const sweetAlert = async(titulo, descripcion, tipo)=>{
     await Swal.fire({title: `${titulo}`, text: `${descripcion}`, icon:`${tipo}`})
 }
+
+
