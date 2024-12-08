@@ -136,21 +136,12 @@ public class UserService {
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> save(User user) {
         try {
-            /*if (user.getRole().getId() == 3) {
-            Long floorIdFound = user.getSecretary_in_charge().getId();
-            if(floorIdFound == null){
-                return customResponseEntity.getOkResponse("El ID del piso es obligatorio", "BAD_REQUEST", 400, null);
-            }
-                // se valida que el piso existe
-                Floor foundFloor = floorRepository.findById(floorIdFound.longValue());
-                if (foundFloor == null ) {
-                    return customResponseEntity.getOkResponse("Piso inexistente", "BAD_REQUEST", 400, null);
+            List<User> found = userRepository.findAll();
+            for (User u : found) {
+                if (user.getUsername().equals(u.getUsername())) {
+                    return customResponseEntity.getOkResponse("Ese username ya existe", "BAD_REQUEST", 400, null);
                 }
-
-                //se asigna al usuario como encargado de ese piso
-                foundFloor.setSecretary(user);  //aqui se relaciona el piso con el usuario
-                floorRepository.save(foundFloor);   //se guarda el piso con la relación
-            }*/
+            }
             user.setPassword(user.getIdentificationName());
             userRepository.save(user);
             return customResponseEntity.getOkResponse(

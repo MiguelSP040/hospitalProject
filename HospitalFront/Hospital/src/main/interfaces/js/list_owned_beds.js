@@ -87,7 +87,7 @@ const loadBeds = async () => {
         let buttonFree = '';
         let buttonSee = '';
         if (occupied) {
-            buttonHTML = `<button class="btn btn btn-success btn-sm mb-2" disabled>
+            buttonHTML = `<button class="btn btn btn-success btn-sm mb-2 " disabled>
                             <i class="bi bi-plus-lg"></i>
                           </button>`;
 
@@ -113,7 +113,9 @@ const loadBeds = async () => {
         }
 
 
-        content += `<div class="card h-100 d-flex flex-row">
+        content += `
+                        <div class="col">
+                            <div class="card h-100 d-flex flex-row ">
                         <div class="card-body flex-grow-1">
                             <h4 class="card-title">${item.identificationName}</h4>
                             <input type="hidden" id="bedId" value="${item.id}">
@@ -130,7 +132,8 @@ const loadBeds = async () => {
                             ${buttonFree}
                             ${buttonSee}
                         </div>
-                    </div>`;
+                        </div>
+                        </div> `;
     });
 
     cards.innerHTML = content;
