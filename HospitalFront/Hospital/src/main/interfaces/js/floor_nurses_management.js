@@ -1,5 +1,5 @@
 /*
-Falta registrar, editar y transferir
+Falta transferir
 */
 const URL = 'http://localhost:8080';
 let nurseList = [];
@@ -67,6 +67,17 @@ const loadCards = async () => {
 (async () => {
     await loadCards();
 })();
+
+//Método para cargar la información de la enfermera en el updateModal
+const loadNurse = async idNurse => {
+    await findNurseById(idNurse);
+    document.getElementById("updNombres").value = nurse.identificationName;
+    document.getElementById("updApellidoPaterno").value = nurse.surname;
+    document.getElementById("updApellidoMaterno").value = nurse.lastname;
+    document.getElementById("updEmail").value = nurse.email;
+    document.getElementById("updTelefono").value = nurse.phoneNumber;
+    document.getElementById("updUsuario").value = nurse.username;
+}
 
 //Método para encontrar todos los pisos
 const findAllFloors = async () => {
@@ -153,46 +164,52 @@ const confirmTransfer = async () => {
     }
 }
 
-/*
-const savePet = async () => {
-    let form = document.getElementById('saveForm');
-    let modal = new bootstrap.Modal(document.getElementById('saveModal'))
-    pet = {
-        nickname: document.getElementById("nickname").value,
-        owner: {
-            id: document.getElementById('ownerList').value
-        },
-        type: {
-            id: document.getElementById('typeList').value
+const saveNurse = async () => {
+    let form = document.getElementById('registerForm');
+    nurse = {
+        identificationName: document.getElementById("regNombres").value,
+        surname: document.getElementById("regApellidoPaterno").value,
+        lastname: document.getElementById("regApellidoMaterno").value,
+        email: document.getElementById("regEmail").value,
+        phoneNumber: document.getElementById("regTelefono").value,
+        username: document.getElementById("regUsuario").value,
+        role:{
+            id: 3
         }
     };
 
-    await fetch(`${URL}/api/petShop`, {
+    await fetch(`${URL}/api/user`, {
         method: 'POST',
         headers: {
             "Content-type": "application/json",
             "Accept": "application/json"
         },
-        body: JSON.stringify(pet)
+        body: JSON.stringify(nurse)
     }).then(response => response.json()).then(async response => {
         console.log(response);
-        pet = {};
-        await loadTable();
+        nurse = {};
+        await loadCards();
         form.reset();
-    }).catch(console.log);
+    }).catch(console.log());
 }
 
-const updatePet = async () => {
+
+const updateNurse = async () => {
     let form = document.getElementById('updateForm');
-    let updated = {
-        nickname: document.getElementById("u_nickname").value,
-        owner: pet.owner,
-        type: {
-            id: document.getElementById('u_typeList').value
+    updated = {
+        id: nurse.id,
+        identificationName: document.getElementById("updNombres").value,
+        surname: document.getElementById("updApellidoPaterno").value,
+        lastname: document.getElementById("updApellidoMaterno").value,
+        email: document.getElementById("updEmail").value,
+        phoneNumber: document.getElementById("updTelefono").value,
+        username: document.getElementById("updUsuario").value,
+        nurseInFloor: {
+            id: 1
         }
     };
 
-    await fetch(`${URL}/api/pet/${pet.id}`, {
+    await fetch(`${URL}/api/user`, {
         method: 'PUT',
         headers: {
             "Content-type": "application/json",
@@ -201,23 +218,8 @@ const updatePet = async () => {
         body: JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
         console.log(response);
-        pet = {};
-        await loadTable();
+        nurse = {};
+        await loadCards();
         form.reset();
-    }).catch(console.log);
+    }).catch(console.log());
 }
-
-const deletePet = async () => {
-    await fetch(`${URL}/api/pet/${pet.id}`, {
-        method: 'DELETE',
-        headers: {
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-
-    }).then(response => response.json()).then(async response => {
-        console.log(response);
-        pet = {};
-        await loadTable();
-    }).catch(console.log);
-}*/
