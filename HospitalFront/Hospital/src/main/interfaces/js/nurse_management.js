@@ -137,16 +137,15 @@ const loadUser = async id => {
     }
 }
 
-//Método para registrar una nueva enfermera
 const saveUser = async () => {
     let form = document.getElementById('registerForm');
     user = {
-        identificationName: document.getElementById("regNombres").value,
-        surname: document.getElementById("regApellidoPaterno").value,
-        lastname: document.getElementById("regApellidoMaterno").value,
-        email: document.getElementById("regEmail").value,
-        phoneNumber: document.getElementById("regTelefono").value,
-        username: document.getElementById("regUsuario").value,
+        identificationName: document.getElementById("regNombres").value.trim(),
+        surname: document.getElementById("regApellidoPaterno").value.trim(),
+        lastname: document.getElementById("regApellidoMaterno").value.trim(),
+        email: document.getElementById("regEmail").value.trim(),
+        phoneNumber: document.getElementById("regTelefono").value.trim(),
+        username: document.getElementById("regUsuario").value.trim(),
         nurseInFloor: {
             id: document.getElementById('regFloor').value
         },
@@ -155,53 +154,142 @@ const saveUser = async () => {
         }
     };
 
-    await fetch(`${URL}/api/user`, {
-        method: 'POST',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(user)
-    }).then(response => response.json()).then(async response => {
-        console.log(response);
+    if (!user.identificationName || !user.surname || !user.email || !user.phoneNumber || !user.username) {
+        await Swal.fire({
+            title: 'Error',
+            text: 'Todos los campos son obligatorios. Por favor, completa el formulario.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    try {
+        const response = await fetch(`${URL}/api/user`, {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(user)
+        });
+
+        if (!response.ok) {
+            await Swal.fire({
+                title: 'Error',
+                text: 'Ocurrió un error al registrar el usuario. Inténtalo de nuevo.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar'
+            });
+            return;
+        }
+        const data = await response.json();
+        console.log(data);
+        await Swal.fire({
+            title: 'Registro exitoso',
+            text: 'La enfermera ha sido registrada correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
         user = {};
         await loadTable();
         form.reset();
-    }).catch(console.log());
-}
+    } catch (error) {
+        console.error("Error en saveUser:", error);
+        await Swal.fire({
+            title: 'Error',
+            text: 'No se pudo conectar con el servidor. Inténtalo más tarde.',
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+        });
+    }
+};
 
-//Método para editar un usuario
+
+// Método para editar un usuario
 const updateUser = async () => {
     let form = document.getElementById('updateForm');
     let updated = {
         id: user.id,
-        identificationName: document.getElementById("updNombres").value,
-        surname: document.getElementById("updApellidoPaterno").value,
-        lastname: document.getElementById("updApellidoMaterno").value,
-        email: document.getElementById("updEmail").value,
-        phoneNumber: document.getElementById("updTelefono").value,
-        username: document.getElementById("updUsuario").value,
+        identificationName: document.getElementById("updNombres").value.trim(),
+        surname: document.getElementById("updApellidoPaterno").value.trim(),
+        lastname: document.getElementById("updApellidoMaterno").value.trim(),
+        email: document.getElementById("updEmail").value.trim(),
+        phoneNumber: document.getElementById("updTelefono").value.trim(),
+        username: document.getElementById("updUsuario").value.trim(),
         nurseInFloor: {
             id: document.getElementById('updFloor').value
         }
     };
 
-    await fetch(`${URL}/api/user`, {
-        method: 'PUT',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(updated)
-    }).then(response => response.json()).then(async response => {
-        console.log(response);
-        user = {};
-        await loadTable();
-        form.reset();
-    }).catch(console.log());
-}
+    // Validar los campos obligatorios del objeto `updated`
+    if (
+        !updated.identificationName ||
+        !updated.surname ||
+        !updated.email ||
+        !updated.phoneNumber ||
+        !updated.username
+    ) {
+        await Swal.fire({
+            title: 'Error',
+            text: 'Todos los campos son obligatorios. Por favor, completa el formulario.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    try {
+        const response = await fetch(`${URL}/api/user`, {
+            method: 'PUT',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(updated)
+        });
+
+        // Validar respuesta del servidor
+        if (!response.ok) {
+            const errorData = await response.json(); // Si el backend envía un mensaje de error
+            console.error("Error del servidor:", errorData);
+            await Swal.fire({
+                title: 'Error',
+                text: errorData.message || 'Ocurrió un error al actualizar el usuario. Inténtalo de nuevo.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar'
+            });
+            return;
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        // Mostrar mensaje de éxito
+        await Swal.fire({
+            title: 'Actualización exitosa',
+            text: 'El usuario ha sido actualizado correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
+
+        user = {}; // Limpiar el objeto usuario
+        await loadTable(); // Recargar la tabla
+        form.reset(); // Limpiar el formulario
+    } catch (error) {
+        console.error("Error en updateUser:", error);
+        await Swal.fire({
+            title: 'Error',
+            text: 'No se pudo conectar con el servidor. Inténtalo más tarde.',
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+        });
+    }
+};
+
+
 
 //Método para eliminar un usuario
 const deleteUser = async idUser => {

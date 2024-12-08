@@ -148,7 +148,7 @@
                         </div>    
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="saveUser()"
+                            <button type="button" class="btn btn-primary" onclick="saveUser()"
                                 data-bs-dismiss="modal">Registrar</button>
                         </div>
                     </form>
@@ -209,10 +209,30 @@
                         </div>
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="updateUser()"
+                            <button type="button" class="btn btn-primary" onclick="updateUser()"
                                 data-bs-dismiss="modal">Actualizar</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eliminar enfermera -->
+    <div class="modal" tabindex="-1" id="deleteModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar enfermera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Seguro de realizar la acción de eliminar enfermera?</p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="idUser">
+                    <button type="button" class="btn btn-warning" onclick="deleteUser()">Eliminar</button>
+                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
