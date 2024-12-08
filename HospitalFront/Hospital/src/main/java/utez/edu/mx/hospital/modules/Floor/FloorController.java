@@ -17,39 +17,39 @@ public class FloorController {
     @Autowired
     private FloorService floorService;
 
-    @GetMapping("/{idFloor}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")// -> este metodo ya se utiliza en conjunto con User
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/{idFloor}")    // -> este metodo ya se utiliza en conjunto con User
     public ResponseEntity<?> findById(@PathVariable("idFloor") long idFloor){
         return floorService.findById(idFloor);
     }
 
-    @GetMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
+    @GetMapping("")
     public ResponseEntity<?> getAllFloors() {
         return floorService.findAllFloors();
     }
 
-    @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("")
     public ResponseEntity<?> addFloor(@RequestBody Floor floor){
         return  floorService.saveFloor(floor);
     }
 
-    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateFloor(@RequestBody Floor floor){
         return floorService.updateFloor(floor);
     }
 
     // Obtener camas de un piso específico
-    @GetMapping("/beds/{idFloor}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
+    @GetMapping("/beds/{idFloor}")
     public ResponseEntity<?> getBedsByFloorId(@PathVariable long idFloor) {
         return floorService.getBedsByFloorId(idFloor);
     }
 
-    @GetMapping("/nurses/{idFloor}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
+    @GetMapping("/nurses/{idFloor}")
     public ResponseEntity<?> getNursesByFloorId(@PathVariable("idFloor") long idFloor) {
         return floorService.getNursesByFloorId(idFloor);
     }

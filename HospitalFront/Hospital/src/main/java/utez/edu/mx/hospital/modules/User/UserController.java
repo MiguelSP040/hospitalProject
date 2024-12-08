@@ -16,38 +16,36 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //Traer todos los usuarios
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> findAll(){
         return userService.findAll();
     }
 
     //traer por el rol de los usuarios
-    @GetMapping("/rol/{idRole}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/rol/{idRole}")
     public ResponseEntity<?> findAllByIdRol(@PathVariable("idRole") int idRole){
         return userService.findAllByIdRol(idRole);
     }
 
     //traer por el id de usuario
-    @GetMapping("/{idUser}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
+    @GetMapping("/{idUser}")
     public ResponseEntity<?> findById(@PathVariable("idUser") long idUser){
         return userService.findById(idUser);
     }
 
-
     //guardar usuario
-    @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
+    @PostMapping("")
     public ResponseEntity<?> save(@RequestBody User user){
         return userService.save(user);
     }
 
     //actualizar usuario
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> update(@RequestBody User user){
         return userService.update(user);
     }
@@ -67,27 +65,26 @@ public class UserController {
     }
 
     //eliminar usuario
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{idUser}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> deleteById(@PathVariable("idUser") long idUser){
         return userService.deleteById(idUser);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @GetMapping("/withoutFloor")
-    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> findAllSecretariesWithoutFloor(){
         return userService.findAllSecretariesWithoutFloor();
     }
 
     //cambiar el piso de la enfermera
-    @PutMapping("/changeFloorNurse/{idUser}/{idFloor}")
     @PreAuthorize("hasRole('ROLE_SECRETARY')")
+    @PutMapping("/changeFloorNurse/{idUser}/{idFloor}")
     public ResponseEntity<?> changeFloorNurse(@PathVariable("idUser") long idUser, @PathVariable("idFloor") long idFloor) {
         return userService.changeFloorNurse(idUser, idFloor);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY') or hasRole('ROLE_NURSE')")
     @PutMapping("/changePassword")
-    @PreAuthorize("hasRole('ROLE_SECRETARY') or hasRole('ROLE_NURSE') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> changePassword(@RequestBody UserDTO user) {
         return userService.updatePassword(user);
     }

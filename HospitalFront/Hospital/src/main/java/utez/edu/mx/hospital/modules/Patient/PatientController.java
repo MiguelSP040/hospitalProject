@@ -12,30 +12,35 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     @GetMapping("")
     @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> getAllPatients() {
         return patientService.findAllPatients();
     }
 
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> getPatientById(@PathVariable long id) {
         return patientService.findPatientById(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> addPatient(@RequestBody Patient patient) {
         return patientService.savePatient(patient);
     }
 
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     @PutMapping("")
     @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> updatePatient(@RequestBody Patient patient) {
         return patientService.updatePatient(patient);
     }
 
+    @PreAuthorize("hasRole('ROLE_NURSE')")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_NURSE')")
     public ResponseEntity<?> changePatientDischarge(@PathVariable long id) {

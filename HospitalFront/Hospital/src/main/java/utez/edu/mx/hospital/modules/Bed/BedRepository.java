@@ -68,6 +68,9 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     @Query(value = "UPDATE bed SET is_occupied = :isOccupied WHERE id = :idBed;", nativeQuery = true)
     void changeIsOccupied(@Param("isOccupied") boolean isOccupied, @Param("idBed") long idBed);
 
+    @Modifying
+    @Query(value = "UPDATE bed SET id_patient = NULL WHERE id = :idBed AND id_patient = :idPatient;", nativeQuery = true)
+    void quitPatient(@Param("idPatient") long idPatient, @Param("idBed") long idBed);
 
 
 

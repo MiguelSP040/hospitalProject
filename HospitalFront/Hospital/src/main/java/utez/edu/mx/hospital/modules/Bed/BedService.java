@@ -325,29 +325,30 @@ public class BedService {
     }
 
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
-    public ResponseEntity<?>freeBed(long id){
+    public ResponseEntity<?> freeBed(long id) {
         Bed found = bedRepository.findById(id);
-        Patient patientFound = patientRepository.findById(found.getPatient().getId());
-
-        if(found==null || patientFound==null){
+        if (found == null) {
             return customResponseEntity.get404Response();
-        }else if (!found.getIsOccupied() && !patientFound.isDischarged()){
-            try{
+        }
+
+        Patient patientFound = patientRepository.findById(found.getPatient().getId());
+        if (patientFound == null) {
+            return customResponseEntity.get404Response();
+        }
+
+        if (found.getIsOccupied() && !patientFound.isDischarged()) {
+            try {
                 bedRepository.changeIsOccupied(false, found.getId());
-                patientRepository.changeDischarged(!patientFound.isDischarged(), found.getId());
-                return customResponseEntity.getOkResponse("Actualizacion exitosa", "Actualizado",200,null);
-            }catch (Exception e){
+                patientRepository.changeDischarged(true, patientFound.getId());
+                bedRepository.quitPatient(patientFound.getId(), found.getId());
+
+                return customResponseEntity.getOkResponse("OK", "Actualizado", 200, null);
+            } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println(e.getMessage());
                 return customResponseEntity.get400Response();
             }
-        }else {
+        } else {
             return customResponseEntity.get400Response();
         }
     }
-
-
-
-
-
 }

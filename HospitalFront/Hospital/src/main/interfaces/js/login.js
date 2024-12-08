@@ -57,10 +57,10 @@ const login = async () => {
             localStorage.setItem('rol', rol);
             if(rol==1){
                 window.location.replace('http://127.0.0.1:5500/html/nurse/list_owned_beds.html');
-            }else if(rol==3){
-                window.location.replace('http://127.0.0.1:5500/html/secretary/list_beds.html');
             }else if(rol==2){
                 window.location.replace('http://127.0.0.1:5500/html/admin/list_users.html');
+            }else if(rol==3){
+                window.location.replace('http://127.0.0.1:5500/html/secretary/list_beds.html');
             }
         } else if (response.status === 404) {
             // Mostrar mensaje de error si las credenciales son incorrectas o el usuario no existe

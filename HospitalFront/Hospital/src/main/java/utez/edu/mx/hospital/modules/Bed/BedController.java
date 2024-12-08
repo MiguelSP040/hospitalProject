@@ -18,71 +18,71 @@ public class BedController {
     private BedService bedService;
 
     //Traer todas las camas
-    @GetMapping("")
     @PreAuthorize("hasRole('ROLE_SECRETARY')")
+    @GetMapping("")
     public ResponseEntity<?> findAll(){
         return bedService.findAll();
     }
 
     //traer por el id de cama
-    @GetMapping("/{idBed}")
     @PreAuthorize("hasRole('ROLE_SECRETARY')")
+    @GetMapping("/{idBed}")
     public ResponseEntity<?> findById(@PathVariable("idBed") long idBed){
         return bedService.findById(idBed);
     }
 
     //guardar cama
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @PostMapping("")
-    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> save(@RequestBody Bed bed){
         return bedService.save(bed);
     }
 
     //actualizar cama
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @PutMapping("")
-    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> update(@RequestBody Bed bed){
         return bedService.update(bed);
     }
 
     //Encontrar camas por piso
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @GetMapping("/bedOnFloor/{idFloor}")
-    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> findBedOnFloor(@PathVariable ("idFloor") long idFloor){
         return bedService.findByFloor(idFloor);
     }
 
 
     //Encontrar camas disponibles por piso
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @GetMapping("/available/{idFloor}")
-    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> findAvailableByFloor(@PathVariable("idFloor") long idFloor){
         return bedService.findAvailableBedsByFloor(idFloor);
     }
 
     //Encontrar las camas sin enfermera por piso
-    @GetMapping("/withoutNurse/{idFloor}")
     @PreAuthorize("hasRole('ROLE_SECRETARY')")
+    @GetMapping("/withoutNurse/{idFloor}")
     public ResponseEntity<?> findBedsWithoutNurse(@PathVariable ("idFloor") long idFloor) {
         return bedService.findBedsWithoutNurseInFloor(idFloor);
     }
 
     //mostrar los pisos con camas sin enfermera
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @GetMapping("/floorsWithoutNurse")
-    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> findFloorsWithoutNurse() {
         return bedService.findFloorsWithoutNurse();
     }
 
     //contador de camas vacias por piso
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @GetMapping("/countEmptyBeds/{idFloor}")
-    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> countEmptyBedsInFloor(@PathVariable("idFloor") long idFloor) {
         return bedService.countEmptyBedsInFloor(idFloor);
     }
 
+    @PreAuthorize("hasRole('ROLE_NURSE') or hasRole('ROLE_SECRETARY')")
     @GetMapping("/findBedName/{idPatient}")
-    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> getBedNameByPatientId(@PathVariable("idPatient") long idPatient) {
         return bedService.findBedNameByPatientId(idPatient);
     }
@@ -99,7 +99,9 @@ public class BedController {
         return bedService.insertPatient(bed);
     }
 
-
-
-
+    @PreAuthorize("hasRole('ROLE_NURSE')")
+    @PutMapping("/freeBed/{id}")
+    public ResponseEntity<?> freeBed(@PathVariable("id") long id) {
+        return bedService.freeBed(id);
+    }
 }
