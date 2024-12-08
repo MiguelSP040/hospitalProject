@@ -25,21 +25,23 @@ const loadTable = async () => {
     await findAllSecretaries();
     let tbody = document.getElementById("tbody");
     let content = '';
-    userList.forEach((item, index) => {
+
+    for (const item of userList) {
+        const floorName = await fetchFloorName(item.id)
         content += `<tr>
-                        <th scope="row">${index + 1}</th>
+                        <th scope="row">${userList.indexOf(item) + 1}</th>
                         <td>${`${item.identificationName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.email}</td>
                         <td>${item.phoneNumber}</td>
                         <td>${item.username}</td>
-                        <td>${item.nurseInFloor ? item.nurseInFloor.identificationName : 'Sin piso asignado'}</td>
+                        <td>${floorName ? floorName : "Sin piso asignado"}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
                             <button class="btn btn-primary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal"
                                 data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;
-    });
+    }
     tbody.innerHTML = content;
 }
 
@@ -155,7 +157,6 @@ const saveUser = async () => {
         console.log(response);
         user = {};
         await loadTable();
-        form.reset();
     }).catch(console.log());
 }
 
@@ -186,7 +187,6 @@ const updateUser = async () => {
         console.log(response);
         user = {};
         await loadTable();
-        form.reset();
     }).catch(console.log());
 }
 
@@ -203,4 +203,15 @@ const deleteUser = async idUser => {
         user = {};
         await loadTable();
     }).catch(error => console.error(error));
+}
+
+const fetchFloorName = async (idUser) => {
+    try {
+        const response = await fetch(`${URL}/api/user/findFloorName/${idUser}`);
+        const result = await response.json(); // Parse the response as JSON
+        return result.data; // Return only the floor name
+    } catch (error) {
+        console.error(error.message);
+        return "Sin piso asignada"; // Default value if fetching fails
+    }
 }

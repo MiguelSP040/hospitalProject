@@ -80,4 +80,8 @@ public class UserController {
         return userService.updatePassword(user);
     }
 
+    @GetMapping("/findFloorName/{idUser}")
+    public ResponseEntity<?> getFloorNameBySecretary(@PathVariable("idUser") long idUser) {
+        return userService.findFloorNameBySecretary(idUser);
+    }
 }

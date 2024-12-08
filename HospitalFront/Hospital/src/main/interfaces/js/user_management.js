@@ -121,7 +121,7 @@ const loadUser = async id => {
 //Método para registrar un nuevo usuario
 const saveUser = async () => {
     let form = document.getElementById('registerForm');
-    user = {
+    let user = {
         identificationName: document.getElementById("regNombres").value,
         surname: document.getElementById("regApellidoPaterno").value,
         lastname: document.getElementById("regApellidoMaterno").value,
@@ -133,24 +133,17 @@ const saveUser = async () => {
         }
     };
 
-    try {
-        const response = await fetch(`${URL}/api/user`, {
+    await fetch(`${URL}/api/user`, {
             method: 'POST',
             headers: {
                 "Content-type": "application/json",
                 "Accept": "application/json"
             },
             body: JSON.stringify(user)
-        });
-        if (!response.ok) {
-            throw new Error("Failed to save user");
-        }
-        const result = await response.json();
-        console.log("User saved:", result);
-        await loadTable();
-    } catch (error) {
-        console.error(error);
-    }
+        }).then(response => response.json()).then(async response => {
+            user = {};
+            await loadTable();
+        }).catch(console.log());
 }
 
 //Método para editar un usuario
@@ -163,10 +156,7 @@ const updateUser = async () => {
         lastname : document.getElementById("updApellidoMaterno").value,
         email : document.getElementById("updEmail").value,
         phoneNumber : document.getElementById("updTelefono").value,
-        username : document.getElementById("updUsuario").value,
-        role : {
-            id: document.getElementById('updRol').value
-        }
+        username : document.getElementById("updUsuario").value
     };
 
     await fetch(`${URL}/api/user`, {
@@ -179,7 +169,7 @@ const updateUser = async () => {
     }).then(response => response.json()).then(async response => {
         user = {};
         await loadTable();
-    }).catch(error => console.error(error));
+    }).catch(console.log());
 }
 
 //Método para eliminar un usuario
