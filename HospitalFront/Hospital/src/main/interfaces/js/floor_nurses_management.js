@@ -1,5 +1,5 @@
 /*
-Falta registrar, editar y transferir
+Corregir el obtener el id del piso de la sesión. Manejando id estático actualmente
 */
 const URL = 'http://localhost:8080';
 let nurseList = [];
@@ -14,7 +14,7 @@ const username = localStorage.getItem('username')
 //Método para encontrar enfermeras por piso
 //El parámetro de idFloor se obtiene de la sesión de la secretaria
 const getNursesByFloorId = async () => {
-    await fetch(`${URL}/api/floor/nurses/1`, {
+    await fetch(`${URL}/api/floor/nurses/2`, {
         method: 'GET',
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -78,6 +78,17 @@ const loadCards = async () => {
     await loadCards();
 })();
 
+//Método para cargar la información de la enfermera en el updateModal
+const loadNurse = async idNurse => {
+    await findNurseById(idNurse);
+    document.getElementById("updNombres").value = nurse.identificationName;
+    document.getElementById("updApellidoPaterno").value = nurse.surname;
+    document.getElementById("updApellidoMaterno").value = nurse.lastname;
+    document.getElementById("updEmail").value = nurse.email;
+    document.getElementById("updTelefono").value = nurse.phoneNumber;
+    document.getElementById("updUsuario").value = nurse.username;
+}
+
 //Método para encontrar todos los pisos
 const findAllFloors = async () => {
     await fetch(`${URL}/api/floor`, {
@@ -94,10 +105,10 @@ const findAllFloors = async () => {
 
 
 //Método para cargar las opciones de pisos en el transferModal
-let selectedNurseId; // Global variable to store the nurse ID
+let selectedNurseId; // Variable global para almacenar el id de la enfermera
 
 const loadData = async (idNurse) => {
-    selectedNurseId = idNurse; // Save the idNurse globally
+    selectedNurseId = idNurse; 
     await findNurseById(idNurse);
     await findAllFloors();
 
@@ -120,7 +131,7 @@ const loadData = async (idNurse) => {
 //Método para transferir enfermera a otro piso
 const changeFloorNurse = async (idNurse, idFloor) => {
     try {
-        const response = await fetch(`${URL}/changeFloorNurse/${idNurse}/${idFloor}`, {
+        const response = await fetch(`${URL}/api/user/changeFloorNurse/${idNurse}/${idFloor}`, {
             method: 'PUT',
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -135,76 +146,79 @@ const changeFloorNurse = async (idNurse, idFloor) => {
 
         const result = await response.json();
         console.log('Transfer successful:', result);
-        return result; // Return the result in case it needs to be used
+        return result; 
     } catch (error) {
         console.error('Error transferring nurse:', error);
-        throw error; // Re-throw the error to handle it where the function is called
     }
 };
 
 
 const confirmTransfer = async () => {
     const floorSelect = document.getElementById('floor');
-    const selectedFloorId = floorSelect.value; // Get selected floor ID
+    const selectedFloorId = floorSelect.value; 
 
     if (!selectedNurseId || !selectedFloorId) {
-        alert('Por favor, seleccione una enfermera y un piso.');
+        console.log('Por favor, seleccione una enfermera y un piso.');
         return;
     }
 
     try {
         await changeFloorNurse(selectedNurseId, selectedFloorId);
-        alert('Transferencia realizada con éxito.');
-        // Optionally, refresh the cards or close the modal
+        console.log('Transferencia realizada con éxito.');
         await loadCards();
         const transferModal = bootstrap.Modal.getInstance(document.getElementById('transferModal'));
         transferModal.hide();
     } catch (error) {
         console.error('Error al transferir:', error);
-        alert('Hubo un problema al realizar la transferencia.');
     }
 }
 
-/*
-const savePet = async () => {
-    let form = document.getElementById('saveForm');
-    let modal = new bootstrap.Modal(document.getElementById('saveModal'))
-    pet = {
-        nickname: document.getElementById("nickname").value,
-        owner: {
-            id: document.getElementById('ownerList').value
-        },
-        type: {
-            id: document.getElementById('typeList').value
+const saveNurse = async () => {
+    let form = document.getElementById('registerForm');
+    nurse = {
+        identificationName: document.getElementById("regNombres").value,
+        surname: document.getElementById("regApellidoPaterno").value,
+        lastname: document.getElementById("regApellidoMaterno").value,
+        email: document.getElementById("regEmail").value,
+        phoneNumber: document.getElementById("regTelefono").value,
+        username: document.getElementById("regUsuario").value,
+        role:{
+            id: 3
         }
     };
 
-    await fetch(`${URL}/api/petShop`, {
+    await fetch(`${URL}/api/user`, {
         method: 'POST',
         headers: {
             "Content-type": "application/json",
             "Accept": "application/json"
         },
-        body: JSON.stringify(pet)
+        body: JSON.stringify(nurse)
     }).then(response => response.json()).then(async response => {
         console.log(response);
-        pet = {};
-        await loadTable();
+        nurse = {};
+        await loadCards();
         form.reset();
-    }).catch(console.log);
+    }).catch(console.log());
 }
 
-const updatePet = async () => {
+
+const updateNurse = async () => {
     let form = document.getElementById('updateForm');
-    let updated = {
-        nickname: document.getElementById("u_nickname").value,
-        owner: pet.owner,
-        type: {
-            id: document.getElementById('u_typeList').value
+    updated = {
+        id: nurse.id,
+        identificationName: document.getElementById("updNombres").value,
+        surname: document.getElementById("updApellidoPaterno").value,
+        lastname: document.getElementById("updApellidoMaterno").value,
+        email: document.getElementById("updEmail").value,
+        phoneNumber: document.getElementById("updTelefono").value,
+        username: document.getElementById("updUsuario").value,
+        nurseInFloor: {
+            id: 1
         }
     };
 
-    await fetch(`${URL}/api/pet/${pet.id}`, {
+    await fetch(`${URL}/api/user`, {
         method: 'PUT',
         headers: {
             "Content-type": "application/json",
@@ -213,23 +227,8 @@ const updatePet = async () => {
         body: JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
         console.log(response);
-        pet = {};
-        await loadTable();
+        nurse = {};
+        await loadCards();
         form.reset();
-    }).catch(console.log);
+    }).catch(console.log());
 }
-
-const deletePet = async () => {
-    await fetch(`${URL}/api/pet/${pet.id}`, {
-        method: 'DELETE',
-        headers: {
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-
-    }).then(response => response.json()).then(async response => {
-        console.log(response);
-        pet = {};
-        await loadTable();
-    }).catch(console.log);
-}*/
