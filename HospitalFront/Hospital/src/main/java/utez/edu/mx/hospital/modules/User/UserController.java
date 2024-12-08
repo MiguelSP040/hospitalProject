@@ -36,6 +36,7 @@ public class UserController {
         return userService.findById(idUser);
     }
 
+
     //guardar usuario
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY')")
     @PostMapping("")
@@ -95,4 +96,9 @@ public class UserController {
     public ResponseEntity<?> changeBedNurse(@RequestBody User user){return userService.changeBedNurse(user);
     }
 
+    @GetMapping("/findFloorName/{idUser}")
+    @PreAuthorize("hasRole('ROLE_SECRETARY') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getFloorNameBySecretary(@PathVariable("idUser") long idUser) {
+        return userService.findFloorNameBySecretary(idUser);
+    }
 }

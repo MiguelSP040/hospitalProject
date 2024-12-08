@@ -61,4 +61,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT  FROM user WHERE username = :username", nativeQuery = true)
     int findRoleByUsername(@Param("username") String username);
 
+    @Query("SELECT b.identificationName FROM Floor b WHERE b.secretary.id = :idUser")
+    String findFloorNameBySecretary(@Param("idUser") long idUser);
 }

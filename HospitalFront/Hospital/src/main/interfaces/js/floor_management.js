@@ -213,7 +213,7 @@ const loadFloor = async id => {
 //Método para registrar un piso
 const saveFloor = async () => {
     let form = document.getElementById('registerForm');
-    floor = {
+    let floor = {
         identificationName: document.getElementById("regNombre").value,
         secretary: {
             id: document.getElementById('regSecretary').value
@@ -231,7 +231,6 @@ const saveFloor = async () => {
     }).then(response => response.json()).then(async response => {
         floor = {};
         await loadCards();
-        form.reset();
     }).catch(console.log());
 }
 
@@ -257,6 +256,5 @@ const updateFloor = async () => {
     }).then(response => response.json()).then(async response => {
         floor = {};
         await loadCards();
-        form.reset();
     }).catch(console.log());
 }

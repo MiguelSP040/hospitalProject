@@ -377,5 +377,19 @@ public class UserService {
         }
     }
 
+    public ResponseEntity<?> findFloorNameBySecretary(long idUser) {
+        String floorName = null;
+        String message = "";
 
+        String foundFloorName = userRepository.findFloorNameBySecretary(idUser);
+
+        if (foundFloorName == null) {
+            return customResponseEntity.get404Response();
+        } else {
+            floorName = foundFloorName;
+            message = "Operación exitosa";
+        }
+
+        return customResponseEntity.getOkResponse(message, "OK", 200, floorName);
+    }
 }
