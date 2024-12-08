@@ -86,10 +86,15 @@ const loadCards = async () => {
         const nurseLastname = item.nurse_lastname || ''
         const isDisabled = item.nurse_name ? 'disabled' : ''; // Si tiene enfermera, se desactiva el botón
         const showChangeNurseButton = item.has_nurse ? '' : 'd-none';
+        const patientStatus = item.bed_occupiedPatient ?
+            { text: "Paciente en cama", class: "text-bg-info" } :
+            { text: "Sin paciente", class: "text-bg-secondary" };
+
         content += `
     <div class="col">
         <div class="card h-100 d-flex flex-row">
             <div class="card-body flex-grow-1">
+            <h6><span class="badge ${patientStatus.class}">${patientStatus.text}</span></h6>
                 <h4 class="card-title">${item.bed_name || "Sin nombre"}</h4>
                 <hr>
                 <div class="text-body-secondary">

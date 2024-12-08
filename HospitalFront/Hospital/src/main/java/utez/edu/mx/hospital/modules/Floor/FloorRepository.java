@@ -35,6 +35,7 @@ public interface FloorRepository extends JpaRepository<Floor, Long> {
             "f.identification_name AS floor_name, " +
             "b.id AS id, " +
             "b.identification_name AS bed_name, " +
+            "b.is_occupied as bed_occupiedPatient," +
             "b.has_nurse AS has_nurse, " +
             "n.full_name AS nurse_name, " +
             "n.surname AS nurse_surname," +
