@@ -1,5 +1,5 @@
 /*
-Falta transferir
+Corregir el obtener el id del piso de la sesión. Manejando id estático actualmente
 */
 const URL = 'http://localhost:8080';
 let nurseList = [];
@@ -10,7 +10,7 @@ let floor = {};
 //Método para encontrar enfermeras por piso
 //El parámetro de idFloor se obtiene de la sesión de la secretaria
 const getNursesByFloorId = async () => {
-    await fetch(`${URL}/api/floor/nurses/1`, {
+    await fetch(`${URL}/api/floor/nurses/2`, {
         method: 'GET',
         headers: {
             "Content-type": "application/json",
@@ -94,10 +94,10 @@ const findAllFloors = async () => {
 
 
 //Método para cargar las opciones de pisos en el transferModal
-let selectedNurseId; // Global variable to store the nurse ID
+let selectedNurseId; // Variable global para almacenar el id de la enfermera
 
 const loadData = async (idNurse) => {
-    selectedNurseId = idNurse; // Save the idNurse globally
+    selectedNurseId = idNurse; 
     await findNurseById(idNurse);
     await findAllFloors();
 
@@ -120,7 +120,7 @@ const loadData = async (idNurse) => {
 //Método para transferir enfermera a otro piso
 const changeFloorNurse = async (idNurse, idFloor) => {
     try {
-        const response = await fetch(`${URL}/changeFloorNurse/${idNurse}/${idFloor}`, {
+        const response = await fetch(`${URL}/api/user/changeFloorNurse/${idNurse}/${idFloor}`, {
             method: 'PUT',
             headers: {
                 "Content-type": "application/json",
@@ -134,33 +134,30 @@ const changeFloorNurse = async (idNurse, idFloor) => {
 
         const result = await response.json();
         console.log('Transfer successful:', result);
-        return result; // Return the result in case it needs to be used
+        return result; 
     } catch (error) {
         console.error('Error transferring nurse:', error);
-        throw error; // Re-throw the error to handle it where the function is called
     }
 };
 
 
 const confirmTransfer = async () => {
     const floorSelect = document.getElementById('floor');
-    const selectedFloorId = floorSelect.value; // Get selected floor ID
+    const selectedFloorId = floorSelect.value; 
 
     if (!selectedNurseId || !selectedFloorId) {
-        alert('Por favor, seleccione una enfermera y un piso.');
+        console.log('Por favor, seleccione una enfermera y un piso.');
         return;
     }
 
     try {
         await changeFloorNurse(selectedNurseId, selectedFloorId);
-        alert('Transferencia realizada con éxito.');
-        // Optionally, refresh the cards or close the modal
+        console.log('Transferencia realizada con éxito.');
         await loadCards();
         const transferModal = bootstrap.Modal.getInstance(document.getElementById('transferModal'));
         transferModal.hide();
     } catch (error) {
         console.error('Error al transferir:', error);
-        alert('Hubo un problema al realizar la transferencia.');
     }
 }
 
