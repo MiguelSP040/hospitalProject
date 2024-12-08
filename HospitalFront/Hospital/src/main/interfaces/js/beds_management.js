@@ -66,33 +66,36 @@ const loadCards = async () => {
     let content = '';
     bedList.forEach((item) => {
         const nurseName = item.nurse_name || "Sin asignar";
+        const isDisabled = item.nurse_name ? 'disabled' : ''; // Si tiene enfermera, se desactiva el botón
         content += `
-        <div class="col">
-            <div class="card h-100 d-flex flex-row">
-                <div class="card-body flex-grow-1">
-                    <h4 class="card-title">${item.bed_name || "Sin nombre"}</h4>
-                    <hr>
-                    <div class="text-body-secondary">
-                        Enfermera: ${nurseName}
-                    </div>
-                </div>
-                <div class="d-flex flex-column justify-content-start align-items-center p-3">
-                    <button class="btn btn-primary btn-sm mb-2" 
-                        onclick="loadBeds(${item.id})"
-                        data-bs-target="#updateModal" 
-                        data-bs-toggle="modal" >
-                        <i class="bi bi-pencil"></i> 
-                    </button>
-                    <button class="btn btn-success btn-sm mb-2" 
-                        onclick="loadNurse(${item.floor_id})"
-                        data-bs-target="#updateNurseModal" 
-                        data-bs-toggle="modal">
-                        <i class="bi bi-person-fill-up"></i>
-                    </button>
+    <div class="col">
+        <div class="card h-100 d-flex flex-row">
+            <div class="card-body flex-grow-1">
+                <h4 class="card-title">${item.bed_name || "Sin nombre"}</h4>
+                <hr>
+                <div class="text-body-secondary">
+                    Enfermera: ${nurseName}
                 </div>
             </div>
-        </div>`;
+            <div class="d-flex flex-column justify-content-start align-items-center p-3">
+                <button class="btn btn-primary btn-sm mb-2" 
+                    onclick="loadBeds(${item.id})"
+                    data-bs-target="#updateModal" 
+                    data-bs-toggle="modal">
+                    <i class="bi bi-pencil"></i> 
+                </button>
+                <button class="btn btn-success btn-sm mb-2" 
+                    onclick="loadNurse(${item.id})"
+                    data-bs-target="#updateNurseModal" 
+                    data-bs-toggle="modal"
+                    ${isDisabled}>
+                    <i class="bi bi-person-fill-up"></i>
+                </button>
+            </div>
+        </div>
+    </div>`;
     });
+
     bedCards.innerHTML = content;
 };
 
@@ -142,21 +145,78 @@ const loadBeds = async (id) => {
     document.getElementById("id").value = bed.id;
 };
 
-const loadNurse = async (id) => {
-    await getNursesByFloorId(id);
+const loadNurse = async (idBed) => {
+    // Cargar datos de la cama seleccionada
+    await findBedById(idBed);
+
+    const floorId = bed.floor.id;
+
+    await getNursesByFloorId(floorId);
+
+    // Configurar las opciones de selección de enfermeras
     let nurseSelect = document.getElementById('regNurse');
-    console.log(userList)
     let content = '';
     if (userList.length === 0) {
-        content += `<option selected disabled>No hay enfermeras</option>`
+        content += `<option selected disabled>No hay enfermeras</option>`;
     } else {
         content = `<option selected disabled hidden>Selecciona una enfermera</option>`;
         userList.forEach(item => {
-            content += `<option value="${item.id}">${item.identificationName}</option>`
+            content += `<option value="${item.id}">${item.identificationName}</option>`;
         });
     }
     nurseSelect.innerHTML = content;
+
+    document.getElementById('idBed').value = idBed;
 };
+
+// Método para actualizar las camas asignadas a una enfermera
+const updateInsertBed = async () => {
+    let form = document.getElementById('updateNurseForm');
+
+    const nurseId = document.getElementById('regNurse').value; // ID de la enfermera seleccionada
+    const bedId = document.getElementById('idBed').value = bed.id; // ID de la cama seleccionada
+
+    console.log(nurseId)
+    console.log(bedId)
+    if (!nurseId || !bedId) {
+        console.error("Faltan datos para realizar la operación.");
+        alert("Por favor, selecciona una enfermera y una cama.");
+        return;
+    }
+
+    // Crear el objeto JSON que se enviará en el cuerpo de la solicitud
+    const updated = {
+        id: nurseId,
+        beds: [
+            {
+                id: bedId
+            }
+        ]
+    };
+
+    try {
+        // Enviar la solicitud para actualizar las camas asignadas
+        const response = await fetch(`${URL}/api/user/beds`, {
+            method: 'PUT',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(updated)
+        });
+
+        const data = await response.json();
+        console.log("Camas asignadas a la enfermera:", data);
+        bed = {}
+        await loadCards(); // Recargar las tarjetas de camas
+        form.reset(); // Limpiar el formulario
+    } catch (error) {
+        console.error("Error al asignar camas a la enfermera:", error);
+        alert("No se pudo asignar la cama. Intenta nuevamente.");
+    }
+};
+
 
 // Método para actualizar la cama
 const updateBed = async () => {

@@ -166,37 +166,47 @@ public class UserService {
         }
     }
 
-    //metodo para que secretary asigne una bed a nurse
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> insertBedNurse(User user) {
+        // Buscar el usuario en el repositorio
         User userFound = userRepository.findById(user.getId());
         if (userFound == null) {
             return customResponseEntity.get404Response();
         }
+
         try {
-            List<Bed> beds = new ArrayList<>();
+            List<Bed> bedsToUpdate = new ArrayList<>();
+
+            // Iterar sobre las camas proporcionadas en el objeto `user`
             for (Bed b : user.getBeds()) {
                 Bed bedFound = bedRepository.findById(b.getId());
                 if (bedFound == null) {
                     return customResponseEntity.get404Response();
-                } else {
-                    bedFound.setHasNurse(true);
-                    userRepository.insertBeds(user.getId(), b.getId());
                 }
+
+                // Marcar la cama como asignada
+                bedFound.setHasNurse(true);
+                bedsToUpdate.add(bedFound);
+
+                // Realizar la inserción en la tabla intermedia
+                userRepository.insertBeds(user.getId(), b.getId());
             }
-            bedRepository.saveAll(beds);  // Guardar todas las camas modificadas
+
+            // Guardar todas las camas actualizadas
+            bedRepository.saveAll(bedsToUpdate);
+
             return customResponseEntity.getOkResponse(
-                    "Actualización exitosa",
+                    "Camas asignadas correctamente a la enfermera.",
                     "OK",
                     200,
                     null
             );
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(e.getMessage());
             return customResponseEntity.get400Response();
         }
     }
+
 
 
     //metodo para que secretary asigne floor a nurse

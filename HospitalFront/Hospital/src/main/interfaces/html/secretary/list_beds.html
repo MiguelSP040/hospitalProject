@@ -167,12 +167,13 @@
                 <label for="regNurse" class="form-label">Enfermeras:</label>
                 <select class="form-select" id="regNurse">
                 </select>
+                <input type="hidden" id="idBed">
               </div>
               <div>
               </div>
               <div class="col-12 text-end">
                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick=""
+                <button type="button" class="btn btn-primary" onclick="updateInsertBed()"
                         data-bs-dismiss="modal">Aceptar</button>
               </div>
             </form>
