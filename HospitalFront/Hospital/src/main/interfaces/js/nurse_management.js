@@ -8,6 +8,7 @@ let floorList = [];
 let floor = {};
 const role = localStorage.getItem('rol');
 const token = localStorage.getItem('token');
+const username = localStorage.getItem('username');
 
 //Método para obtener la lista de usuarios
 const findAllNurses = async () => {
@@ -52,6 +53,7 @@ const loadTable = async () => {
     if(role != 2){
         window.location.replace('http://127.0.0.1:5500/html/login.html');
     }
+    document.getElementById('userLogged').textContent = username;
     await loadTable();
 })();
 
