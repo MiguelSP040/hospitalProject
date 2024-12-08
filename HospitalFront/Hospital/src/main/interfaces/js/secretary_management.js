@@ -7,6 +7,8 @@ let user = {};
 let floorList = [];
 let floor = {};
 const role = localStorage.getItem('rol');
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username')
 
 
 //Método para obtener la lista de usuarios
@@ -14,6 +16,7 @@ const findAllSecretaries = async () => {
     await fetch(`${URL}/api/user/rol/3`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -50,7 +53,9 @@ const loadTable = async () => {
     if(role != 2){
         window.location.replace('http://127.0.0.1:5500/html/login.html');
     }
+    document.getElementById('userLogged').textContent = username;
     await loadTable();
+    
 })();
 
 //Método para cargar la lista de pisos
@@ -58,6 +63,7 @@ const findAllFloors = async () => {
     await fetch(`${URL}/api/floor`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -88,6 +94,7 @@ const findUserById = async idUser => {
     await fetch(`${URL}/api/user/${idUser}`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -152,6 +159,7 @@ const saveUser = async () => {
     await fetch(`${URL}/api/user`, {
         method: 'POST',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         },
@@ -183,6 +191,7 @@ const updateUser = async () => {
     await fetch(`${URL}/api/user`, {
         method: 'PUT',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         },
@@ -200,6 +209,7 @@ const deleteUser = async idUser => {
     await fetch(`${URL}/api/user/delete/${idUser}`, {
         method: 'DELETE',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         },

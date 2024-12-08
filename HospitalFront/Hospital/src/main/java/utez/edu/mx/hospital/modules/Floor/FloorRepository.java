@@ -8,6 +8,7 @@ import utez.edu.mx.hospital.modules.Bed.Bed;
 import utez.edu.mx.hospital.modules.User.User;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface FloorRepository extends JpaRepository<Floor, Long> {

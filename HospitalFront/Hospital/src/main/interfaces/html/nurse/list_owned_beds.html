@@ -11,7 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -54,7 +54,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h3 class="custom-title">
                 Camas asignadas:
-                <i id="numPiso">Piso 01</i>
+                <i id="numPiso"></i>
             </h3>
         </div>
 
@@ -67,8 +67,7 @@
         </div>
 
         <!-- Modal para Asignar Paciente -->
-        <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -87,7 +86,7 @@
                             </div>
                             <div class="col-12 text-end">
                                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                <button type="button" class="btn btn-primary" onclick="insertPatient()"
+                                <button type="button" id="insertPatientButton" class="btn btn-primary" onclick="insertPatient()"
                                     data-bs-dismiss="modal">Registrar</button>
                             </div>
                         </form>
@@ -96,8 +95,30 @@
             </div>
         </div>
 
+        <!-- Modal para Liberar Cama y Dar de Alta al Paciente -->
+        <div class="modal fade" id="confirmFreeBedModal" tabindex="-1" aria-labelledby="confirmFreeBedModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="material-symbols-outlined">warning</span>
+                        <h5 class="modal-title ms-2" id="confirmFreeBedModalLabel">Confirmación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>¿Estás segur@ de dar de alta al paciente: <span id="patientName" class="fw-bold"></span>?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" onclick="freePatientAndBed()">Liberar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
         <!-- Modal para Ver Más -->
-        <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -140,6 +161,7 @@
             </div>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
         <script src="../../js/bootstrap.bundle.min.js"></script>
         <script src="../../js/list_owned_beds.js" defer></script>
         <script src="../../js/logout.js"></script>

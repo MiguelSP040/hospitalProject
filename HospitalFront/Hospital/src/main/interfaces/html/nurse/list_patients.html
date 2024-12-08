@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../css/navbar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -38,7 +39,7 @@
                 </ul>
                 <!-- Sesión activa -->
                 <div class="ms-auto d-flex align-items-center">
-                    <span class="text-white me-3">miguel@correo.com</span>
+                    <span class="text-white me-3" id="userLogged"></span>
                     <button onclick="logout()" class="btn btn-sm d-flex align-items-center text-white">
                         <span class="material-symbols-outlined">
                             logout
@@ -103,7 +104,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="needs-validation" id="registerForm" novalidate>
+                    <form class="needs-validation" id="registerForm">
                         <div class=" row mb-3">
                             <div class="col">
                                 <label for="regNombres" class="form-label">Nombre(s):</label>
@@ -120,7 +121,7 @@
                             <div class="col">
                                 <label for="regApellidoMaterno" class="form-label">Apellido Materno:</label>
                                 <input type="text" class="form-control" id="regApellidoMaterno"
-                                    placeholder="Ingresa el apellido materno">
+                                    placeholder="Ingresa el apellido materno" required>
                             </div>
                             <div class="col">
                                 <label for="regTelefono" class="form-label">Teléfono:</label>
@@ -129,8 +130,8 @@
                             </div>
                         </div>
                         <div class="col-12 text-end">
-                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="savePatient()"
+                            <button type="reset" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" onclick="savePatient()"
                                 data-bs-dismiss="modal">Registrar</button>
                         </div>
                     </form>
@@ -178,7 +179,7 @@
                         </div>
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="updatePatient()"
+                            <button type="button" class="btn btn-primary" onclick="updatePatient()"
                                 data-bs-dismiss="modal">Actualizar</button>
                         </div>
                     </form>
@@ -187,6 +188,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <script src="../../js/patient_management.js"></script>
     <script src="../../js/logout.js"></script>

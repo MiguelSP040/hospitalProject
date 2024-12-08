@@ -27,7 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()).authorizeHttpRequests((authz) -> authz
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/auth/role/**").permitAll()
+                .requestMatchers("/api/role/**").permitAll()
                 .requestMatchers("/api/**").hasAnyRole("NURSE", "SECRETARY", "ADMIN").anyRequest().authenticated()
         ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

@@ -5,12 +5,15 @@ const URL = 'http://localhost:8080';
 let floorList = [];
 let floor = {};
 const role = localStorage.getItem('rol');
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username')
 
 //Método para obtener la lista de pisos
 const findAllFloors = async () => {
     await fetch(`${URL}/api/floor`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -22,11 +25,18 @@ const findAllFloors = async () => {
 //Método para contar las camas por piso
 const getBedsOnFloor = async (idFloor) => {
     try {
-        const response = await fetch(`${URL}/api/floor/beds/${idFloor}`);
+        const response = await fetch(`${URL}/api/floor/beds/${idFloor}`, {
+            method: 'GET',  // Asegúrate de especificar el método si es necesario
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"  // Asegúrate de indicar el tipo de contenido si es necesario
+            }
+        });
+
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
-        
+
         const result = await response.json();
 
         // Check if the response directly contains nurses, not floors
@@ -40,13 +50,20 @@ const getBedsOnFloor = async (idFloor) => {
     }
 };
 
-//Método para contar las enfermeras por piso
 const countNurses = async (idFloor) => {
     try {
-        const response = await fetch(`${URL}/api/floor/nurses/${idFloor}`);
+        const response = await fetch(`${URL}/api/floor/nurses/${idFloor}`, {
+            method: 'GET',  // Asegúrate de especificar el método si es necesario
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"  // Asegúrate de indicar el tipo de contenido si es necesario
+            }
+        });
+
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
+
         const result = await response.json();
 
         // Check if the response directly contains nurses, not floors
@@ -59,7 +76,6 @@ const countNurses = async (idFloor) => {
         return { nursesList: [], count: 0 };
     }
 };
-
 
 const loadCards = async () => {
     await findAllFloors();
@@ -104,6 +120,7 @@ const loadCards = async () => {
     if(role != 2){
         window.location.replace('http://127.0.0.1:5500/html/login.html');
     }
+    document.getElementById('userLogged').textContent = username;
     await loadCards();
 })();
 
@@ -112,6 +129,7 @@ const findAllSecretariesWithoutFloor = async () => {
         const response = await fetch(`${URL}/api/user/withoutFloor`, {
             method: 'GET',
             headers: {
+                "Authorization": `Bearer ${token}`,
                 "Content-type": "application/json",
                 "Accept": "application/json"
             }
@@ -163,6 +181,7 @@ const findFloorById = async idFloor => {
     await fetch(`${URL}/api/floor/${idFloor}`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -204,6 +223,7 @@ const saveFloor = async () => {
     await fetch(`${URL}/api/floor`, {
         method: 'POST',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         },
@@ -229,6 +249,7 @@ const updateFloor = async () => {
     await fetch(`${URL}/api/floor/${floor.id}`, {
         method : 'PUT',
         headers : {
+            "Authorization": `Bearer ${token}`,
             "Content-type" : "application/json",
             "Accept" : "application/json"
         },

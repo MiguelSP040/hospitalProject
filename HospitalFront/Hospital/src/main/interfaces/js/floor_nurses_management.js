@@ -7,6 +7,8 @@ let floorList = [];
 let nurse = {};
 let floor = {};
 const role = localStorage.getItem('rol');
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username')
 
 
 //Método para encontrar enfermeras por piso
@@ -15,6 +17,7 @@ const getNursesByFloorId = async () => {
     await fetch(`${URL}/api/floor/nurses/1`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -28,6 +31,7 @@ const findNurseById = async idNurse => {
     await fetch(`${URL}/api/user/${idNurse}`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -70,6 +74,7 @@ const loadCards = async () => {
     if(role != 3){
         window.location.replace('http://127.0.0.1:5500/html/login.html');
     }
+    document.getElementById('userLogged').textContent = username;
     await loadCards();
 })();
 
@@ -78,6 +83,7 @@ const findAllFloors = async () => {
     await fetch(`${URL}/api/floor`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -117,6 +123,7 @@ const changeFloorNurse = async (idNurse, idFloor) => {
         const response = await fetch(`${URL}/changeFloorNurse/${idNurse}/${idFloor}`, {
             method: 'PUT',
             headers: {
+                "Authorization": `Bearer ${token}`,
                 "Content-type": "application/json",
                 "Accept": "application/json"
             }
