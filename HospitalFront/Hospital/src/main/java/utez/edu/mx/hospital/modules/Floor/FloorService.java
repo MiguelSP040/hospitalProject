@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.Bed;
 import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
+import utez.edu.mx.hospital.modules.Bed.BedRepository;
 import utez.edu.mx.hospital.modules.Bed.BedService;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
@@ -16,10 +17,12 @@ import utez.edu.mx.hospital.utils.CustomResponseEntity;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class FloorService {
+
 
     @Autowired
     private FloorRepository floorRepository;
@@ -152,5 +155,40 @@ public class FloorService {
         String message = nurses.isEmpty() ? "No hay enfermeras asignadas a este piso" : "Operación exitosa";
         return customResponseEntity.getOkResponse(message, "OK", 200, nurses);
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getBedsAndFloorBySecretaryUsername(String username) {
+        // Obtener resultados del repository
+        List<Map<String, Object>> results = floorRepository.findBedsAndFloorBySecretaryUsername(username);
+
+        // Verificar si los resultados están vacíos
+        if (results == null || results.isEmpty()) {
+            return customResponseEntity.get404Response();
+        }
+
+        // Log para depuración (opcional)
+        results.forEach(result -> {
+            System.out.println("Resultado: " + result);
+        });
+
+        // Construir respuesta exitosa
+        String message = "Operación exitosa";
+        return customResponseEntity.getOkResponse(message, "OK", 200, results);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getFloorBySecretaryUsername(String username) {
+        // Obtener datos del piso mediante el repositorio
+        Map<String, String> floorData = floorRepository.findFloorBySecretaryUsername(username);
+
+        // Validar si se encontraron datos
+        if (floorData == null || floorData.isEmpty()) {
+            return customResponseEntity.get404Response();
+        }
+
+        String message = "Operación exitosa";
+        return customResponseEntity.getOkResponse(message, "OK", 200, floorData);
+    }
+
 
 }

@@ -11,6 +11,7 @@ import utez.edu.mx.hospital.modules.User.User;
 
 import java.awt.print.Pageable;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface BedRepository extends JpaRepository<Bed, Long> {
@@ -66,5 +67,8 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     @Modifying
     @Query(value = "UPDATE bed SET is_occupied = :isOccupied WHERE id = :idBed;", nativeQuery = true)
     void changeIsOccupied(@Param("isOccupied") boolean isOccupied, @Param("idBed") long idBed);
+
+
+
 
 }

@@ -8,6 +8,7 @@ import utez.edu.mx.hospital.modules.Bed.Bed;
 import utez.edu.mx.hospital.modules.User.User;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface FloorRepository extends JpaRepository<Floor, Long> {
@@ -25,7 +26,32 @@ public interface FloorRepository extends JpaRepository<Floor, Long> {
     @Query(value = "SELECT b FROM Bed b WHERE b.floor.id = :idFloor")
     List<Bed> getBedsByFloorId(@Param("idFloor") long idFloor);
 
+
     // Obtener enfermeras de un piso específico
     @Query("SELECT u FROM User u JOIN u.nurseInFloor f WHERE f.id = :idFloor AND u.role.name = 'nurse'")
     List<User> getNursesByFloorId(@Param("idFloor") long idFloor);
+
+    @Query(value ="SELECT f.identification_name AS floor_name, " +
+            "b.id AS id, " +
+            "b.identification_name AS bed_name, " +
+            "b.has_nurse AS has_nurse, " +
+            "n.full_name AS nurse_name, " +
+            "u.full_name AS secretary_name " +
+            "FROM floor f " +
+            "JOIN bed b ON b.id_floor = f.id " +
+            "JOIN user u ON f.secretary_in_charge = u.id " +
+            "LEFT JOIN user_has_beds ub ON b.id = ub.id_bed " +
+            "LEFT JOIN user n ON ub.id_user = n.id AND n.id_role = 1 " +
+            "WHERE u.username = :username",
+            nativeQuery = true)
+    List<Map<String, Object>> findBedsAndFloorBySecretaryUsername(@Param("username") String username);
+
+    @Query(value = "SELECT f.identification_name AS floor_name, " + "f.id as id," +
+            "u.full_name AS secretary_name " +
+            "FROM floor f " +
+            "JOIN user u ON f.secretary_in_charge = u.id " +
+            "WHERE u.username = :username",
+            nativeQuery = true)
+    Map<String, String> findFloorBySecretaryUsername(@Param("username") String username);
+
 }

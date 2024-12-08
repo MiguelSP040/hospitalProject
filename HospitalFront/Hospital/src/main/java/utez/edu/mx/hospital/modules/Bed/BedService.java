@@ -18,6 +18,7 @@ import utez.edu.mx.hospital.utils.CustomResponseEntity;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -162,13 +163,12 @@ public class BedService {
         Bed found = bedRepository.findById(bed.getId());
         if(found==null){
             return customResponseEntity.get404Response();
-        }else if(found.getHasNurse()){
-            return customResponseEntity.getOkResponse("Esta cama tiene enfermera asignada", "Error en operación", 400, null);
         }else {
             try{
                 bed.setIsOccupied(found.getIsOccupied());
                 bed.setPatient(found.getPatient());
                 bed.setHasNurse(found.getHasNurse());
+                bed.setFloor(found.getFloor());
                 bedRepository.save(bed);
                 return customResponseEntity.getOkResponse("Actualizacion exitosa", "Actualizado",200,null);
             }catch (Exception e){
@@ -345,6 +345,7 @@ public class BedService {
             return customResponseEntity.get400Response();
         }
     }
+
 
 
 

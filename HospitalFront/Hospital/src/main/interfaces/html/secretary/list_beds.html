@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="../../css/navbar.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 
@@ -56,9 +57,7 @@
         <i id="numPiso"></i>
       </h3>
       <div class="d-flex align-items-center">
-        <select class="form-select form-select-md w-auto me-2" id="selectFloor" aria-label="Large select example" onclick="loadFloors()">
-        </select>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" >
           Registrar Camas
         </button>
       </div>
@@ -108,14 +107,9 @@
                 <label for="regNombre" class="form-label">Nombre:</label>
                 <input type="text" class="form-control" id="regNombre" placeholder="Ingresa el nomrbe de la cama" required>
               </div>
-              <div>
-                <label for="regFloor" class="form-label">Pisos:</label>
-                <select class="form-select" id="regFloor">
-                </select>
-            </div>
               <div class="col-12 text-end">
                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" onclick="saveBed()"
+                <button type="button" class="btn btn-primary" onclick="saveBed()"
                   data-bs-dismiss="modal">Registrar</button>
               </div>
             </form>
@@ -139,16 +133,15 @@
             <form class="row g-3 needs-validation" id="updateForm" novalidate>
               <div>
                 <label for="updNombre" class="form-label">Nombre:</label>
+                <input type="hidden" id="id">
                 <input type="text" class="form-control" id="updNombre" placeholder="Ingresa el nombre de la cama" required>
+
               </div>
               <div>
-                <label for="updFloor" class="form-label">Piso:</label>
-                <select class="form-select" id="updFloor">
-                </select>
             </div>
               <div class="col-12 text-end">
                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" onclick="updateBed()"
+                <button type="button" class="btn btn-primary" onclick="updateBed()"
                   data-bs-dismiss="modal">Actualizar</button>
               </div>
             </form>
@@ -156,6 +149,39 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal para agregar enfermera -->
+    <div class="modal fade" id="updateNurseModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span class="material-symbols-outlined">
+              bed
+            </span>
+            <h5 class="modal-title ms-1" id="updateNurseModalLabel">Agregar enfermeras</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form class="row g-3 needs-validation" id="updateNurseForm" novalidate>
+              <div>
+                <label for="regNurse" class="form-label">Enfermeras:</label>
+                <select class="form-select" id="regNurse">
+                </select>
+              </div>
+              <div>
+              </div>
+              <div class="col-12 text-end">
+                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick=""
+                        data-bs-dismiss="modal">Aceptar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
     <script src="../../js/bootstrap.bundle.min.js"></script>
   <script src="../../js/beds_management.js"></script>
