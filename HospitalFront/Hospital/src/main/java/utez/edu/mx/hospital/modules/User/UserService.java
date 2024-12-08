@@ -168,41 +168,31 @@ public class UserService {
 
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> insertBedNurse(User user) {
-        // Buscar el usuario en el repositorio
         User userFound = userRepository.findById(user.getId());
         if (userFound == null) {
             return customResponseEntity.get404Response();
         }
-
         try {
-            List<Bed> bedsToUpdate = new ArrayList<>();
-
-            // Iterar sobre las camas proporcionadas en el objeto `user`
+            List<Bed> beds = new ArrayList<>();
             for (Bed b : user.getBeds()) {
                 Bed bedFound = bedRepository.findById(b.getId());
                 if (bedFound == null) {
                     return customResponseEntity.get404Response();
+                } else {
+                    bedFound.setHasNurse(true);
+                    userRepository.insertBeds(user.getId(), b.getId());
                 }
-
-                // Marcar la cama como asignada
-                bedFound.setHasNurse(true);
-                bedsToUpdate.add(bedFound);
-
-                // Realizar la inserción en la tabla intermedia
-                userRepository.insertBeds(user.getId(), b.getId());
             }
-
-            // Guardar todas las camas actualizadas
-            bedRepository.saveAll(bedsToUpdate);
-
+            bedRepository.saveAll(beds);  // Guardar todas las camas modificadas
             return customResponseEntity.getOkResponse(
-                    "Camas asignadas correctamente a la enfermera.",
+                    "Actualización exitosa",
                     "OK",
                     200,
                     null
             );
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
             return customResponseEntity.get400Response();
         }
     }
