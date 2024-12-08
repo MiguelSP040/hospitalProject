@@ -31,7 +31,8 @@ public interface FloorRepository extends JpaRepository<Floor, Long> {
     @Query("SELECT u FROM User u JOIN u.nurseInFloor f WHERE f.id = :idFloor AND u.role.name = 'nurse'")
     List<User> getNursesByFloorId(@Param("idFloor") long idFloor);
 
-    @Query(value ="SELECT f.identification_name AS floor_name, " +
+    @Query(value ="SELECT f.id AS floor_id, " +
+            "f.identification_name AS floor_name, " +
             "b.id AS id, " +
             "b.identification_name AS bed_name, " +
             "b.has_nurse AS has_nurse, " +

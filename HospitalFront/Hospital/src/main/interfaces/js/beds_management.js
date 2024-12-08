@@ -84,10 +84,10 @@ const loadCards = async () => {
                         <i class="bi bi-pencil"></i> 
                     </button>
                     <button class="btn btn-success btn-sm mb-2" 
-                        onclick="loadNurse(${item.id})"
+                        onclick="loadNurse(${item.floor_id})"
                         data-bs-target="#updateNurseModal" 
                         data-bs-toggle="modal">
-                        <i class="bi bi-reply-fill"></i>
+                        <i class="bi bi-person-fill-up"></i>
                     </button>
                 </div>
             </div>
@@ -144,7 +144,7 @@ const loadBeds = async (id) => {
 
 const loadNurse = async (id) => {
     await getNursesByFloorId(id);
-    let nurseSelect = document.getElementById('regSecretary');
+    let nurseSelect = document.getElementById('regNurse');
     console.log(userList)
     let content = '';
     if (userList.length === 0) {
