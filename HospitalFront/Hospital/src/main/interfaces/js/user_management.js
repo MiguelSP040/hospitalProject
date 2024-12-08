@@ -39,7 +39,7 @@ const loadTable = async () => {
                         <td>${item.email}</td>
                         <td>${item.phoneNumber}</td>
                         <td>${item.username}</td>
-                        <td>${item.role.name}</td>
+                        <td>${item.role.name.replace("ROLE_","")}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
                             <button class="btn btn-primary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal" data-bs-toggle="modal">Editar</button>
