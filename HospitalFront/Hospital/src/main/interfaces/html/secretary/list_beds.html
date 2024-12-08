@@ -136,9 +136,6 @@
                 <label for="updNombre" class="form-label">Nombre:</label>
                 <input type="hidden" id="id">
                 <input type="text" class="form-control" id="updNombre" placeholder="Ingresa el nombre de la cama" required>
-
-              </div>
-              <div>
             </div>
               <div class="col-12 text-end">
                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -176,6 +173,38 @@
                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary" onclick="updateInsertBed()"
                         data-bs-dismiss="modal">Aceptar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para agregar enfermera -->
+    <div class="modal fade" id="changeNurseModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span class="material-symbols-outlined">
+              bed
+            </span>
+            <h5 class="modal-title ms-1" id="changeNurseModalLabel">Cambiar enfermera</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form class="row g-3 needs-validation" id="changeNurseForm" novalidate>
+              <div>
+                <label for="regNurse" class="form-label">Enfermeras:</label>
+                <select class="form-select" id="chNurse">
+                </select>
+                <input type="hidden" id="idBedNurse">
+              </div>
+              <div>
+              </div>
+              <div class="col-12 text-end">
+                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="changeInsertBed()"
+                        data-bs-dismiss="modal">Cambiar</button>
               </div>
             </form>
           </div>

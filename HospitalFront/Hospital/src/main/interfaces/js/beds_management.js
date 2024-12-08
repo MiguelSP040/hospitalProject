@@ -85,6 +85,7 @@ const loadCards = async () => {
         const nurseSurname = item.nurse_surname || ''
         const nurseLastname = item.nurse_lastname || ''
         const isDisabled = item.nurse_name ? 'disabled' : ''; // Si tiene enfermera, se desactiva el botón
+        const showChangeNurseButton = item.has_nurse ? '' : 'd-none';
         content += `
     <div class="col">
         <div class="card h-100 d-flex flex-row">
@@ -108,6 +109,12 @@ const loadCards = async () => {
                     data-bs-toggle="modal"
                     ${isDisabled}>
                     <i class="bi bi-person-fill-up"></i>
+                </button>
+               <button class="btn btn-outline-warning btn-sm mb-2 ${showChangeNurseButton}" 
+                    onclick="loadChangeNurse(${item.id})"
+                    data-bs-target="#changeNurseModal" 
+                    data-bs-toggle="modal">
+                   <i class="bi bi-people-fill"></i>
                 </button>
             </div>
         </div>
@@ -161,6 +168,7 @@ const loadBeds = async (id) => {
     console.log(bed)
     document.getElementById("updNombre").value = bed.identificationName;
     document.getElementById("id").value = bed.id;
+
 };
 
 const loadNurse = async (idBed) => {
@@ -191,8 +199,8 @@ const loadNurse = async (idBed) => {
 const updateInsertBed = async () => {
     let form = document.getElementById('updateNurseForm');
 
-    const nurseId = document.getElementById('regNurse').value; // ID de la enfermera seleccionada
-    const bedId = document.getElementById('idBed').value = bed.id; // ID de la cama seleccionada
+    const nurseId = document.getElementById('regNurse').value;
+    const bedId = document.getElementById('idBed').value = bed.id;
 
     console.log(nurseId)
     console.log(bedId)
@@ -204,11 +212,10 @@ const updateInsertBed = async () => {
             icon: 'error',
             confirmButtonText: 'Entendido'
         });
-        form.reset(); // Limpiar el formulario al detectar un error
+        form.reset();
         return;
     }
 
-    // Crear el objeto JSON que se enviará en el cuerpo de la solicitud
     const updated = {
         id: nurseId,
         beds: [
@@ -246,6 +253,95 @@ const updateInsertBed = async () => {
         await Swal.fire({
             title: 'Selección inválida',
             text: 'No se logró asignar enfermera a la cama',
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+        });
+        form.reset();
+    }
+};
+
+const loadChangeNurse = async (idBedNurse) => {
+    // Cargar datos de la cama seleccionada
+    await findBedById(idBedNurse);
+
+    const floorId = bed.floor.id;
+
+    await getNursesByFloorId(floorId);
+
+    // Configurar las opciones de selección de enfermeras
+    let nurseSelect = document.getElementById('chNurse');
+    let content = '';
+    if (userList.length === 0) {
+        content += `<option selected disabled>No hay enfermeras</option>`;
+    } else {
+        content = `<option selected disabled hidden>Selecciona una enfermera</option>`;
+        userList.forEach(item => {
+            content += `<option value="${item.id}">${item.identificationName} ${item.surname} ${item.lastname}</option>`;
+        });
+    }
+    nurseSelect.innerHTML = content;
+
+    document.getElementById('idBedNurse').value = idBed;
+};
+
+// Método para actualizar las camas asignadas a una enfermera
+const changeInsertBed = async () => {
+    let form = document.getElementById('changeNurseForm');
+
+    const nurseId = document.getElementById('chNurse').value;
+    const bedId = document.getElementById('idBedNurse').value = bed.id;
+
+    console.log(nurseId)
+    console.log(bedId)
+    if (!nurseId || !bedId) {
+        console.log("Faltan datos para realizar la operación.");
+        await Swal.fire({
+            title: 'Selección inválida',
+            text: 'No se logró asignar cama a enfermera',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
+        return;
+    }
+
+    const updated = {
+        id: nurseId,
+        beds: [
+            {
+                id: bedId
+            }
+        ]
+    };
+
+    try {
+        // Enviar la solicitud para actualizar las camas asignadas
+        const response = await fetch(`${URL}/api/user/bedsChange`, {
+            method: 'PUT',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(updated)
+        });
+
+        const data = await response.json();
+        console.log("Cambio de enfermera exitoso:", data);
+        bed = {}
+        await loadCards();
+        form.reset();
+        await Swal.fire({
+            title: 'Cambio de asignación exitoso',
+            text: 'Hiciste un cambio de enfermera a la cama',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
+    } catch (error) {
+        console.error("Error al hacer cambio de enfermera:", error);
+        await Swal.fire({
+            title: 'Selección inválida',
+            text: 'No se logró re asignar enfermera a la cama',
             icon: 'error',
             confirmButtonText: 'Cerrar'
         });

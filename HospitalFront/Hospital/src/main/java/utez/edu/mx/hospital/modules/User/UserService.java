@@ -197,7 +197,39 @@ public class UserService {
         }
     }
 
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> changeBedNurse(User user) {
+        // Verificar si el usuario existe
+        User userFound = userRepository.findById(user.getId());
+        if (userFound == null) {
+            return customResponseEntity.get404Response();
+        }
 
+        try {
+            for (Bed b : user.getBeds()) {
+                // Verificar si la cama existe
+                Bed bedFound = bedRepository.findById(b.getId());
+                if (bedFound == null) {
+                    return customResponseEntity.get404Response();
+                }
+
+                // Marcar la cama como ocupada y actualizar la relación
+                bedFound.setHasNurse(true);
+                userRepository.changeBeds(user.getId(), b.getId());
+            }
+
+            return customResponseEntity.getOkResponse(
+                    "Actualización exitosa",
+                    "OK",
+                    200,
+                    null
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return customResponseEntity.get400Response();
+        }
+    }
 
     //metodo para que secretary asigne floor a nurse
     @Transactional(rollbackFor = {SQLException.class, Exception.class})

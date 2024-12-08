@@ -46,6 +46,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "insert into user_has_beds(id_user, id_bed) values (:idUser, :idBed);", nativeQuery = true)
     void insertBeds(@Param("idUser") long idUser, @Param("idBed") long idBed);
 
+    @Modifying
+    @Query(value = "UPDATE user_has_beds SET id_user = :idUser WHERE id_bed = :idBed", nativeQuery = true)
+    void changeBeds(@Param("idUser") long idUser, @Param("idBed") long idBed);
+
     //metodo para buscar secretarias sin piso
     @Query("SELECT u FROM User u LEFT JOIN u.secretary_in_charge f WHERE u.role.id = 3 AND f IS NULL")
     List<User> findSecretariesWithoutFloor();

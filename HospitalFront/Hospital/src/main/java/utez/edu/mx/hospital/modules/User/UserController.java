@@ -92,6 +92,10 @@ public class UserController {
         return userService.updatePassword(user);
     }
 
-
+    //secretary cambia camas a nurse
+    @PutMapping("/bedsChange")
+    @PreAuthorize("hasRole('ROLE_SECRETARY')")
+    public ResponseEntity<?> changeBedNurse(@RequestBody User user){return userService.changeBedNurse(user);
+    }
 
 }
