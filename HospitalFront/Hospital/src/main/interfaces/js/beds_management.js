@@ -42,6 +42,8 @@ const loadPutFloor = async () => {
     await getFloorBySecretaryUsername();
 
     const numPiso = document.getElementById("numPiso");
+    const registerButton = document.getElementById("registerButton");
+
     if (!numPiso) {
         console.error("Elemento numPiso no encontrado en el DOM.");
         return;
@@ -49,7 +51,21 @@ const loadPutFloor = async () => {
 
     const floorName = floor?.floor_name || "No tienes piso";
     numPiso.textContent = floorName; // Actualizar solo el contenido del elemento <i>
+
+    // Si no hay un piso asignado, ocultar el botón
+    if (!floor || !floor.id) {
+        registerButton.style.display = "none";
+    } else {
+        registerButton.style.display = "inline-block"; // Asegurarse de que sea visible si hay un piso
+    }
 };
+
+(async () => {
+    if (role != 3) {
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
+    await loadPutFloor();
+})();
 
 
 (async () => {
@@ -179,8 +195,14 @@ const updateInsertBed = async () => {
     console.log(nurseId)
     console.log(bedId)
     if (!nurseId || !bedId) {
-        console.error("Faltan datos para realizar la operación.");
-        alert("Por favor, selecciona una enfermera y una cama.");
+        console.log("Faltan datos para realizar la operación.");
+        await Swal.fire({
+            title: 'Selección inválida',
+            text: 'No se logró asignar cama a enfermera',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset(); // Limpiar el formulario al detectar un error
         return;
     }
 
@@ -209,11 +231,23 @@ const updateInsertBed = async () => {
         const data = await response.json();
         console.log("Camas asignadas a la enfermera:", data);
         bed = {}
-        await loadCards(); // Recargar las tarjetas de camas
-        form.reset(); // Limpiar el formulario
+        await loadCards();
+        form.reset();
+        await Swal.fire({
+            title: 'Asignación exitosa',
+            text: 'Haz asignado una enfermera a la cama',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
     } catch (error) {
         console.error("Error al asignar camas a la enfermera:", error);
-        alert("No se pudo asignar la cama. Intenta nuevamente.");
+        await Swal.fire({
+            title: 'Selección inválida',
+            text: 'No se logró asignar enfermera a la cama',
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+        });
+        form.reset();
     }
 };
 
@@ -221,6 +255,31 @@ const updateInsertBed = async () => {
 // Método para actualizar la cama
 const updateBed = async () => {
     let form = document.getElementById('updateForm');
+
+    const nameField = document.getElementById("updNombre").value.trim();
+    const validNameRegex = /^[a-zA-Z0-9][a-zA-Z0-9\s]{1,}$/;
+
+    if (!nameField) {
+        await Swal.fire({
+            title: 'Nombre inválido',
+            text: 'El campo de nombre está vacío. Por favor, ingresa un nombre válido.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset(); // Limpiar el formulario al detectar un error
+        return;
+    }
+
+    if (!validNameRegex.test(nameField)) {
+        await Swal.fire({
+            title: 'Nombre inválido',
+            text: 'El nombre de la cama debe tener al menos 2 caracteres y contener solo letras o números.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
+        return;
+    }
 
     let updated = {
         id: bed.id,
@@ -244,48 +303,94 @@ const updateBed = async () => {
         bed = {}; // Limpiar el objeto bed
         await loadCards(); // Recargar las tarjetas de camas
         form.reset(); // Limpiar el formulario
+        await sweetAlert('Actualización exitosa', '', 'success');
     }).catch(error => {
         console.error("Error al actualizar la cama:", error);
     });
 };
 
-
-
-//Método para registrar una nueva cama
+// Método para registrar una nueva cama
 const saveBed = async () => {
     let form = document.getElementById('registerForm');
     await getFloorBySecretaryUsername();
 
-    console.log(floor)
-    let currentFloorId = floor.id
+    console.log(floor);
+    let currentFloorId = floor.id;
 
-    // Verificar que el ID del piso esté definido
     if (!currentFloorId) {
-        console.error("No se encontró el ID del piso en curso.");
-        alert("No se puede registrar la cama porque no hay un piso seleccionado.");
+        await Swal.fire({
+            title: 'Error',
+            text: 'No se puede registrar la cama porque no hay un piso seleccionado.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
+        return;
+    }
+
+    const nameField = document.getElementById("regNombre").value.trim();
+    const validNameRegex = /^[a-zA-Z0-9][a-zA-Z0-9\s]{1,}$/;
+
+    if (!nameField) {
+        await Swal.fire({
+            title: 'Nombre inválido',
+            text: 'El campo de nombre está vacío. Por favor, ingresa un nombre válido.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset(); // Limpiar el formulario al detectar un error
+        return;
+    }
+
+    if (!validNameRegex.test(nameField)) {
+        await Swal.fire({
+            title: 'Nombre inválido',
+            text: 'El nombre de la cama debe tener al menos 2 caracteres y contener solo letras o números.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
         return;
     }
     bed = {
-        identificationName: document.getElementById("regNombre").value,
+        identificationName: nameField,
         floor: {
             id: currentFloorId // Usar el ID del piso en curso
         }
     };
-    await fetch(`${URL}/api/bed`, {
-        method: 'POST',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(bed)
-    }).then(response => response.json()).then(async response => {
-        console.log(response);
+    try {
+        const response = await fetch(`${URL}/api/bed`, {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(bed)
+        });
+        const data = await response.json();
+        console.log(data);
         bed = {};
         await loadCards();
         form.reset();
-    }).catch(error => {
+        await Swal.fire({
+            title: 'Registro exitoso',
+            text: 'Acabas de registrar una cama.',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
+    } catch (error) {
         console.error("Error al registrar la cama:", error);
-    });
+        await Swal.fire({
+            title: 'Error',
+            text: 'Ocurrió un error al registrar la cama. Inténtalo de nuevo.',
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+        });
+        form.reset(); // Limpiar el formulario si hay un error en el fetch
+    }
 };
 
+const sweetAlert = async(titulo, descripcion, tipo)=>{
+    await Swal.fire({title: `${titulo}`, text: `${descripcion}`, icon:`${tipo}`})
+}
