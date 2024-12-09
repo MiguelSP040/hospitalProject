@@ -34,13 +34,13 @@
                 <!-- Opciones después del título -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="list_floors.html" class="nav-link fw-bold text-white">Pisos</a>
-                    </li>
-                    <li class="nav-item">
                         <a href="list_secretaries.html" class="nav-link fw-bold text-white">Secretarias</a>
                     </li>
                     <li class="nav-item">
                         <a href="list_users.html" class="nav-link fw-bold text-white">Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="list_floors.html" class="nav-link fw-bold text-white">Pisos</a>
                     </li>
                 </ul>
                 <!-- Sesión activa -->
@@ -220,6 +220,43 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal para Actualizar piso emfermera -->
+    <div class="modal fade" id="updatePisoModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="material-symbols-outlined">
+                        person
+                    </span>
+                    <h5 class="modal-title ms-1" id="updatePisoModalLabel">Actualizar piso Enfermera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="updatePisoForm" novalidate>
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="updFloor" class="form-label">Piso:</label>
+                                <select class="form-select" id="updFloorNurse">
+                                </select>
+                            </div>
+                            <div class="col">
+
+                                <input type="hidden" class="form-control" id="updUsuarioPiso" placeholder="Ingresa el usuario " disabled>
+                            </div>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" onclick="updateUser()"
+                                    data-bs-dismiss="modal">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Eliminar enfermera -->
     <div class="modal" tabindex="-1" id="deleteModal">

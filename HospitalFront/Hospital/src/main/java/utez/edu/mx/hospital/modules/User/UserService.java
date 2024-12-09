@@ -260,9 +260,7 @@ public class UserService {
         User found = userRepository.findById(user.getId());
         if (found == null) {
             return customResponseEntity.get404Response();
-        } /*else if(found.getNurseInFloor() != null){
-            //return customResponseEntity.get400Response();
-        }*/else {
+        } else {
             try {
                 user.setPassword(found.getPassword());
                 user.setBeds(found.getBeds());
@@ -442,4 +440,50 @@ public class UserService {
             }
         }
     }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> updateNurse(User user) {
+        User found = userRepository.findById(user.getId());
+        if (found != null) {
+            if(found.getBeds().isEmpty()){
+                try {
+                    userRepository.updateNurse(user.getIdentificationName(), user.getSurname(), user.getLastname(), user.getEmail(), user.getPhoneNumber(), user.getNurseInFloor().getId(), user.getId());
+                    return customResponseEntity.getOkResponse(
+                            "Actualización exitosa",
+                            "OK",
+                            200,
+                            null
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(e.getMessage());
+                    return customResponseEntity.get400Response();
+                }
+
+            }else if(!(found.getBeds().isEmpty()) && found.getNurseInFloor().getId() ==  user.getNurseInFloor().getId()){
+                try {
+                    user.setPassword(found.getPassword());
+                    user.setBeds(found.getBeds());
+                    user.setRole(found.getRole());
+                    user.setNurseInFloor(found.getNurseInFloor());
+                    userRepository.save(user);
+                    return customResponseEntity.getOkResponse(
+                            "Actualización exitosa",
+                            "OK",
+                            200,
+                            null
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(e.getMessage());
+                    return customResponseEntity.get400Response();
+                }
+            }else{
+                return customResponseEntity.get400Response();
+            }
+        }else{
+            return customResponseEntity.get404Response();
+        }
+    }
+
 }

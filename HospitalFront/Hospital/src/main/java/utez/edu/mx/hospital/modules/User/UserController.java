@@ -111,4 +111,10 @@ public class UserController {
     public ResponseEntity<?> updateUserInfo(@RequestBody UserDTO user) {
         return userService.updateUserInfo(user);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY') or hasRole('ROLE_NURSE')")
+    @PutMapping("/updateNurse")
+    public ResponseEntity<?> updateNurse(@RequestBody User user) {
+        return userService.updateNurse(user);
+    }
 }
