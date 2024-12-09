@@ -66,4 +66,16 @@ public class FloorController {
         return floorService.getFloorBySecretaryUsername(username);
     }
 
+    @GetMapping("/findNurseInFloor/{username}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY') or hasRole('ROLE_NURSE')")
+    public ResponseEntity<?> getNurseInFloor(@PathVariable("username") String username) {
+        return floorService.getNurseFloorId(username);
+    }
+
+    @GetMapping("/findFloorNameById/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY') or hasRole('ROLE_NURSE')")
+    public ResponseEntity<?> getFloorNameById(@PathVariable("id") long id) {
+        return floorService.getFloorById(id);
+    }
+
 }

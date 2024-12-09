@@ -28,21 +28,23 @@ const loadTable = async () => {
     await findAllSecretaries();
     let tbody = document.getElementById("tbody");
     let content = '';
-    userList.forEach((item, index) => {
+
+    for (const item of userList) {
+        const floorName = await fetchFloorName(item.id)
         content += `<tr>
-                        <th scope="row">${index + 1}</th>
+                        <th scope="row">${userList.indexOf(item) + 1}</th>
                         <td>${`${item.identificationName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.email}</td>
                         <td>${item.phoneNumber}</td>
                         <td>${item.username}</td>
-                        <td>${item.nurseInFloor ? item.nurseInFloor.identificationName : 'Sin piso asignado'}</td>
+                        <td>${floorName ? floorName : "Sin piso asignado"}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
                             <button class="btn btn-primary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal"
                                 data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;
-    });
+    }
     tbody.innerHTML = content;
 }
 
@@ -113,26 +115,24 @@ const loadUser = async id => {
     document.getElementById("updEmail").value = user.email;
     document.getElementById("updTelefono").value = user.phoneNumber;
     document.getElementById("updUsuario").value = user.username;
-    let select = document.getElementById("updFloor");
-    let content = '';
 
-    const floorId = user.nurseInFloor?.id ?? null;
-    const floorName = user.nurseInFloor?.identificationName ?? 'Escoge un piso';
 
-    content = `<option value="${floorId}" selected disabled hidden>${floorName}</option>`;
+}
 
-    if (floorList.length === 0) {
-        content += `<option disabled>No hay pisos para escoger</option>`;
-    } else {
-        floorList.forEach(item => {
-            content += `<option value="${item.id}">${item.identificationName}</option>`;
+const fetchFloorName = async (idUser) => {
+    try {
+        let response = await fetch(`${URL}/api/user/findFloorName/${idUser}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            }
         });
-    }
-
-    select.innerHTML = content;
-
-    if (floorId !== null) {
-        select.value = floorId;
+        const result = await response.json();
+        return result.data;
+    } catch (error) {
+        console.error(error.message);
+        return "Sin piso asignada";
     }
 }
 
@@ -145,7 +145,7 @@ const saveUser = async () => {
     const email = document.getElementById("regEmail").value.trim();
     const phoneNumber = document.getElementById("regTelefono").value.trim();
     const username = document.getElementById("regUsuario").value.trim();
-    const floorId = document.getElementById('regFloor')?.value;
+
 
     // Validar campos requeridos
     if (!identificationName || !surname || !email || !phoneNumber || !username) {
@@ -165,7 +165,6 @@ const saveUser = async () => {
         email,
         phoneNumber,
         username,
-        nurseInFloor: floorId ? { id: floorId } : null,
         role: { id: 3 } // Rol para secretaria
     };
 
@@ -297,11 +296,19 @@ const deleteUser = async (idUser) => {
                     "Authorization": `Bearer ${token}`,
                     "Content-type": "application/json",
                     "Accept": "application/json"
-                },
-                body: JSON.stringify(updateUser)
+                }
             })
-                .then(response => response.json())
                 .then(async (response) => {
+                    const data = await response.json();
+
+                    // Manejar respuestas no exitosas
+                    if (!response.ok) {
+                        const errorMessage = data.message || 'Ocurrió un error al intentar eliminar la secretaria.';
+                        await sweetAlert('Error al eliminar usuario', errorMessage, 'error');
+                        return;
+                    }
+
+                    // Respuesta exitosa
                     await loadTable();
                     await sweetAlert('Operación exitosa', 'Secretaria eliminada', 'success');
                     location.reload();
@@ -312,7 +319,6 @@ const deleteUser = async (idUser) => {
         }
     });
 };
-
 
 const sweetAlert = async(titulo, descripcion, tipo)=>{
     await Swal.fire({title: `${titulo}`, text: `${descripcion}`, icon:`${tipo}`})

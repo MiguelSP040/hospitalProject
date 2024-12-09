@@ -11,6 +11,7 @@ import utez.edu.mx.hospital.modules.Bed.BedService;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.modules.User.User;
+import utez.edu.mx.hospital.modules.User.UserRepository;
 import utez.edu.mx.hospital.modules.User.UserService;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
@@ -24,7 +25,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class FloorService {
-
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private FloorRepository floorRepository;
@@ -182,6 +184,38 @@ public class FloorService {
     public ResponseEntity<?> getFloorBySecretaryUsername(String username) {
         // Obtener datos del piso mediante el repositorio
         Map<String, String> floorData = floorRepository.findFloorBySecretaryUsername(username);
+
+        // Validar si se encontraron datos
+        if (floorData == null || floorData.isEmpty()) {
+            return customResponseEntity.get404Response();
+        }
+
+        String message = "Operación exitosa";
+        return customResponseEntity.getOkResponse(message, "OK", 200, floorData);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getNurseFloorId(String username) {
+        User found = userRepository.findByUsername(username);
+        if (found == null) {
+            return customResponseEntity.get404Response();
+        }
+
+        int nurseInFloor = floorRepository.findNurseInFloorId(username);
+
+        // Validar si se encontraron datos
+        if (nurseInFloor == -1) {
+            return customResponseEntity.get404Response();
+        }
+
+        String message = "Operación exitosa";
+        return customResponseEntity.getOkResponse(message, "OK", 200, nurseInFloor);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getFloorById(long id) {
+        // Obtener datos del piso mediante el repositorio
+        Map<String, String> floorData = floorRepository.findFloorNameById(id);
 
         // Validar si se encontraron datos
         if (floorData == null || floorData.isEmpty()) {

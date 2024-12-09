@@ -290,19 +290,49 @@ const updateUser = async () => {
 };
 
 
+// Método para eliminar un usuario
+const deleteUser = async (idUser) => {
+    Swal.fire({
+        title: 'Eliminar enfermera',
+        text: '¿Estás seguro de realizar esta acción?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            await fetch(`${URL}/api/user/delete/${idUser}`, {
+                method: 'DELETE',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-type": "application/json",
+                    "Accept": "application/json"
+                }
+            })
+                .then(async (response) => {
+                    const data = await response.json();
 
-//Método para eliminar un usuario
-const deleteUser = async idUser => {
-    await fetch(`${URL}/api/user/delete/${idUser}`, {
-        method: 'DELETE',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
+                    if (!response.ok) {
+                        const errorMessage = data.message || 'Ocurrió un error al intentar eliminar la enfermera.';
+                        await sweetAlert('Error al eliminar usuario', errorMessage, 'error');
+                        return;
+                    }
 
-    }).then(response => response.json()).then(async response => {
-        user = {};
-        await loadTable();
-    }).catch(error => console.error(error));
+                    await loadTable();
+                    await sweetAlert('Operación exitosa', 'Enfermera eliminada', 'success');
+                    location.reload();
+                })
+                .catch(async () => {
+                    await sweetAlert('Error al eliminar usuario', 'Ocurrió un error inesperado, prueba más tarde', 'error');
+                });
+        }
+    });
+};
+
+
+
+const sweetAlert = async(titulo, descripcion, tipo)=>{
+    await Swal.fire({title: `${titulo}`, text: `${descripcion}`, icon:`${tipo}`})
 }

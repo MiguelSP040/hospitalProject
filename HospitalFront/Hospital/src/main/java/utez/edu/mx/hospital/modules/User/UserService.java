@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.Bed;
 import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Bed.BedRepository;
-import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorRepository;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
@@ -67,22 +66,6 @@ public class UserService {
                 b.getIdentificationName(),
                 b.getIsOccupied(),
                 b.getPatient()
-        );
-    }
-
-    public FloorDTO transformFloorToDTO(Floor floor) {
-        return new FloorDTO(
-                floor.getId(),
-                floor.getIdentificationName(),
-                transformUserDTO(floor.getSecretary())
-        );
-    }
-
-    public BedDTO transformBedDTOToSecretary(Bed b){ //este mero puedo ocupar
-        return new BedDTO(
-                b.getId(),
-                b.getIdentificationName(),
-                transformFloorToDTO(b.getFloor())
         );
     }
 
@@ -187,7 +170,7 @@ public class UserService {
                 if (bedFound == null) {
                     return customResponseEntity.get404Response();
                 } else {
-                    bedFound.setHasNurse(true);
+                    bedFound.setHasNurse(!bedFound.getHasNurse());
                     userRepository.insertBeds(user.getId(), b.getId());
                 }
             }
@@ -277,7 +260,9 @@ public class UserService {
         User found = userRepository.findById(user.getId());
         if (found == null) {
             return customResponseEntity.get404Response();
-        } else {
+        } /*else if(found.getNurseInFloor() != null){
+            //return customResponseEntity.get400Response();
+        }*/else {
             try {
                 user.setPassword(found.getPassword());
                 user.setBeds(found.getBeds());
@@ -306,13 +291,13 @@ public class UserService {
         } else {
             try {
                 if (userFound.getRole().getId() == 3 && floorRepository.existsBySecretary(userFound)) {
-                    return customResponseEntity.getOkResponse("Error, secretaria asignada a un piso", "OK", 200, null);
+                    return customResponseEntity.get400Response();
                 }
                 if (userFound.getRole().getId() == 1) {
                     // Verifica si tiene camas asociadas en la base de datos
                     long assignedBedsCount = bedRepository.countByUsers(userFound);
                     if (assignedBedsCount > 0) {
-                        return customResponseEntity.getOkResponse("Error, enfermera asignada a camas", "OK", 200, null);
+                        return customResponseEntity.get400Response();
                     }
                 }
                 userRepository.deleteById(userFound.getId());
@@ -357,16 +342,27 @@ public class UserService {
         if (newFloor == null) {
             return customResponseEntity.get404Response(); // Piso no encontrado
         }
-        // Lógica para cambiar el piso
-        userFound.setNurseInFloor(newFloor); // Cambia el piso de la enfermera
-        userRepository.save(userFound); // Guarda la actualización
+        try{
+            if(userFound.getBeds().isEmpty()){
+                userFound.setNurseInFloor(newFloor); // Cambia el piso de la enfermera
+                userRepository.save(userFound); // Guarda la actualización
 
-        return customResponseEntity.getOkResponse(
-                "Cambio de piso realizado con éxito",
-                "OK",
-                200,
-                null
-        );
+                return customResponseEntity.getOkResponse(
+                        "Cambio de piso realizado con éxito",
+                        "OK",
+                        200,
+                        null
+                );
+            }else{
+                return customResponseEntity.get400Response();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return customResponseEntity.get400Response();
+        }
+
     }
 
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
@@ -395,6 +391,7 @@ public class UserService {
         }
     }
 
+
     public ResponseEntity<?> findFloorNameBySecretary(long idUser) {
         String floorName = null;
         String message = "";
@@ -409,5 +406,40 @@ public class UserService {
         }
 
         return customResponseEntity.getOkResponse(message, "OK", 200, floorName);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity findByUsername(String username) {
+        UserDTO dto = null;
+        User found = userRepository.findByUsername(username);
+        String message = "";
+        if (found == null) {
+            return customResponseEntity.get404Response();
+        } else {
+            message = "Operación exitosa";
+            dto = transformUserDTO(found);
+        }
+        return customResponseEntity.getOkResponse(message, "OK", 200, dto);
+    }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> updateUserInfo(UserDTO user) {
+        if(userRepository.findById(user.getId())==null){
+            return customResponseEntity.get404Response();
+        }else{
+            try{
+                userRepository.updateUserInfo(user.getIdentificationName(),user.getSurname(),user.getLastname(),user.getEmail(), user.getPhoneNumber(), user.getId());
+                return customResponseEntity.getOkResponse(
+                        "Actualización exitosa",
+                        "OK",
+                        200,
+                        null
+                );
+            } catch (Exception e){
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return customResponseEntity.get400Response();
+            }
+        }
     }
 }

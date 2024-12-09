@@ -58,5 +58,10 @@ public interface FloorRepository extends JpaRepository<Floor, Long> {
             nativeQuery = true)
     Map<String, String> findFloorBySecretaryUsername(@Param("username") String username);
 
+    @Query(value = "SELECT nurse_in_floor FROM user WHERE username = :username;", nativeQuery = true)
+    int findNurseInFloorId(@Param("username") String username);
+
+    @Query(value = "SELECT identification_name FROM floor WHERE id = :id;", nativeQuery = true)
+    Map<String, String> findFloorNameById(@Param("id") long id);
 
 }

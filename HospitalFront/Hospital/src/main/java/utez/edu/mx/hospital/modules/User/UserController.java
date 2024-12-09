@@ -45,7 +45,7 @@ public class UserController {
     }
 
     //actualizar usuario
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY') or hasRole('ROLE_NURSE')")
     @PutMapping("")
     public ResponseEntity<?> update(@RequestBody User user){
         return userService.update(user);
@@ -100,5 +100,15 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_SECRETARY') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getFloorNameBySecretary(@PathVariable("idUser") long idUser) {
         return userService.findFloorNameBySecretary(idUser);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY') or hasRole('ROLE_NURSE')")
+    @GetMapping("/findUser/{username}")
+    public ResponseEntity<?> findByUsername(@PathVariable("username") String username) {return userService.findByUsername(username);}
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SECRETARY') or hasRole('ROLE_NURSE')")
+    @PutMapping("/updateUser")
+    public ResponseEntity<?> updateUserInfo(@RequestBody UserDTO user) {
+        return userService.updateUserInfo(user);
     }
 }

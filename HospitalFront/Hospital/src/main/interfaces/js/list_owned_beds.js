@@ -6,6 +6,8 @@ const username = localStorage.getItem('username')
 let patientList = [];
 let bedList = {};
 let patient = {};
+let floorId = {};
+let floorName = {};
 
 const findPatientsWithoutBedAndNotDischarged = async () => {
     await fetch(`${URL}/api/patient/withoutBed`, {
@@ -13,9 +15,9 @@ const findPatientsWithoutBedAndNotDischarged = async () => {
         headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
-            "Accept": "application/json"  
+            "Accept": "application/json"
         }
-        
+
     }).then(response => response.json()).then(response => {
         console.log(response);
         patientList=null;
@@ -23,12 +25,62 @@ const findPatientsWithoutBedAndNotDischarged = async () => {
     }).catch(console.log);
 }
 
+
+//Método para obtener el piso de username
+const getFloorByNurseUsername = async () => {
+    await fetch(`${URL}/api/floor/findNurseInFloor/${username}`, {
+        method: 'GET',
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-type": "application/json",
+            "Accept": "application/json"
+        }
+    }).then(response => response.json()).then(response => {
+        floorId = response.data;
+    }).catch(error => console.error(error));
+
+    await fetch(`${URL}/api/floor/findFloorNameById/${floorId}`, {
+        method: 'GET',
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-type": "application/json",
+            "Accept": "application/json"
+        }
+    }).then(response => response.json()).then(response => {
+        floorName = response.data;
+    }).catch(error => console.error(error));
+}
+
+const loadPutFloor = async () => {
+    await getFloorByNurseUsername();
+
+    const numPiso = document.getElementById("numPiso");
+
+    if (!numPiso) {
+        console.error("Elemento numPiso no encontrado en el DOM.");
+        return;
+    }
+    const floorNameDisplay = floorName?.identification_name || "No tienes piso";
+    numPiso.textContent = floorNameDisplay; // Actualizar solo el contenido del elemento <i>
+};
+
+(async () => {
+    if (role != 1) {
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
+    await getFloorByNurseUsername(username);
+    await loadPutFloor();
+    console.log(floorId);
+    console.log(floorName);
+
+})();
+
 let thereArePatients = '';
-const loadData = async () => {       
-    await findPatientsWithoutBedAndNotDischarged(); 
+const loadData = async () => {
+    await findPatientsWithoutBedAndNotDischarged();
 
     const patientSelect = document.getElementById("regPaciente");
-    
+
     let patientContent = '';
     if (patientList.length === 0) {
         patientContent = `<option><small>No hay pacientes disponibles</small></option>`;
@@ -58,26 +110,13 @@ const getBedsByNurse = async () => {
     }).then(response => response.json()).then(response => {
         console.log(response);
         bedList = response.data;
-
-        // Verificar si bedList no está vacío
-        if (bedList.length > 0) {
-            // Extraer el identificationName del único floor
-            const floorName = bedList[0].floor.identificationName;
-
-            // Guardar en localStorage
-            localStorage.setItem('floorName', floorName);
-
-            console.log('Nombre del piso guardado:', floorName);
-        } else {
-            console.log('No hay camas asociadas.');
-        }
     }).catch(console.log);
 };
 
 const loadBeds = async () => {
     await getBedsByNurse();
-    
-    const cards = document.getElementById('bedsCards'); 
+
+    const cards = document.getElementById('bedsCards');
     let content = '';
 
     bedList.forEach((item, index) => {
@@ -114,26 +153,26 @@ const loadBeds = async () => {
 
 
         content += `
-                        <div class="col">
-                            <div class="card h-100 d-flex flex-row ">
-                        <div class="card-body flex-grow-1">
-                            <h4 class="card-title">${item.identificationName}</h4>
-                            <input type="hidden" id="bedId" value="${item.id}">
-                            <span class="badge ${occupied ? 'text-bg-success' : 'text-bg-secondary'}">
-                                ${occupied ? 'Ingreso' : 'Disponible'}
-                            </span>
-                            <hr>
-                            <div class="text-body-secondary">
-                                Paciente: ${item.patient?.fullName || 'N/A'} ${item.patient?.surname || ''} ${item.patient?.lastname || ''}
-                            </div>
+                    <div class="col">
+                        <div class="card h-100 d-flex flex-row ">
+                    <div class="card-body flex-grow-1">
+                        <h4 class="card-title">${item.identificationName}</h4>
+                        <input type="hidden" id="bedId" value="${item.id}">
+                        <span class="badge ${occupied ? 'text-bg-success' : 'text-bg-secondary'}">
+                            ${occupied ? 'Ingreso' : 'Disponible'}
+                        </span>
+                        <hr>
+                        <div class="text-body-secondary">
+                            Paciente: ${item.patient?.fullName || 'N/A'} ${item.patient?.surname || ''} ${item.patient?.lastname || ''}
                         </div>
-                        <div class="d-flex flex-column justify-content-start align-items-center p-3">
-                            ${buttonHTML}
-                            ${buttonFree}
-                            ${buttonSee}
-                        </div>
-                        </div>
-                        </div> `;
+                    </div>
+                    <div class="d-flex flex-column justify-content-start align-items-center p-3">
+                        ${buttonHTML}
+                        ${buttonFree}
+                        ${buttonSee}
+                    </div>
+                    </div>
+                    </div> `;
     });
 
     cards.innerHTML = content;
@@ -147,16 +186,16 @@ const freePatientAndBed = async () => {
         return;
     }
 
-    await freeBed(currentBedId); 
+    await freeBed(currentBedId);
     location.reload();
 };
 
 function seeInfoPatient(name, surname, lastname, phoneNumber, assignmentDate){
     document.getElementById("infNombres").value = name;
-    document.getElementById("infApellidoPaterno").value = surname; 
+    document.getElementById("infApellidoPaterno").value = surname;
     document.getElementById("infApellidoMaterno").value = lastname;
     document.getElementById("infTelefono").value = phoneNumber;
-    document.getElementById("infIngreso").value = assignmentDate;    
+    document.getElementById("infIngreso").value = assignmentDate;
 };
 
 let currentBedId = null;
@@ -186,9 +225,9 @@ const insertPatient = async () => {
     }
 
     patient = {
-        id: currentBedId, 
+        id: currentBedId,
         patient: {
-            id: patientId 
+            id: patientId
         }
     };
 
@@ -204,7 +243,7 @@ const insertPatient = async () => {
         body: JSON.stringify(patient)
     }).then(response => response.json()).then(async response => {
         console.log("Respuesta del servidor:", response);
-        await loadBeds(); 
+        await loadBeds();
         document.getElementById("registerForm").reset();
         await sweetAlert('Operación exitosa', 'Paciente insertado correctamente', 'success');
     }).catch(error => {
@@ -212,6 +251,7 @@ const insertPatient = async () => {
     });
     location.reload();
 };
+
 
 const freeBed = async(id) => {
     try {
@@ -226,34 +266,28 @@ const freeBed = async(id) => {
 
         if (response.ok) {
             await sweetAlert('Operación exitosa', 'Se liberó la cama y se dió de alta al paciente exitosamente', 'success');
-            await loadCard(); 
+            await loadCard();
         } else {
             await sweetAlert('Ocurrió un error', 'No se pudo liberar la cama y no se dió de alta al paciente', 'error');
         }
     } catch (error) {
         console.log('Ocurrió un error');
-    }  
+    }
 }
 
 const sweetAlert = async(titulo, descripcion, tipo)=>{
     await Swal.fire({title: `${titulo}`, text: `${descripcion}`, icon:`${tipo}`})
 }
 
-const floorName = localStorage.getItem('floorName');
+const floorname = '';
 (async () => {
     if(role != 1){
         window.location.replace('http://127.0.0.1:5500/html/login.html');
     }
     console.log(username)
-    document.getElementById('numPiso').textContent = floorName;
+    document.getElementById('numPiso').textContent = floorname;
     document.getElementById('userLogged').textContent = username;
     loadBeds();
     loadData();
 })();
-
-
-
-
-
-
 
