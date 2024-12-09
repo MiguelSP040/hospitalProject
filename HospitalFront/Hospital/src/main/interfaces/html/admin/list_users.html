@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../css/navbar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -44,8 +45,8 @@
                 </ul>
                 <!-- Sesión activa -->
                 <div class="ms-auto d-flex align-items-center">
-                    <span class="text-white me-3">miguel@correo.com</span>
-                    <button class="btn btn-sm d-flex align-items-center text-white">
+                    <span id="userLogged" class="text-white me-3"></span>
+                    <button onclick="logout()" class="btn btn-sm d-flex align-items-center text-white">
                         <span class="material-symbols-outlined">
                             logout
                         </span>
@@ -60,9 +61,6 @@
             <h3 class="custom-title">
                 Usuarios
             </h3>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal" onclick="loadData()">
-                Registrar Usuario
-            </button>
         </div>
 
         <!-- Tabla de Usuarios -->
@@ -76,7 +74,6 @@
                         <th>Teléfono</th>
                         <th>Usuario</th>
                         <th>Rol</th>
-                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="text-center" id="tbody">
@@ -99,7 +96,7 @@
         </div>
     </div>
 
-    <!-- Modal para Registrar Usuario -->
+    <!-- Modal para Registrar Usuario
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -158,9 +155,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <!-- Modal para Actualizar Usuario -->
+    <!-- Modal para Actualizar Usuario
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -173,9 +170,11 @@
                 </div>
                 <div class="modal-body">
                     <form class="needs-validation" id="updateForm" novalidate>
-                        <div>
-                            <label for="updNombres" class="form-label">Nombre(s):</label>
-                            <input type="text" class="form-control" id="updNombres" placeholder="Ingresa los nombres">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="updNombres" class="form-label">Nombre(s):</label>
+                                <input type="text" class="form-control" id="updNombres" placeholder="Ingresa los nombres">
+                            </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col">
@@ -194,16 +193,11 @@
                                 <label for="updEmail" class="form-label">Correo Electrónico:</label>
                                 <input type="email" class="form-control" id="updEmail" placeholder="Ingresa el correo">
                             </div>
-                            <div class="col">
-                                <label for="updTelefono" class="form-label">Teléfono:</label>
-                                <input type="text" class="form-control" id="updTelefono" placeholder="Ingresa el teléfono">
-                            </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="updRol" class="form-label">Rol:</label>
-                                <select class="form-select" id="updRol">
-                                </select>
+                                <label for="updTelefono" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="updTelefono" placeholder="Ingresa el teléfono">
                             </div>
                             <div class="col">
                                 <label for="updUsuario" class="form-label">Usuario:</label>
@@ -218,11 +212,13 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div>  -->
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <script src="../../js/user_management.js"></script>
+    <script src="../../js/logout.js"></script>
+    
 </body>
 
 </html>

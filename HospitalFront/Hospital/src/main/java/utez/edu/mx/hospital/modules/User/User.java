@@ -19,7 +19,7 @@ public class User {
     @Column(name = "full_name", nullable = false)
     private String identificationName;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(name = "surname", nullable = false)
@@ -34,7 +34,7 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
     @ManyToOne

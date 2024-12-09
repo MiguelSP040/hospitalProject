@@ -59,6 +59,7 @@ public class UserService {
     }
 
 
+
     public BedDTO transformBedToDTO(Bed b){
         return new BedDTO(
                 b.getId(),
@@ -67,7 +68,6 @@ public class UserService {
                 b.getPatient()
         );
     }
-
 
     public List<BedDTO> transformBedsDTO(List<Bed> beds){
         List<BedDTO> bedDTOs = new ArrayList<>();
@@ -136,21 +136,12 @@ public class UserService {
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> save(User user) {
         try {
-            /*if (user.getRole().getId() == 3) {
-            Long floorIdFound = user.getSecretary_in_charge().getId();
-            if(floorIdFound == null){
-                return customResponseEntity.getOkResponse("El ID del piso es obligatorio", "BAD_REQUEST", 400, null);
-            }
-                // se valida que el piso existe
-                Floor foundFloor = floorRepository.findById(floorIdFound.longValue());
-                if (foundFloor == null ) {
-                    return customResponseEntity.getOkResponse("Piso inexistente", "BAD_REQUEST", 400, null);
+            List<User> found = userRepository.findAll();
+            for (User u : found) {
+                if (user.getUsername().equals(u.getUsername())) {
+                    return customResponseEntity.get400Response();
                 }
-
-                //se asigna al usuario como encargado de ese piso
-                foundFloor.setSecretary(user);  //aqui se relaciona el piso con el usuario
-                floorRepository.save(foundFloor);   //se guarda el piso con la relación
-            }*/
+            }
             user.setPassword(user.getIdentificationName());
             userRepository.save(user);
             return customResponseEntity.getOkResponse(
@@ -166,7 +157,6 @@ public class UserService {
         }
     }
 
-    //metodo para que secretary asigne una bed a nurse
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?> insertBedNurse(User user) {
         User userFound = userRepository.findById(user.getId());
@@ -180,7 +170,7 @@ public class UserService {
                 if (bedFound == null) {
                     return customResponseEntity.get404Response();
                 } else {
-                    bedFound.setHasNurse(true);
+                    bedFound.setHasNurse(!bedFound.getHasNurse());
                     userRepository.insertBeds(user.getId(), b.getId());
                 }
             }
@@ -198,6 +188,39 @@ public class UserService {
         }
     }
 
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> changeBedNurse(User user) {
+        // Verificar si el usuario existe
+        User userFound = userRepository.findById(user.getId());
+        if (userFound == null) {
+            return customResponseEntity.get404Response();
+        }
+
+        try {
+            for (Bed b : user.getBeds()) {
+                // Verificar si la cama existe
+                Bed bedFound = bedRepository.findById(b.getId());
+                if (bedFound == null) {
+                    return customResponseEntity.get404Response();
+                }
+
+                // Marcar la cama como ocupada y actualizar la relación
+                bedFound.setHasNurse(true);
+                userRepository.changeBeds(user.getId(), b.getId());
+            }
+
+            return customResponseEntity.getOkResponse(
+                    "Actualización exitosa",
+                    "OK",
+                    200,
+                    null
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return customResponseEntity.get400Response();
+        }
+    }
 
     //metodo para que secretary asigne floor a nurse
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
@@ -237,11 +260,14 @@ public class UserService {
         User found = userRepository.findById(user.getId());
         if (found == null) {
             return customResponseEntity.get404Response();
-        } else {
+        } /*else if(found.getNurseInFloor() != null){
+            //return customResponseEntity.get400Response();
+        }*/else {
             try {
                 user.setPassword(found.getPassword());
                 user.setBeds(found.getBeds());
                 user.setRole(found.getRole());
+                user.setNurseInFloor(found.getNurseInFloor());
                 userRepository.save(user);
                 return customResponseEntity.getOkResponse(
                         "Actualización exitosa",
@@ -265,13 +291,13 @@ public class UserService {
         } else {
             try {
                 if (userFound.getRole().getId() == 3 && floorRepository.existsBySecretary(userFound)) {
-                    return customResponseEntity.getOkResponse("Error, secretaria asignada a un piso", "OK", 200, null);
+                    return customResponseEntity.get400Response();
                 }
                 if (userFound.getRole().getId() == 1) {
                     // Verifica si tiene camas asociadas en la base de datos
                     long assignedBedsCount = bedRepository.countByUsers(userFound);
                     if (assignedBedsCount > 0) {
-                        return customResponseEntity.getOkResponse("Error, enfermera asignada a camas", "OK", 200, null);
+                        return customResponseEntity.get400Response();
                     }
                 }
                 userRepository.deleteById(userFound.getId());
@@ -316,16 +342,27 @@ public class UserService {
         if (newFloor == null) {
             return customResponseEntity.get404Response(); // Piso no encontrado
         }
-        // Lógica para cambiar el piso
-        userFound.setNurseInFloor(newFloor); // Cambia el piso de la enfermera
-        userRepository.save(userFound); // Guarda la actualización
+        try{
+            if(userFound.getBeds().isEmpty()){
+                userFound.setNurseInFloor(newFloor); // Cambia el piso de la enfermera
+                userRepository.save(userFound); // Guarda la actualización
 
-        return customResponseEntity.getOkResponse(
-                "Cambio de piso realizado con éxito",
-                "OK",
-                200,
-                null
-        );
+                return customResponseEntity.getOkResponse(
+                        "Cambio de piso realizado con éxito",
+                        "OK",
+                        200,
+                        null
+                );
+            }else{
+                return customResponseEntity.get400Response();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return customResponseEntity.get400Response();
+        }
+
     }
 
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
@@ -355,4 +392,54 @@ public class UserService {
     }
 
 
+    public ResponseEntity<?> findFloorNameBySecretary(long idUser) {
+        String floorName = null;
+        String message = "";
+
+        String foundFloorName = userRepository.findFloorNameBySecretary(idUser);
+
+        if (foundFloorName == null) {
+            return customResponseEntity.get404Response();
+        } else {
+            floorName = foundFloorName;
+            message = "Operación exitosa";
+        }
+
+        return customResponseEntity.getOkResponse(message, "OK", 200, floorName);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity findByUsername(String username) {
+        UserDTO dto = null;
+        User found = userRepository.findByUsername(username);
+        String message = "";
+        if (found == null) {
+            return customResponseEntity.get404Response();
+        } else {
+            message = "Operación exitosa";
+            dto = transformUserDTO(found);
+        }
+        return customResponseEntity.getOkResponse(message, "OK", 200, dto);
+    }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> updateUserInfo(UserDTO user) {
+        if(userRepository.findById(user.getId())==null){
+            return customResponseEntity.get404Response();
+        }else{
+            try{
+                userRepository.updateUserInfo(user.getIdentificationName(),user.getSurname(),user.getLastname(),user.getEmail(), user.getPhoneNumber(), user.getId());
+                return customResponseEntity.getOkResponse(
+                        "Actualización exitosa",
+                        "OK",
+                        200,
+                        null
+                );
+            } catch (Exception e){
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return customResponseEntity.get400Response();
+            }
+        }
+    }
 }

@@ -6,12 +6,16 @@ let userList = [];
 let user = {};
 let roleList = [];
 let role = {};
+const rol = localStorage.getItem('rol');
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username')
 
 //Método para obtener la lista de usuarios
 const findAllUsers = async () => {
     await fetch(`${URL}/api/user`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -28,18 +32,15 @@ const loadTable = async () => {
 
     let tbody = document.getElementById("tbody");
     let content = '';
-    userList.forEach((item, index) => {
+
+    userList.filter(item => item.role.name !== "ROLE_ADMIN").forEach((item, index) => {
         content += `<tr>
                         <th scope="row">${index + 1}</th>
                         <td>${`${item.identificationName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.email}</td>
                         <td>${item.phoneNumber}</td>
                         <td>${item.username}</td>
-                        <td>${item.role.name}</td>
-                        <td class="text-center">
-                            <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
-                            <button class="btn btn-primary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal" data-bs-toggle="modal">Editar</button>
-                        </td>
+                        <td>${item.role.name.replace("ROLE_","")}</td>
                     </tr>`;
     });
     tbody.innerHTML = content;
@@ -47,6 +48,10 @@ const loadTable = async () => {
 
 //Función anónima para cargar la información de la tabla
 (async () => {
+    if(rol != 2){
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
+    document.getElementById('userLogged').textContent = username;
     await loadTable();
 })();
 
@@ -55,6 +60,7 @@ const findAllRoles = async () => {
     await fetch(`${URL}/api/role`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -85,6 +91,7 @@ const findUserById = async idUser => {
     await fetch (`${URL}/api/user/${idUser}`,{
         method : 'GET',
         headers : {
+            "Authorization": `Bearer ${token}`,
             "Content-type" : "application/json",
             "Accept" : "application/json"
         }
@@ -121,7 +128,7 @@ const loadUser = async id => {
 //Método para registrar un nuevo usuario
 const saveUser = async () => {
     let form = document.getElementById('registerForm');
-    user = {
+    let user = {
         identificationName: document.getElementById("regNombres").value,
         surname: document.getElementById("regApellidoPaterno").value,
         lastname: document.getElementById("regApellidoMaterno").value,
@@ -133,24 +140,18 @@ const saveUser = async () => {
         }
     };
 
-    try {
-        const response = await fetch(`${URL}/api/user`, {
+    await fetch(`${URL}/api/user`, {
             method: 'POST',
             headers: {
+                "Authorization": `Bearer ${token}`,
                 "Content-type": "application/json",
                 "Accept": "application/json"
             },
             body: JSON.stringify(user)
-        });
-        if (!response.ok) {
-            throw new Error("Failed to save user");
-        }
-        const result = await response.json();
-        console.log("User saved:", result);
-        await loadTable();
-    } catch (error) {
-        console.error(error);
-    }
+        }).then(response => response.json()).then(async response => {
+            user = {};
+            await loadTable();
+        }).catch(console.log());
 }
 
 //Método para editar un usuario
@@ -163,15 +164,13 @@ const updateUser = async () => {
         lastname : document.getElementById("updApellidoMaterno").value,
         email : document.getElementById("updEmail").value,
         phoneNumber : document.getElementById("updTelefono").value,
-        username : document.getElementById("updUsuario").value,
-        role : {
-            id: document.getElementById('updRol').value
-        }
+        username : document.getElementById("updUsuario").value
     };
 
     await fetch(`${URL}/api/user`, {
         method : 'PUT',
         headers : {
+            "Authorization": `Bearer ${token}`,
             "Content-type" : "application/json",
             "Accept" : "application/json"
         },
@@ -179,7 +178,7 @@ const updateUser = async () => {
     }).then(response => response.json()).then(async response => {
         user = {};
         await loadTable();
-    }).catch(error => console.error(error));
+    }).catch(console.log());
 }
 
 //Método para eliminar un usuario
@@ -187,6 +186,7 @@ const deleteUser = async idUser => {
     await fetch(`${URL}/api/user/delete/${idUser}`, {
         method: 'DELETE',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         },

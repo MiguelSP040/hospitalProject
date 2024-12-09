@@ -52,6 +52,12 @@ public class BedDTO {
         this.patient = patient;
     }
 
+    public BedDTO(long id, String identificationName, FloorDTO floor) {
+        this.id = id;
+        this.identificationName = identificationName;
+        this.floor = floor;
+    }
+
     public BedDTO(long id, String identificationName) {
         this.id = id;
         this.identificationName = identificationName;

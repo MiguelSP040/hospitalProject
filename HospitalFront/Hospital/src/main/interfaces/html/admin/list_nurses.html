@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../css/navbar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -38,11 +39,14 @@
                     <li class="nav-item">
                         <a href="list_secretaries.html" class="nav-link fw-bold text-white">Secretarias</a>
                     </li>
+                    <li class="nav-item">
+                        <a href="list_users.html" class="nav-link fw-bold text-white">Usuarios</a>
+                    </li>
                 </ul>
                 <!-- Sesión activa -->
                 <div class="ms-auto d-flex align-items-center">
-                    <span class="text-white me-3">miguel@correo.com</span>
-                    <button class="btn btn-sm d-flex align-items-center text-white">
+                    <span id="userLogged" class="text-white me-3"></span>
+                    <button onclick="logout()" class="btn btn-sm d-flex align-items-center text-white">
                         <span class="material-symbols-outlined">
                             logout
                         </span>
@@ -147,7 +151,7 @@
                         </div>    
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="saveUser()"
+                            <button type="button" class="btn btn-primary" onclick="saveUser()"
                                 data-bs-dismiss="modal">Registrar</button>
                         </div>
                     </form>
@@ -203,12 +207,12 @@
                             </div>
                             <div class="col">
                                 <label for="updUsuario" class="form-label">Usuario:</label>
-                                <input type="text" class="form-control" id="updUsuario" placeholder="Ingresa el usuario ">
+                                <input type="text" class="form-control" id="updUsuario" placeholder="Ingresa el usuario " disabled>
                             </div>
                         </div>
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="updateUser()"
+                            <button type="button" class="btn btn-primary" onclick="updateUser()"
                                 data-bs-dismiss="modal">Actualizar</button>
                         </div>
                     </form>
@@ -217,8 +221,29 @@
         </div>
     </div>
 
+    <!-- Eliminar enfermera -->
+    <div class="modal" tabindex="-1" id="deleteModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar enfermera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Seguro de realizar la acción de eliminar enfermera?</p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="idUser">
+                    <button type="button" class="btn btn-warning" onclick="deleteUser()">Eliminar</button>
+                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <script src="../../js/nurse_management.js"></script>
+    <script src="../../js/logout.js"></script>
 </body>
 
 </html>

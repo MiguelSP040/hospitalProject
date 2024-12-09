@@ -12,7 +12,13 @@ public class RoleController {
     private RoleService roleService;
 
     @GetMapping("")
-    public ResponseEntity<?> findAll(){
+    public ResponseEntity<?> findAll() {
         return roleService.findAll();
     }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<?> findRoleByUsername(@PathVariable("username") String username) {
+        return roleService.findRoleByUsername(username);
+    }
 }
+

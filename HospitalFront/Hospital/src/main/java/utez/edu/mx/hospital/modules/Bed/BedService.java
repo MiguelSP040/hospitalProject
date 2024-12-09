@@ -8,13 +8,17 @@ import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorService;
+import utez.edu.mx.hospital.modules.Patient.Patient;
+import utez.edu.mx.hospital.modules.Patient.PatientRepository;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
 import utez.edu.mx.hospital.modules.User.User;
+import utez.edu.mx.hospital.modules.User.UserRepository;
 import utez.edu.mx.hospital.utils.CustomResponseEntity;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +26,14 @@ public class BedService {
 
     @Autowired
     private BedRepository bedRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+
 
     @Autowired
     private CustomResponseEntity customResponseEntity;
@@ -135,7 +147,7 @@ public class BedService {
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     public ResponseEntity<?>save(Bed bed){
         try{
-            bed.setIsOccupied(true);
+            bed.setIsOccupied(false);
             bed.setHasNurse(false);
             bedRepository.save(bed);
             return customResponseEntity.getOkResponse("Registro exitoso", "CREATED",201,null);
@@ -153,6 +165,10 @@ public class BedService {
             return customResponseEntity.get404Response();
         }else {
             try{
+                bed.setIsOccupied(found.getIsOccupied());
+                bed.setPatient(found.getPatient());
+                bed.setHasNurse(found.getHasNurse());
+                bed.setFloor(found.getFloor());
                 bedRepository.save(bed);
                 return customResponseEntity.getOkResponse("Actualizacion exitosa", "Actualizado",200,null);
             }catch (Exception e){
@@ -268,4 +284,71 @@ public class BedService {
         return customResponseEntity.getOkResponse(message, "OK", 200, bedName);
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findBedsByNurseName(String name){
+        User found = userRepository.findByUsername(name);
+        List<Bed> beds = new ArrayList<>();
+        List<BedDTO> bedsDTO = new ArrayList<>();
+
+        String message = "";
+        if(found == null){
+            return customResponseEntity.get404Response();
+        } else {
+            beds = bedRepository.findBedsByUserName(name);
+            for (Bed b : beds){
+                bedsDTO.add(transformBedToDTO(b));
+            }
+        }
+        return customResponseEntity.getOkResponse(message, "OK", 200, bedsDTO);
+    }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?>insertPatient(Bed bed){
+        Bed found = bedRepository.findById(bed.getId());
+        Patient patientFound = patientRepository.findById(bed.getPatient().getId());
+
+        if(found==null || patientFound==null){
+            return customResponseEntity.get404Response();
+        }else if (!found.getIsOccupied() && !patientFound.isDischarged()){
+            try{
+                bedRepository.insertPatientInBed(patientFound.getId(), bed.getId());
+                bedRepository.changeIsOccupied(true, found.getId());
+                return customResponseEntity.getOkResponse("Actualizacion exitosa", "Actualizado",200,null);
+            }catch (Exception e){
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                return customResponseEntity.get400Response();
+            }
+        }else {
+            return customResponseEntity.get400Response();
+        }
+    }
+
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<?> freeBed(long id) {
+        Bed found = bedRepository.findById(id);
+        if (found == null) {
+            return customResponseEntity.get404Response();
+        }
+
+        Patient patientFound = patientRepository.findById(found.getPatient().getId());
+        if (patientFound == null) {
+            return customResponseEntity.get404Response();
+        }
+
+        if (found.getIsOccupied() && !patientFound.isDischarged()) {
+            try {
+                bedRepository.changeIsOccupied(false, found.getId());
+                patientRepository.changeDischarged(true, patientFound.getId());
+                bedRepository.quitPatient(patientFound.getId(), found.getId());
+
+                return customResponseEntity.getOkResponse("OK", "Actualizado", 200, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return customResponseEntity.get400Response();
+            }
+        } else {
+            return customResponseEntity.get400Response();
+        }
+    }
 }

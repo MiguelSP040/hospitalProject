@@ -8,6 +8,8 @@
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css" rel="stylesheet">
+
     <style>
         body {
             height: 100vh;
@@ -66,7 +68,7 @@
         <div class="card-body">
             <i class="fas fa-hospital hospital-icon"></i>
             <h4 class="card-title mb-4">Sistema Hospitalario</h4>
-            <form>
+            <form id="loginForm">
                 <div class="mb-3 text-start">
                     <label for="username" class="form-label">Usuario</label>
                     <input type="text" class="form-control" id="username" placeholder="Ingresa tu usuario">
@@ -76,13 +78,14 @@
                     <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña">
                 </div>
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                    <button type="button" class="btn btn-primary" id="formButton">Iniciar sesión</button>
                 </div>
             </form>
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
     <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/login.js"></script>
 </body>
 
 </html>

@@ -11,6 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -36,11 +37,14 @@
                     <li class="nav-item">
                         <a href="list_beds.html" class="nav-link fw-bold text-white">Camas</a>
                     </li>
+                    <li class="nav-item">
+                        <a href="secretary_profile.html" class="nav-link fw-bold text-white">Perfil</a>
+                    </li>
                 </ul>
                 <!-- Sesión activa -->
                 <div class="ms-auto d-flex align-items-center">
-                    <span class="text-white me-3">miguel@correo.com</span>
-                    <button class="btn btn-sm d-flex align-items-center text-white">
+                    <span id="userLogged" class="text-white me-3"></span>
+                    <button onclick="logout()" class="btn btn-sm d-flex align-items-center text-white">
                         <span class="material-symbols-outlined">
                             logout
                         </span>
@@ -54,9 +58,9 @@
         <div class="d-flex justify-content-between align-items-center">
             <h3 class="custom-title">
                 Enfermeras:
-                <i id="numPiso">Piso 01</i>
+                <i id="numPiso"></i>
             </h3>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+            <button class="btn btn-primary" id="registerButton" data-bs-toggle="modal" data-bs-target="#registerModal">
                 Registrar Enfermera
             </button>
         </div>
@@ -85,7 +89,7 @@
     </div>
 
     <!-- Modal para Registrar Enfermera -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -126,10 +130,11 @@
                                 <label for="regUsuario" class="form-label">Usuario:</label>
                                 <input type="text" class="form-control" id="regUsuario" placeholder="Ingresa el usuario ">
                             </div>
+                            <input type="hidden" id="id">
                         </div>
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="saveNurse()"
+                            <button type="button" class="btn btn-primary" onclick="saveNurse()"
                                 data-bs-dismiss="modal">Registrar</button>
                         </div>
                     </form>
@@ -139,7 +144,7 @@
     </div>
 
     <!-- Modal para Actualizar Enfermera -->
-    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -178,12 +183,12 @@
                             </div>
                             <div class="col">
                                 <label for="updUsuario" class="form-label">Usuario:</label>
-                                <input type="text" class="form-control" id="updUsuario" placeholder="Ingresa el usuario ">
+                                <input type="text" class="form-control" id="updUsuario" placeholder="Ingresa el usuario " disabled>
                             </div>
                         </div>
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="updateUser()"
+                            <button type="button" class="btn btn-primary" onclick="updateNurse()"
                                 data-bs-dismiss="modal">Actualizar</button>
                         </div>
                     </form>
@@ -193,7 +198,7 @@
     </div>
 
     <!-- Modal para Transferir -->
-    <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+    <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -212,7 +217,7 @@
                         </div>
                         <div class="col-12 text-end">
                             <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" onclick="confirmTransfer()"
+                            <button type="button" class="btn btn-primary" onclick="confirmTransfer()"
                                 data-bs-dismiss="modal">Transferir</button>
                         </div>
                     </form>
@@ -221,8 +226,10 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <script src="../../js/floor_nurses_management.js"></script>
+    <script src="../../js/logout.js"></script>
 </body>
 
 </html>

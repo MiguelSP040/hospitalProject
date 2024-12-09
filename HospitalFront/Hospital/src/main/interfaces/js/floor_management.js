@@ -4,12 +4,16 @@ Revisar método save y update, restraso para mostrar información actualizada
 const URL = 'http://localhost:8080';
 let floorList = [];
 let floor = {};
+const role = localStorage.getItem('rol');
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username')
 
 //Método para obtener la lista de pisos
 const findAllFloors = async () => {
     await fetch(`${URL}/api/floor`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -21,11 +25,18 @@ const findAllFloors = async () => {
 //Método para contar las camas por piso
 const getBedsOnFloor = async (idFloor) => {
     try {
-        const response = await fetch(`${URL}/api/floor/beds/${idFloor}`);
+        const response = await fetch(`${URL}/api/floor/beds/${idFloor}`, {
+            method: 'GET',  // Asegúrate de especificar el método si es necesario
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"  // Asegúrate de indicar el tipo de contenido si es necesario
+            }
+        });
+
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
-        
+
         const result = await response.json();
 
         // Check if the response directly contains nurses, not floors
@@ -39,13 +50,20 @@ const getBedsOnFloor = async (idFloor) => {
     }
 };
 
-//Método para contar las enfermeras por piso
 const countNurses = async (idFloor) => {
     try {
-        const response = await fetch(`${URL}/api/floor/nurses/${idFloor}`);
+        const response = await fetch(`${URL}/api/floor/nurses/${idFloor}`, {
+            method: 'GET',  // Asegúrate de especificar el método si es necesario
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"  // Asegúrate de indicar el tipo de contenido si es necesario
+            }
+        });
+
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
+
         const result = await response.json();
 
         // Check if the response directly contains nurses, not floors
@@ -58,7 +76,6 @@ const countNurses = async (idFloor) => {
         return { nursesList: [], count: 0 };
     }
 };
-
 
 const loadCards = async () => {
     await findAllFloors();
@@ -100,6 +117,10 @@ const loadCards = async () => {
 
 //Función anónima para cargar la información
 (async () => {
+    if(role != 2){
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
+    document.getElementById('userLogged').textContent = username;
     await loadCards();
 })();
 
@@ -108,6 +129,7 @@ const findAllSecretariesWithoutFloor = async () => {
         const response = await fetch(`${URL}/api/user/withoutFloor`, {
             method: 'GET',
             headers: {
+                "Authorization": `Bearer ${token}`,
                 "Content-type": "application/json",
                 "Accept": "application/json"
             }
@@ -159,6 +181,7 @@ const findFloorById = async idFloor => {
     await fetch(`${URL}/api/floor/${idFloor}`, {
         method: 'GET',
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-type": "application/json",
             "Accept": "application/json"
         }
@@ -187,33 +210,105 @@ const loadFloor = async id => {
     select.value = floor.secretary.id;
 }
 
-//Método para registrar un piso
+// Método para registrar un piso
 const saveFloor = async () => {
     let form = document.getElementById('registerForm');
-    floor = {
-        identificationName: document.getElementById("regNombre").value,
+    let identificationName = document.getElementById("regNombre").value.trim();
+    let secretaryId = document.getElementById('regSecretary').value;
+
+    if (!identificationName || !secretaryId) {
+        await Swal.fire({
+            title: 'Error',
+            text: 'Todos los campos son obligatorios. Por favor, completa el formulario.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    let floor = {
+        identificationName: identificationName,
         secretary: {
-            id: document.getElementById('regSecretary').value
+            id: secretaryId
         }
     };
 
-    await fetch(`${URL}/api/floor`, {
-        method: 'POST',
-        headers: {
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(floor)
-    }).then(response => response.json()).then(async response => {
+    try {
+        const response = await fetch(`${URL}/api/floor`, {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(floor)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error del servidor:", errorData);
+            await Swal.fire({
+                title: 'Error',
+                text: errorData.message || 'Ocurrió un error al registrar el piso. Inténtalo de nuevo.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar'
+            });
+            return;
+        }
+
+        const data = await response.json();
+        console.log(data);
+        await Swal.fire({
+            title: 'Registro exitoso',
+            text: 'El piso ha sido registrado correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
         floor = {};
         await loadCards();
         form.reset();
-    }).catch(console.log());
-}
+    } catch (error) {
+        console.error("Error en saveFloor:", error);
+        await Swal.fire({
+            title: 'Error',
+            text: 'No se pudo conectar con el servidor. Inténtalo más tarde.',
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+        });
+    }
+};
+
 
 //Método para actualizar un piso
 const updateFloor = async () => {
     let form = document.getElementById('updateForm');
+
+    const nameField = document.getElementById("updNombre").value.trim();
+    const updSecretary = document.getElementById("updSecretary").value
+    const validNameRegex = /^[a-zA-Z0-9][a-zA-Z0-9\s]{1,}$/;
+
+    if (!nameField || !updSecretary) {
+        await Swal.fire({
+            title: 'Campos inválidos',
+            text: 'Los campos son obligatorios',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
+        return;
+    }
+
+    if (!validNameRegex.test(nameField)) {
+        await Swal.fire({
+            title: 'Nombre inválido',
+            text: 'El nombre de la cama debe tener al menos 2 caracteres y contener solo letras o números.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
+        return;
+    }
+
     let updated = {
         id : floor.id,
         identificationName: document.getElementById("updNombre").value,
@@ -222,16 +317,23 @@ const updateFloor = async () => {
         }
     };
 
+
     await fetch(`${URL}/api/floor/${floor.id}`, {
         method : 'PUT',
         headers : {
+            "Authorization": `Bearer ${token}`,
             "Content-type" : "application/json",
             "Accept" : "application/json"
         },
         body : JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
+        await Swal.fire({
+            title: 'Actualización exitosa',
+            text: 'El usuario ha sido actualizado correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
         floor = {};
         await loadCards();
-        form.reset();
     }).catch(console.log());
 }

@@ -17,7 +17,7 @@ public class Bed {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "identification_name", nullable = false)
+    @Column(name = "identification_name", nullable = false, unique = true)
     private String identificationName;
 
     @Column(name = "is_occupied")
