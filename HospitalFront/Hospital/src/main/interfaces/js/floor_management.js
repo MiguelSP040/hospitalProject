@@ -210,33 +210,105 @@ const loadFloor = async id => {
     select.value = floor.secretary.id;
 }
 
-//Método para registrar un piso
+// Método para registrar un piso
 const saveFloor = async () => {
     let form = document.getElementById('registerForm');
+    let identificationName = document.getElementById("regNombre").value.trim();
+    let secretaryId = document.getElementById('regSecretary').value;
+
+    if (!identificationName || !secretaryId) {
+        await Swal.fire({
+            title: 'Error',
+            text: 'Todos los campos son obligatorios. Por favor, completa el formulario.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
     let floor = {
-        identificationName: document.getElementById("regNombre").value,
+        identificationName: identificationName,
         secretary: {
-            id: document.getElementById('regSecretary').value
+            id: secretaryId
         }
     };
 
-    await fetch(`${URL}/api/floor`, {
-        method: 'POST',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(floor)
-    }).then(response => response.json()).then(async response => {
+    try {
+        const response = await fetch(`${URL}/api/floor`, {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(floor)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error del servidor:", errorData);
+            await Swal.fire({
+                title: 'Error',
+                text: errorData.message || 'Ocurrió un error al registrar el piso. Inténtalo de nuevo.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar'
+            });
+            return;
+        }
+
+        const data = await response.json();
+        console.log(data);
+        await Swal.fire({
+            title: 'Registro exitoso',
+            text: 'El piso ha sido registrado correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
         floor = {};
         await loadCards();
-    }).catch(console.log());
-}
+        form.reset();
+    } catch (error) {
+        console.error("Error en saveFloor:", error);
+        await Swal.fire({
+            title: 'Error',
+            text: 'No se pudo conectar con el servidor. Inténtalo más tarde.',
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+        });
+    }
+};
+
 
 //Método para actualizar un piso
 const updateFloor = async () => {
     let form = document.getElementById('updateForm');
+
+    const nameField = document.getElementById("updNombre").value.trim();
+    const updSecretary = document.getElementById("updSecretary").value
+    const validNameRegex = /^[a-zA-Z0-9][a-zA-Z0-9\s]{1,}$/;
+
+    if (!nameField || !updSecretary) {
+        await Swal.fire({
+            title: 'Campos inválidos',
+            text: 'Los campos son obligatorios',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
+        return;
+    }
+
+    if (!validNameRegex.test(nameField)) {
+        await Swal.fire({
+            title: 'Nombre inválido',
+            text: 'El nombre de la cama debe tener al menos 2 caracteres y contener solo letras o números.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
+        return;
+    }
+
     let updated = {
         id : floor.id,
         identificationName: document.getElementById("updNombre").value,
@@ -244,6 +316,7 @@ const updateFloor = async () => {
             id: document.getElementById('updSecretary').value
         }
     };
+
 
     await fetch(`${URL}/api/floor/${floor.id}`, {
         method : 'PUT',
@@ -254,6 +327,12 @@ const updateFloor = async () => {
         },
         body : JSON.stringify(updated)
     }).then(response => response.json()).then(async response => {
+        await Swal.fire({
+            title: 'Actualización exitosa',
+            text: 'El usuario ha sido actualizado correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
         floor = {};
         await loadCards();
     }).catch(console.log());

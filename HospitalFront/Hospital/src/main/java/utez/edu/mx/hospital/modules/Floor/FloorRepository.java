@@ -58,4 +58,5 @@ public interface FloorRepository extends JpaRepository<Floor, Long> {
             nativeQuery = true)
     Map<String, String> findFloorBySecretaryUsername(@Param("username") String username);
 
+
 }

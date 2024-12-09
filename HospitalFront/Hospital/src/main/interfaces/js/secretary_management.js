@@ -1,15 +1,13 @@
-/*
-Revisar retraso en actualización y registro
-*/
+
+const role = localStorage.getItem('rol');
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username');
+
 const URL = 'http://localhost:8080';
 let userList = [];
 let user = {};
 let floorList = [];
 let floor = {};
-const role = localStorage.getItem('rol');
-const token = localStorage.getItem('token');
-const username = localStorage.getItem('username')
-
 
 //Método para obtener la lista de usuarios
 const findAllSecretaries = async () => {
@@ -30,35 +28,29 @@ const loadTable = async () => {
     await findAllSecretaries();
     let tbody = document.getElementById("tbody");
     let content = '';
-
-    for (const item of userList) {
-        const floorName = await fetchFloorName(item.id)
+    userList.forEach((item, index) => {
         content += `<tr>
-                        <th scope="row">${userList.indexOf(item) + 1}</th>
+                        <th scope="row">${index + 1}</th>
                         <td>${`${item.identificationName} ${item.surname} ${item.lastname ? item.lastname : ''}`}</td>
                         <td>${item.email}</td>
                         <td>${item.phoneNumber}</td>
                         <td>${item.username}</td>
-                        <td>${floorName ? floorName : "Sin piso asignado"}</td>
+                        <td>${item.nurseInFloor ? item.nurseInFloor.identificationName : 'Sin piso asignado'}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-danger btn-sm me-3" onclick="deleteUser(${item.id})">Eliminar</button>
                             <button class="btn btn-primary btn-sm ms-3" onclick="loadUser(${item.id})" data-bs-target="#updateModal"
                                 data-bs-toggle="modal">Editar</button>
                         </td>
                     </tr>`;
-    }
+    });
     tbody.innerHTML = content;
 }
 
 //Función anónima para cargar la información de la tabla
 (async () => {
-    if(role != 2){
-        window.location.replace('http://127.0.0.1:5500/html/login.html');
-    }
-    document.getElementById('userLogged').textContent = username;
     await loadTable();
-
 })();
+
 
 //Método para cargar la lista de pisos
 const findAllFloors = async () => {
@@ -120,7 +112,7 @@ const loadUser = async id => {
     let select = document.getElementById("updFloor");
     let content = '';
 
-    const floorId = user.nurseInFloor?.id ?? null; 
+    const floorId = user.nurseInFloor?.id ?? null;
     const floorName = user.nurseInFloor?.identificationName ?? 'Escoge un piso';
 
     content = `<option value="${floorId}" selected disabled hidden>${floorName}</option>`;
@@ -140,39 +132,85 @@ const loadUser = async id => {
     }
 }
 
-//Método para registrar un nuevo usuario
+// Método para registrar un nuevo usuario
 const saveUser = async () => {
     let form = document.getElementById('registerForm');
-    user = {
-        identificationName: document.getElementById("regNombres").value,
-        surname: document.getElementById("regApellidoPaterno").value,
-        lastname: document.getElementById("regApellidoMaterno").value,
-        email: document.getElementById("regEmail").value,
-        phoneNumber: document.getElementById("regTelefono").value,
-        username: document.getElementById("regUsuario").value,
-        nurseInFloor: {
-            id: document.getElementById('regFloor').value
-        },
-        role: {
-            id: 1
-        }
+    const identificationName = document.getElementById("regNombres").value.trim();
+    const surname = document.getElementById("regApellidoPaterno").value.trim();
+    const lastname = document.getElementById("regApellidoMaterno").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
+    const phoneNumber = document.getElementById("regTelefono").value.trim();
+    const username = document.getElementById("regUsuario").value.trim();
+    const floorId = document.getElementById('regFloor')?.value;
+
+    // Validar campos requeridos
+    if (!identificationName || !surname || !email || !phoneNumber || !username) {
+        await Swal.fire({
+            title: 'Error',
+            text: 'Todos los campos son obligatorios. Por favor, completa el formulario.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    let user = {
+        identificationName,
+        surname,
+        lastname,
+        email,
+        phoneNumber,
+        username,
+        nurseInFloor: floorId ? { id: floorId } : null,
+        role: { id: 3 } // Rol para secretaria
     };
 
-    await fetch(`${URL}/api/user`, {
-        method: 'POST',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(user)
-    }).then(response => response.json()).then(async response => {
-        console.log(response);
+    try {
+        const response = await fetch(`${URL}/api/user`, {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(user)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error del servidor:", errorData);
+            await Swal.fire({
+                title: 'Error',
+                text: errorData.message || 'Ocurrió un error al registrar el usuario. Inténtalo de nuevo.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar'
+            });
+            return;
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        await Swal.fire({
+            title: 'Registro exitoso',
+            text: 'La secretaria ha sido registrada correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Entendido'
+        });
+
         user = {};
         await loadTable();
         form.reset();
-    }).catch(console.log());
-}
+    } catch (error) {
+        console.error(`Error en saveUser: ${error.message}`);
+        await Swal.fire({
+            title: 'Error',
+            text: 'No se pudo conectar con el servidor. Inténtalo más tarde.',
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+        });
+    }
+};
 
 //Método para editar un usuario
 const updateUser = async () => {
@@ -184,10 +222,7 @@ const updateUser = async () => {
         lastname: document.getElementById("updApellidoMaterno").value,
         email: document.getElementById("updEmail").value,
         phoneNumber: document.getElementById("updTelefono").value,
-        username: document.getElementById("updUsuario").value,
-        nurseInFloor: {
-            id: document.getElementById('regFloor').value
-        },
+        username: document.getElementById("updUsuario").value
     };
 
     await fetch(`${URL}/api/user`, {
@@ -202,6 +237,7 @@ const updateUser = async () => {
         console.log(response);
         user = {};
         await loadTable();
+        form.reset();
     }).catch(console.log());
 }
 
@@ -219,15 +255,4 @@ const deleteUser = async idUser => {
         user = {};
         await loadTable();
     }).catch(error => console.error(error));
-}
-
-const fetchFloorName = async (idUser) => {
-    try {
-        const response = await fetch(`${URL}/api/user/findFloorName/${idUser}`);
-        const result = await response.json(); // Parse the response as JSON
-        return result.data; // Return only the floor name
-    } catch (error) {
-        console.error(error.message);
-        return "Sin piso asignada"; // Default value if fetching fails
-    }
 }

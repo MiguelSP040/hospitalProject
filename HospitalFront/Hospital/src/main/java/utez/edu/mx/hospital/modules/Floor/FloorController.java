@@ -66,5 +66,4 @@ public class FloorController {
         return floorService.getFloorBySecretaryUsername(username);
     }
 
-
 }

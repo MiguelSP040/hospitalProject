@@ -43,6 +43,7 @@ public class FloorDTO {
         this.secretary = secretary;
     }
 
+
     public FloorDTO(long id, String identificationName, UserDTO secretary) {
         this.id = id;
         this.identificationName = identificationName;

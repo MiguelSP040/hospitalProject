@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import utez.edu.mx.hospital.modules.Bed.Bed;
 import utez.edu.mx.hospital.modules.Bed.BedDTO.BedDTO;
 import utez.edu.mx.hospital.modules.Bed.BedRepository;
+import utez.edu.mx.hospital.modules.Floor.DTO.FloorDTO;
 import utez.edu.mx.hospital.modules.Floor.Floor;
 import utez.edu.mx.hospital.modules.Floor.FloorRepository;
 import utez.edu.mx.hospital.modules.User.DTO.UserDTO;
@@ -59,6 +60,7 @@ public class UserService {
     }
 
 
+
     public BedDTO transformBedToDTO(Bed b){
         return new BedDTO(
                 b.getId(),
@@ -68,6 +70,21 @@ public class UserService {
         );
     }
 
+    public FloorDTO transformFloorToDTO(Floor floor) {
+        return new FloorDTO(
+                floor.getId(),
+                floor.getIdentificationName(),
+                transformUserDTO(floor.getSecretary())
+        );
+    }
+
+    public BedDTO transformBedDTOToSecretary(Bed b){ //este mero puedo ocupar
+        return new BedDTO(
+                b.getId(),
+                b.getIdentificationName(),
+                transformFloorToDTO(b.getFloor())
+        );
+    }
 
     public List<BedDTO> transformBedsDTO(List<Bed> beds){
         List<BedDTO> bedDTOs = new ArrayList<>();
@@ -265,6 +282,7 @@ public class UserService {
                 user.setPassword(found.getPassword());
                 user.setBeds(found.getBeds());
                 user.setRole(found.getRole());
+                user.setNurseInFloor(found.getNurseInFloor());
                 userRepository.save(user);
                 return customResponseEntity.getOkResponse(
                         "Actualización exitosa",
