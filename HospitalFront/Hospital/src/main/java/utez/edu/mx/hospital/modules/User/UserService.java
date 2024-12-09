@@ -156,7 +156,7 @@ public class UserService {
             List<User> found = userRepository.findAll();
             for (User u : found) {
                 if (user.getUsername().equals(u.getUsername())) {
-                    return customResponseEntity.getOkResponse("Ese username ya existe", "BAD_REQUEST", 400, null);
+                    return customResponseEntity.get400Response();
                 }
             }
             user.setPassword(user.getIdentificationName());

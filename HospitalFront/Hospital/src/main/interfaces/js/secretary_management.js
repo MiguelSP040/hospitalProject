@@ -48,6 +48,10 @@ const loadTable = async () => {
 
 //Función anónima para cargar la información de la tabla
 (async () => {
+    if(role != 2){
+        window.location.replace('http://127.0.0.1:5500/html/login.html');
+    }
+    document.getElementById('userLogged').textContent = username;
     await loadTable();
 })();
 
@@ -185,7 +189,7 @@ const saveUser = async () => {
                 icon: 'error',
                 confirmButtonText: 'Cerrar'
             });
-            return;
+            form.reset();
         }
 
         const data = await response.json();
@@ -215,6 +219,38 @@ const saveUser = async () => {
 //Método para editar un usuario
 const updateUser = async () => {
     let form = document.getElementById('updateForm');
+
+    const nameField = document.getElementById("updNombres").value.trim();
+    const surnameField = document.getElementById("updApellidoPaterno").value.trim();
+    const lastnameField = document.getElementById("updApellidoMaterno").value.trim();
+    const emailField = document.getElementById("updEmail").value.trim();
+    const telefonoField = document.getElementById("updTelefono").value.trim();
+    const usuarioField = document.getElementById("updUsuario").value.trim();
+    const validNameRegex = /^[a-zA-Z0-9][a-zA-Z0-9\s]{1,}$/;
+
+    if (!nameField || !surnameField || !lastnameField || !emailField || !telefonoField || !usuarioField) {
+        await Swal.fire({
+            title: 'Nombre inválido',
+            text: 'El campo de nombre está vacío. Por favor, ingresa un nombre válido.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset(); // Limpiar el formulario al detectar un error
+        return;
+    }
+
+    if (!validNameRegex.test(nameField)) {
+        await Swal.fire({
+            title: 'Nombre inválido',
+            text: 'El nombre de la cama debe tener al menos 2 caracteres y contener solo letras o números.',
+            icon: 'error',
+            confirmButtonText: 'Entendido'
+        });
+        form.reset();
+        return;
+    }
+
+
     let updated = {
         id: user.id,
         identificationName: document.getElementById("updNombres").value,
@@ -238,21 +274,46 @@ const updateUser = async () => {
         user = {};
         await loadTable();
         form.reset();
+        await sweetAlert('Actualización exitosa', '', 'success');
     }).catch(console.log());
 }
 
-//Método para eliminar un usuario
-const deleteUser = async idUser => {
-    await fetch(`${URL}/api/user/delete/${idUser}`, {
-        method: 'DELETE',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-type": "application/json",
-            "Accept": "application/json"
-        },
+// Método para eliminar un usuario
+const deleteUser = async (idUser) => {
+    Swal.fire({
+        title: 'Eliminar secretaria',
+        text: '¿Estás seguro de realizar esta acción?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            await fetch(`${URL}/api/user/delete/${idUser}`, {
+                method: 'DELETE',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(updateUser)
+            })
+                .then(response => response.json())
+                .then(async (response) => {
+                    await loadTable();
+                    await sweetAlert('Operación exitosa', 'Secretaria eliminada', 'success');
+                    location.reload();
+                })
+                .catch(async () => {
+                    await sweetAlert('Error al eliminar usuario', 'Ocurrió un error inesperado, prueba más tarde', 'error');
+                });
+        }
+    });
+};
 
-    }).then(response => response.json()).then(async response => {
-        user = {};
-        await loadTable();
-    }).catch(error => console.error(error));
+
+const sweetAlert = async(titulo, descripcion, tipo)=>{
+    await Swal.fire({title: `${titulo}`, text: `${descripcion}`, icon:`${tipo}`})
 }
