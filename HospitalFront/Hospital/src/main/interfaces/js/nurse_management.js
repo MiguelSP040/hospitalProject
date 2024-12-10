@@ -222,7 +222,7 @@ const updateUser = async () => {
             id: document.getElementById('updFloor').value
         }
     };
-
+    console.log(updated.nurseInFloor.id);
     // Validar los campos obligatorios del objeto `updated`
     if (
         !updated.identificationName ||
@@ -241,7 +241,7 @@ const updateUser = async () => {
     }
 
     try {
-        const response = await fetch(`${URL}/api/user`, {
+        const response = await fetch(`${URL}/api/user/updateNurse`, {
             method: 'PUT',
             headers: {
                 "Authorization": `Bearer ${token}`,
